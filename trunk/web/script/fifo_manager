@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+
+abort "Usage: #{__FILE__} <environment>" unless ARGV[0]
+
+require 'drb'
+require 'drb/acl'
+require 'rubygems'
+require 'yaml'
+require File.dirname(__FILE__) + '/../config/boot'
+require 'actionmailer'
+require File.dirname(__FILE__) + '/../config/initializers/config'
+require 'activerecord'
+
+require File.dirname(__FILE__) + '/../app/models/game'
+require File.dirname(__FILE__) + '/../app/models/game_container'
+
+PORT = 1935
+
+database_yaml = YAML.load_file("config/database.yml")
+abort "Environment '#{ARGV[0]}' not found" unless database_config = database_yaml[ARGV[0]]
+
+ActiveRecord::Base.establish_connection(database_config)
+
+class FifoManager
+  # Check login
+  LOGIN_OK                          = 0
+  LOGIN_OLD_CONTAINER_VERSION       = 6
+  LOGIN_NO_GAME                     = 7
+  LOGIN_OLD_GAME_VERSION            = 8
+
+  def game_info(id, locale)
+    game = Game.find(id)
+    {'name' => game.name(locale)}
+  end
+
+  def check_login(container_version, game_id, game_version)
+    cv = GameContainer.instance.updated_at.to_i
+    return LOGIN_OLD_CONTAINER_VERSION if container_version != cv
+
+    g = Game.find_by_id(game_id)
+    return LOGIN_NO_GAME if g.nil?
+    gv = g.updated_at.to_i
+    return LOGIN_OLD_GAME_VERSION if game_version != gv
+
+    LOGIN_OK
+  end
+end
+
+acl = ACL.new(%w(
+deny all
+allow localhost))
+DRb.install_acl(acl)
+
+DRb.start_service("druby://localhost:#{PORT}", FifoManager.new)
+puts "Fifo manager started on localhost:#{PORT}"
+DRb.thread.join

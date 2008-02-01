@@ -1,0 +1,21 @@
+== Requirements
+
+* Rails 2+
+* RubyGettext
+* For Windows: Install poedit and add its bin directory to system path
+
+== Installation
+
+* Modify config/initializers/config.rb, config/database.yml
+* Prepare DB
+rake db:migrate
+rake db:init
+* Translate pofiles to mofiles
+rake gettext:makemo
+
+== Running
+
+* Start web server
+ruby script/server
+* Start Fifo manager
+ruby script/fifo_manager

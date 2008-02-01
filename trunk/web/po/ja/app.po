@@ -1,0 +1,210 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: latest\n"
+"POT-Creation-Date: 2008-01-26 01:54+0900\n"
+"PO-Revision-Date: 2008-01-26 02:00+0900\n"
+"Last-Translator: Ngoc DAO <ngocdaothanh@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: app/helpers/application_helper.rb:14
+#: app/helpers/application_helper.rb:31
+#: app/views/games/show.rhtml:4
+#: app/views/games/play.rhtml:5
+#: app/views/toys/show.rhtml:5
+msgid "Please install %{getflashplayer}"
+msgstr "%{getflashplayer} をインストールしてください"
+
+#: app/helpers/application_helper.rb:14
+#: app/helpers/application_helper.rb:31
+#: app/views/games/show.rhtml:4
+#: app/views/games/play.rhtml:5
+#: app/views/toys/show.rhtml:5
+msgid "Flash player 9 or above"
+msgstr "フラッシュプレイヤー9以上"
+
+#: app/helpers/application_helper.rb:75
+msgid "Error"
+msgstr "エラー"
+
+#: app/models/game.rb:-
+msgid "game"
+msgstr "ゲーム"
+
+#: app/models/game.rb:-
+msgid "Game|Names"
+msgstr "ゲーム名"
+
+#: app/models/game.rb:26
+msgid "Please provide game.swf"
+msgstr "game.swf を入力してください。"
+
+#: app/models/game.rb:29
+#: app/models/game.rb:64
+msgid "Please provide game name in English"
+msgstr "英語名を入力してください。"
+
+#: app/models/toy.rb:-
+msgid "toy"
+msgstr "おもちゃ"
+
+#: app/models/toy.rb:-
+msgid "Toy|Names"
+msgstr "おもちゃ名"
+
+#: app/models/toy.rb:26
+msgid "Please provide toy.swf"
+msgstr "toy.swf を入力してください。"
+
+#: app/models/toy.rb:29
+#: app/models/toy.rb:64
+msgid "Please provide toy name in English"
+msgstr "英語名を入力してください。"
+
+#: app/controllers/admin/games_controller.rb:16
+#: app/controllers/admin/toys_controller.rb:15
+msgid "%s was uploaded"
+msgstr "%s がアップロードされました"
+
+#: app/controllers/admin/games_controller.rb:30
+#: app/controllers/admin/toys_controller.rb:29
+msgid "%s was updated"
+msgstr "%s が更新されました"
+
+#: app/controllers/admin/game_container_controller.rb:12
+msgid "Container was updated"
+msgstr "Container が更新されました"
+
+#: app/views/layouts/application.rhtml:17
+#: app/views/layouts/admin.rhtml:18
+#: app/views/admin/games/index.rhtml:6
+msgid "Games"
+msgstr "ゲーム"
+
+#: app/views/layouts/application.rhtml:18
+#: app/views/layouts/admin.rhtml:19
+msgid "Toys"
+msgstr "おもちゃ"
+
+#: app/views/layouts/admin.rhtml:6
+msgid "Administration"
+msgstr "管理"
+
+#: app/views/layouts/admin.rhtml:17
+msgid "Statistics"
+msgstr "統計"
+
+#: app/views/games/show.rhtml:14
+msgid "Public channels"
+msgstr "みんなのチャンネル"
+
+#: app/views/games/show.rhtml:16
+msgid "Newbie"
+msgstr "玄人"
+
+#: app/views/games/show.rhtml:16
+msgid "Easy"
+msgstr "やしゃしい"
+
+#: app/views/games/show.rhtml:16
+msgid "Normal"
+msgstr "ノーマル"
+
+#: app/views/games/show.rhtml:16
+msgid "Hard"
+msgstr "ハード"
+
+#: app/views/games/show.rhtml:16
+msgid "World class"
+msgstr "ワールドクラス"
+
+#: app/views/games/index.rhtml:1
+msgid "Let's make your web site more interesting by embedding <b><u>multiplayer</u></b> games and play with your friends right at your web site!"
+msgstr "<b><u>マルチプレイヤー</u></b>ゲームを埋め込んで面白いウェブサイトを作ってともだちと楽しもう！"
+
+#: app/views/games/index.rhtml:3
+msgid "Select game"
+msgstr "ゲームを選択する"
+
+#: app/views/games/index.rhtml:4
+#: app/views/toys/index.rhtml:5
+msgid "Embed into your web site"
+msgstr "自分のウェブサイトに埋め込む"
+
+#: app/views/games/index.rhtml:5
+msgid "Play with your friends"
+msgstr "ともだちとゲームを楽しむ"
+
+#: app/views/admin/games/index.rhtml:3
+msgid "Game container"
+msgstr "ゲーム container"
+
+#: app/views/admin/games/index.rhtml:4
+msgid "Update container"
+msgstr "Containerの更新"
+
+#: app/views/admin/games/index.rhtml:7
+#: app/views/admin/games/new.rhtml:2
+msgid "Upload new game"
+msgstr "新しいゲームのアップロード"
+
+#: app/views/admin/games/edit.rhtml:2
+#: app/views/admin/toys/edit.rhtml:2
+msgid "Edit %s"
+msgstr "%s の編集"
+
+#: app/views/admin/games/edit.rhtml:9
+#: app/views/admin/game_container/edit.rhtml:9
+msgid "(blank = no change)"
+msgstr "(空白 = 変更なし)"
+
+#: app/views/admin/games/edit.rhtml:14
+#: app/views/admin/games/new.rhtml:10
+msgid "Game name"
+msgstr "ゲーム名"
+
+#: app/views/admin/games/edit.rhtml:30
+#: app/views/admin/toys/edit.rhtml:20
+#: app/views/admin/game_container/edit.rhtml:23
+msgid "Save"
+msgstr "保存"
+
+#: app/views/admin/games/new.rhtml:26
+#: app/views/admin/toys/new.rhtml:26
+msgid "Upload"
+msgstr "アップロード"
+
+#: app/views/admin/toys/index.rhtml:3
+#: app/views/admin/toys/new.rhtml:2
+msgid "Upload new toy"
+msgstr "新しいおもちゃのアップロード"
+
+#: app/views/admin/toys/new.rhtml:10
+#: app/views/admin/toys/edit.rhtml:10
+msgid "Toy name"
+msgstr "おもちゃ名"
+
+#: app/views/admin/game_container/edit.rhtml:2
+msgid "Edit game container"
+msgstr "ゲーム container の編集"
+
+#: app/views/toys/index.rhtml:1
+msgid "Let's make your web site more interesting by embedding toys!"
+msgstr "おもちゃを埋め込んでもっと面白いウェブサイトを作ろう！"
+
+#: app/views/toys/index.rhtml:3
+msgid "Select toy"
+msgstr "おもちゃを選択"
+
+#: app/views/toys/index.rhtml:4
+msgid "Configure"
+msgstr "設定"
+

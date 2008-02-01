@@ -1,0 +1,21 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-12-25 14:56+0900\n"
+"PO-Revision-Date: 2007-12-25 15:00+0900\n"
+"Last-Translator: Ngoc DAO <ngocdaothanh@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: Rule.as:18
+msgid "Tic-tac-toe, also called noughts and crosses, hugs and kisses, and many other names, is a pencil-and-paper game for two players, O and X, who take turns to mark the spaces in a 3×3 grid. The player who succeeds in placing three respective marks in a horizontal, vertical or diagonal row wins the game."
+msgstr "Đọc truyện tranh Lucky Lucke các bạn để ý sẽ thấy chàng hiệp sĩ và con ngựa chơi với nhau trò Tic-tac-toe này. Trò này giống trò Caro, nhưng kích thước bàn cờ chỉ là 3×3, và người đánh được 3 quân trước sẽ thắng."
+

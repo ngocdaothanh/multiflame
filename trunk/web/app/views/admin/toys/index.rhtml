@@ -1,0 +1,9 @@
+<% unless flash[:notice].nil? %><p class="notice"><%= flash[:notice] %></p><% end %>
+
+<p><%= link_to _('Upload new toy'), new_admin_toy_path %></p>
+
+<% unless @toys.blank? %>
+  <% @toys.each do |t| %>
+<p><%= link_to h(t.name), edit_admin_toy_path(t) %></p>
+  <% end %>
+<% end %>

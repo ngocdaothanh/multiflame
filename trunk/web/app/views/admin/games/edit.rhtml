@@ -1,0 +1,31 @@
+<% @flag_destination = edit_admin_game_path(@game) %>
+<% @navigator = _('Edit %s') % h(@game.name) %>
+
+<%= error_messages_for(@game, []) %>
+<%= form_tag admin_game_path(@game), :multipart => true, :method => :put %>
+  <table>
+    <tr>
+      <th>&nbsp;</th>
+      <td><%= _('(blank = no change)') %></td>
+    </tr>
+    <tr>
+      <th>game.swf</th>
+      <td><%= file_field_tag 'game', :id => nil %></td>
+      <th><%= _('Game name') %></th>
+    </tr>
+    <tr>
+      <th>en.mo</th>
+      <td>&nbsp;</td>
+      <td><%= text_field_tag "name_en", @game.name('en') %></td>
+    </tr>
+<% locales = LOCALES.dup; locales.delete('en') %>
+<% locales.each do |l| %>
+    <tr>
+      <th><%= l %>.mo</th>
+      <td><%= file_field_tag "mo_#{l}", :id => nil %></td>
+      <td><%= text_field_tag "name_#{l}", @game.name(l) %></td>
+    </tr>
+<% end %>
+  </table>
+  <%= submit_tag _('Save') %>
+</form>

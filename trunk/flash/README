@@ -1,0 +1,14 @@
+To set class path for AS3 in Adode Flash:
+* Go to Files/Edit -> Preferences -> ActionScript -> ActionScript 3.0 Settings
+* Add ../lib and ../../lib
+
+To run without the web server:
+* Go to http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html
+* Add the folder of your game to trusted location list
+* Copy client.swf to you game folder, rename it to <locale>.swf
+* Run client.swf, it will load game.swf in <locale> language
+
+i18n:
+* Install Ruby and RubyGetText: gem install gettext
+* Install poedit and add its bin directory to system path
+* In the game or toy directory, run ruby <path to gettext.rb> <updatepo|makemo>

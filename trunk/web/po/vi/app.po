@@ -1,0 +1,210 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: latest\n"
+"POT-Creation-Date: 2008-01-26 01:54+0900\n"
+"PO-Revision-Date: 2008-01-26 01:56+0900\n"
+"Last-Translator: Ngoc DAO <ngocdaothanh@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: app/helpers/application_helper.rb:14
+#: app/helpers/application_helper.rb:31
+#: app/views/games/show.rhtml:4
+#: app/views/games/play.rhtml:5
+#: app/views/toys/show.rhtml:5
+msgid "Please install %{getflashplayer}"
+msgstr "Xin cài đặt %{getflashplayer}"
+
+#: app/helpers/application_helper.rb:14
+#: app/helpers/application_helper.rb:31
+#: app/views/games/show.rhtml:4
+#: app/views/games/play.rhtml:5
+#: app/views/toys/show.rhtml:5
+msgid "Flash player 9 or above"
+msgstr "Flash player 9 trở lên"
+
+#: app/helpers/application_helper.rb:75
+msgid "Error"
+msgstr "Lỗi"
+
+#: app/models/game.rb:-
+msgid "game"
+msgstr "game"
+
+#: app/models/game.rb:-
+msgid "Game|Names"
+msgstr "Tên game"
+
+#: app/models/game.rb:26
+msgid "Please provide game.swf"
+msgstr "Xin nhập game.swf"
+
+#: app/models/game.rb:29
+#: app/models/game.rb:64
+msgid "Please provide game name in English"
+msgstr "Xin nhập tên game tiếng Anh"
+
+#: app/models/toy.rb:-
+msgid "toy"
+msgstr "đồ chơi"
+
+#: app/models/toy.rb:-
+msgid "Toy|Names"
+msgstr "Tên"
+
+#: app/models/toy.rb:26
+msgid "Please provide toy.swf"
+msgstr "Xin nhập toy.swf"
+
+#: app/models/toy.rb:29
+#: app/models/toy.rb:64
+msgid "Please provide toy name in English"
+msgstr "Xin nhập tên đồ chơi tiếng Anh"
+
+#: app/controllers/admin/games_controller.rb:16
+#: app/controllers/admin/toys_controller.rb:15
+msgid "%s was uploaded"
+msgstr "%s đã được upload"
+
+#: app/controllers/admin/games_controller.rb:30
+#: app/controllers/admin/toys_controller.rb:29
+msgid "%s was updated"
+msgstr "%s đã được cập nhật"
+
+#: app/controllers/admin/game_container_controller.rb:12
+msgid "Container was updated"
+msgstr "Container đã được cập nhật"
+
+#: app/views/layouts/application.rhtml:17
+#: app/views/layouts/admin.rhtml:18
+#: app/views/admin/games/index.rhtml:6
+msgid "Games"
+msgstr "Game"
+
+#: app/views/layouts/application.rhtml:18
+#: app/views/layouts/admin.rhtml:19
+msgid "Toys"
+msgstr "Đồ chơi"
+
+#: app/views/layouts/admin.rhtml:6
+msgid "Administration"
+msgstr "Quản lí"
+
+#: app/views/layouts/admin.rhtml:17
+msgid "Statistics"
+msgstr "Thống kê"
+
+#: app/views/games/show.rhtml:14
+msgid "Public channels"
+msgstr "Kênh chung"
+
+#: app/views/games/show.rhtml:16
+msgid "Newbie"
+msgstr "Mới bắt đầu"
+
+#: app/views/games/show.rhtml:16
+msgid "Easy"
+msgstr "Dễ"
+
+#: app/views/games/show.rhtml:16
+msgid "Normal"
+msgstr "Vừa phải"
+
+#: app/views/games/show.rhtml:16
+msgid "Hard"
+msgstr "Khó"
+
+#: app/views/games/show.rhtml:16
+msgid "World class"
+msgstr "Rất khó"
+
+#: app/views/games/index.rhtml:1
+msgid "Let's make your web site more interesting by embedding <b><u>multiplayer</u></b> games and play with your friends right at your web site!"
+msgstr "Hãy làm cho trang web của bạn hấp dẫn hơn bằng cách nhúng <b><u>game nhiều người</u></b> để chơi với bạn bè ngay tại trang web của mình nào!"
+
+#: app/views/games/index.rhtml:3
+msgid "Select game"
+msgstr "Chọn game"
+
+#: app/views/games/index.rhtml:4
+#: app/views/toys/index.rhtml:5
+msgid "Embed into your web site"
+msgstr "Nhúng vào trang web của mình"
+
+#: app/views/games/index.rhtml:5
+msgid "Play with your friends"
+msgstr "Chơi với bạn bè"
+
+#: app/views/admin/games/index.rhtml:3
+msgid "Game container"
+msgstr "Game container"
+
+#: app/views/admin/games/index.rhtml:4
+msgid "Update container"
+msgstr "Cập nhật container"
+
+#: app/views/admin/games/index.rhtml:7
+#: app/views/admin/games/new.rhtml:2
+msgid "Upload new game"
+msgstr "Upload game mới"
+
+#: app/views/admin/games/edit.rhtml:2
+#: app/views/admin/toys/edit.rhtml:2
+msgid "Edit %s"
+msgstr "Sửa đổi %s"
+
+#: app/views/admin/games/edit.rhtml:9
+#: app/views/admin/game_container/edit.rhtml:9
+msgid "(blank = no change)"
+msgstr "(để trống = không thay đổi)"
+
+#: app/views/admin/games/edit.rhtml:14
+#: app/views/admin/games/new.rhtml:10
+msgid "Game name"
+msgstr "Tên game"
+
+#: app/views/admin/games/edit.rhtml:30
+#: app/views/admin/toys/edit.rhtml:20
+#: app/views/admin/game_container/edit.rhtml:23
+msgid "Save"
+msgstr "Lưu"
+
+#: app/views/admin/games/new.rhtml:26
+#: app/views/admin/toys/new.rhtml:26
+msgid "Upload"
+msgstr "Upload"
+
+#: app/views/admin/toys/index.rhtml:3
+#: app/views/admin/toys/new.rhtml:2
+msgid "Upload new toy"
+msgstr "Upload đồ chơi mới"
+
+#: app/views/admin/toys/new.rhtml:10
+#: app/views/admin/toys/edit.rhtml:10
+msgid "Toy name"
+msgstr "Tên đồ chơi"
+
+#: app/views/admin/game_container/edit.rhtml:2
+msgid "Edit game container"
+msgstr "Sửa game container"
+
+#: app/views/toys/index.rhtml:1
+msgid "Let's make your web site more interesting by embedding toys!"
+msgstr "Hãy làm cho trang web của bạn hấp dẫn hơn bằng cách nhúng đồ chơi!"
+
+#: app/views/toys/index.rhtml:3
+msgid "Select toy"
+msgstr "Chọn đồ chơi"
+
+#: app/views/toys/index.rhtml:4
+msgid "Configure"
+msgstr "Cấu hình"
+

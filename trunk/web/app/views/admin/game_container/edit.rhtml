@@ -1,0 +1,24 @@
+<% @flag_destination = edit_admin_game_container_path %>
+<% @navigator = _('Edit game container') %>
+
+<% unless flash[:notice].nil? %><div class="notice"><%= flash[:notice] %></div><% end %>
+<%= form_tag admin_game_container_path, :multipart => true, :method => :put %>
+  <table>
+    <tr>
+      <th>&nbsp;</th>
+      <td><%= _('(blank = no change)') %></td>
+    </tr>
+    <tr>
+      <th>container.swf</th>
+      <td><%= file_field_tag 'container', :id => nil %></td>
+    </tr>
+<% locales = LOCALES.dup; locales.delete('en') %>
+<% locales.each do |l| %>
+    <tr>
+      <th><%= l %>.mo</th>
+      <td><%= file_field_tag l, :id => nil %></td>
+    </tr>
+<% end %>
+  </table>
+  <%= submit_tag _('Save') %>
+</form>

@@ -1,0 +1,21 @@
+<% @flag_destination = edit_admin_toy_path(@toy) %>
+<% @navigator = _('Edit %s') % h(@toy.name) %>
+
+<%= error_messages_for(@toy, []) %>
+<%= form_tag admin_toy_path(@toy), :multipart => true, :method => :put %>
+  <table>
+    <tr>
+      <th>toy.swf</th>
+      <td><%= file_field_tag 'toy', :id => nil %></td>
+      <th><%= _('Toy name') %></th>
+    </tr>
+<% LOCALES.each do |l| %>
+    <tr>
+      <th><%= l %>.mo</th>
+      <td><%= file_field_tag "mo_#{l}", :id => nil %></td>
+      <td><%= text_field_tag "name_#{l}", @toy.name(l) %></td>
+    </tr>
+<% end %>
+  </table>
+  <%= submit_tag _('Save') %>
+</form>

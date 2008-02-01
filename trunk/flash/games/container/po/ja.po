@@ -1,0 +1,236 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-01-04 04:44+0900\n"
+"PO-Revision-Date: 2008-01-04 04:45+0900\n"
+"Last-Translator: Ngoc DAO <ngocdaothanh@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: net/web20games/client/LoginScreen.as:52
+msgid "(Can be anything)"
+msgstr "(何でもいいです)"
+
+#: net/web20games/client/ChatTab.as:80
+msgid "<b>{0}</b> has logged in"
+msgstr "<b>{0}</b> がログインしました"
+
+#: net/web20games/client/ChatTab.as:83
+msgid "<b>{0}</b> has logged out"
+msgstr "<b>{0}</b> がログアウトしました"
+
+#: net/web20games/client/LoginScreen.as:62
+#: net/web20games/client/RuleTab.as:32
+msgid "About this game:"
+msgstr "このゲームについて:"
+
+#: net/web20games/client/GameChatRuleScreen.as:55
+msgid "Chat"
+msgstr "チャット"
+
+#: net/web20games/client/ChatTab.as:45
+msgid "Clear"
+msgstr "クリア"
+
+#: net/web20games/client/LoginScreen.as:49
+msgid "Code"
+msgstr "セキュリティコード"
+
+#: net/web20games/client/LoginScreen.as:149
+msgid "Could not find the game, please refresh this web page or clean the browser's cache"
+msgstr "ゲームは見つかりませんでした。このウェブページを更新するかブラウザのキャッシュを削除してください。"
+
+#: net/web20games/client/LoadScreen.as:95
+msgid "Could not find the game."
+msgstr "ゲームは見つかりませんでした。"
+
+#: net/web20games/client/LoadScreen.as:66
+#: net/web20games/client/LoadScreen.as:80
+msgid "Could not load game."
+msgstr "ゲームをロードできませんでした。"
+
+#: net/web20games/client/GameChatRuleScreen.as:54
+msgid "Game"
+msgstr "ゲーム"
+
+#: net/web20games/client/ChatTab.as:124
+#: net/web20games/client/GameChatRuleScreen.as:182
+msgid "Game over"
+msgstr "ゲームオーバー"
+
+#: net/web20games/client/ChatTab.as:117
+msgid "Game started"
+msgstr "ゲームが開始しました"
+
+#: net/web20games/client/LoginScreen.as:48
+msgid "Guest"
+msgstr "ゲスト"
+
+#: net/web20games/client/ConfigDlg.as:47
+msgid "Join"
+msgstr "参加"
+
+#: net/web20games/client/GameChatRuleScreen.as:57
+msgid "Leave"
+msgstr "出掛ける"
+
+#: net/web20games/client/LoadScreen.as:75
+msgid "Loading game information..."
+msgstr "ゲーム情報をロードしています..."
+
+#: net/web20games/client/LoadScreen.as:57
+msgid "Loading game..."
+msgstr "ゲームをロードしています..."
+
+#: net/web20games/client/LoginScreen.as:114
+msgid "Logging in..."
+msgstr "ログインしています..."
+
+#: net/web20games/client/LoginScreen.as:53
+msgid "Login"
+msgstr "ログイン"
+
+#: net/web20games/client/ConfigDlg.as:48
+#: net/web20games/client/GameChatRuleScreen.as:152
+msgid "New game"
+msgstr "新しいゲーム"
+
+#: net/web20games/client/ChatTab.as:112
+msgid "New game..."
+msgstr "新しいゲーム..."
+
+#: net/web20games/client/LoginScreen.as:50
+msgid "Nick"
+msgstr "ニック"
+
+#: net/web20games/client/LoginScreen.as:51
+msgid "Password"
+msgstr "パスワード"
+
+#: net/web20games/client/LoginScreen.as:158
+msgid "People in this channel are playing an older version of the game, you cannot play with them"
+msgstr "このチャネルにいる人たちが古いバージョンを使っていますのでこのチャネルに参加できません"
+
+#: net/web20games/client/LoginScreen.as:155
+msgid "People in this channel are using an older version of this flash file, you cannot play with them"
+msgstr "このチャネルにいる人たちが古いバージョンを使っていますのでこのチャネルに参加できません"
+
+#: net/web20games/client/ChatTab.as:46
+msgid "Player"
+msgstr "プレイヤー"
+
+#: net/web20games/client/ConfigDlg.as:44
+msgid "Players"
+msgstr "プレイヤー"
+
+#: net/web20games/client/LoginScreen.as:110
+msgid "Please input your nick"
+msgstr "ニックを入力してください"
+
+#: net/web20games/client/LoginScreen.as:112
+msgid "Please input your password"
+msgstr "パスワードを入力してください"
+
+#: net/web20games/client/LoadScreen.as:81
+#: net/web20games/client/LoadScreen.as:88
+msgid "Please refresh this page after a few minutes."
+msgstr "数分後にこのウェブページを更新してください。"
+
+#: net/web20games/client/LoadScreen.as:92
+#: net/web20games/client/LoadScreen.as:96
+#: net/web20games/client/LoadScreen.as:100
+msgid "Please refresh this web page or clean the browser's cache."
+msgstr "このウェブページを更新するかブラウザのキャッシュを削除してください。"
+
+#: net/web20games/client/LoginScreen.as:61
+msgid "Register:"
+msgstr "登録:"
+
+#: net/web20games/client/LoginScreen.as:47
+msgid "Registered player"
+msgstr "登録したプレイヤー"
+
+#: net/web20games/client/GameChatRuleScreen.as:56
+msgid "Rule"
+msgstr "ルール"
+
+#: net/web20games/client/ChatTab.as:47
+msgid "Send"
+msgstr "送信"
+
+#: net/web20games/client/TimeoutStatusBar.as:67
+msgid "TIMEOUT"
+msgstr "タイムアウト"
+
+#: net/web20games/client/LoginScreen.as:152
+msgid "The game file is old, please refresh this web page or clean the browser's cache"
+msgstr "ゲームファイルが古いです。このウェブページを更新するかブラウザのキャッシュを削除してください。"
+
+#: net/web20games/client/LoadScreen.as:99
+msgid "The game file is old."
+msgstr "ゲームファイルが古いです。"
+
+#: net/web20games/client/ChatTab.as:152
+msgid "The server will close in a few minutes for maintenance, sorry for this inconvenience"
+msgstr "メンテナンスのためサーバーがしばらくダウンになります。申し訳ございません。"
+
+#: net/web20games/client/LoginScreen.as:164
+msgid "There's already a person with the same nick name in this channel"
+msgstr "このチャネルには同じニックの人がいます"
+
+#: net/web20games/client/LoginScreen.as:146
+msgid "This flash file is old, please refresh this web page or clean the browser's cache"
+msgstr "フラッシュファイルが古いです。このウェブページを更新するかブラウザのキャッシュを削除してください。"
+
+#: net/web20games/client/LoadScreen.as:91
+msgid "This flash file is old."
+msgstr "フラッシュファイルが古いです。"
+
+#: net/web20games/client/ConfigDlg.as:45
+msgid "Time for one move [s]"
+msgstr "時間 [秒]"
+
+#: net/web20games/client/ConfigDlg.as:46
+msgid "Total time [m]"
+msgstr "合計時間 [分]"
+
+#: net/web20games/client/LoginScreen.as:108
+#: net/web20games/client/LoginScreen.as:161
+msgid "Wrong code"
+msgstr "セキュリティコードの間違いです"
+
+#: net/web20games/client/LoginScreen.as:167
+msgid "Wrong nick or password"
+msgstr "ニックまたはパスワードのちがいです"
+
+#: net/web20games/client/ConfigDlg.as:146
+#: net/web20games/client/ChatTab.as:137
+msgid "draw"
+msgstr "引き分け"
+
+#: net/web20games/client/ConfigDlg.as:143
+#: net/web20games/client/ChatTab.as:134
+msgid "lost"
+msgstr "負け"
+
+#: net/web20games/client/ConfigDlg.as:149
+#: net/web20games/client/ChatTab.as:140
+msgid "won"
+msgstr "勝ち"
+
+#: net/web20games/client/LoginScreen.as:143
+msgid "{0} is down for maintenance, please refresh this page after a few minutes"
+msgstr "{0} はメンテナンスのためダウンになっています。数分後にこのウェブページを更新してください。"
+
+#: net/web20games/client/LoadScreen.as:87
+msgid "{0} is down for maintenance."
+msgstr "{0} はメンテナンスのためダウンになっています。"
+

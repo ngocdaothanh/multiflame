@@ -1,0 +1,22 @@
+<% @navigator = @game.name %>
+
+<div id="game_flash" class="left">
+  <p class="notice"><%= _('Please install %{getflashplayer}') % {:getflashplayer => link_to(_('Flash player 9 or above'), 'http://www.adobe.com/go/getflashplayer')} %></p>
+</div>
+
+<script>
+var so = new SWFObject('/games/<%= @game.id %>/game.swf', 'game_flash', '100%', '250', '9', '#FFFFFF');
+so.useExpressInstall('/javascripts/expressinstall.swf');
+so.write('game_flash');
+</script>
+
+<div class="right">
+  <h2><%= _('Public channels') %></h2>
+  <ul>
+<% [_('Newbie'), _('Easy'), _('Normal'), _('Hard'), _('World class')].each do |level| %>
+    <li><%= link_to level, play_path(:id => @game.id, :channel => level) %></li>
+<% end %>
+  </ul>
+</div>
+
+<div style="clear: both"></div>

@@ -1,0 +1,27 @@
+<% @flag_destination = new_admin_game_path %>
+<% @navigator = _('Upload new game') %>
+
+<%= error_messages_for(@game, []) %>
+<%= form_tag admin_games_path, :multipart => true %>
+  <table>
+    <tr>
+      <th>game.swf</th>
+      <td><%= file_field_tag 'game', :id => nil %></td>
+      <th><%= _('Game name') %></th>
+    </tr>
+    <tr>
+      <th>en.mo</th>
+      <td>&nbsp;</td>
+      <td><%= text_field_tag "name_en", (@game.nil?)? '' : @game.name('en') %></td>
+    </tr>
+<% locales = LOCALES.dup; locales.delete('en') %>
+<% locales.each do |l| %>
+    <tr>
+      <th><%= l %>.mo</th>
+      <td><%= file_field_tag "mo_#{l}", :id => nil %></td>
+      <td><%= text_field_tag "name_#{l}", (@game.nil?)? '' : @game.name(l), :id => nil %></td>
+    </tr>
+<% end %>
+  </table>
+  <%= submit_tag _('Upload') %>
+</form>

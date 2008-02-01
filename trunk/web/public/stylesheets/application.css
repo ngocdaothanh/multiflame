@@ -1,0 +1,273 @@
+html, body {
+  margin: 0;
+  padding:0;
+  border: 0 none;
+  overflow: auto;
+  }
+
+body {
+  color: #444444;
+  font-family: Arial,sans-serif;
+  font-size: 12px;
+  padding: 5px;
+}
+
+h2 {
+  font-size: 1.2em;
+}
+
+h3 {
+  font-size: 1.1em;
+}
+
+p {
+  margin-top: 0;
+}
+
+hr {
+  height: 1px;
+  border-top: 1px solid #CCCCCC;
+}
+
+a:link, a:visited {
+  color: green;
+}
+
+input, textarea {
+  padding: 2px 2px 0 2px;
+  font-family: Arial,sans-serif;
+  border-width: 1px;
+  font-size: 1em;
+}
+
+.full_width {
+  width: 99%;
+}
+
+th {
+  text-align: right;
+}
+
+table.data {
+  border-width: 1px 1px 1px 1px;
+  border-spacing: 1px;
+  border-style: solid solid solid solid;
+  border-color: gray gray gray gray;
+  border-collapse: collapse;
+}
+table.data th {
+  text-align: center;
+  border-width: 1px 1px 1px 1px;
+  padding: 2px 2px 2px 2px;
+  border-style: solid solid solid solid;
+  border-color: gray gray gray gray;
+  -moz-border-radius: 0px 0px 0px 0px;
+}
+table.data td {
+  text-align: center;
+  border-width: 1px 1px 1px 1px;
+  padding: 2px 2px 2px 2px;
+  border-style: solid solid solid solid;
+  border-color: gray gray gray gray;
+  -moz-border-radius: 0px 0px 0px 0px;
+}
+
+/*----------------------------------------------------------------------------*/
+
+#container {
+  margin-left: auto;
+  margin-right: auto;
+  width: 571px;
+}
+
+#header_main {
+  float: left;
+  width: 510px;
+  margin: 0 5px;
+  border: green 1px solid;
+}
+
+#header {
+  background-color: white;
+  padding: 5px;
+}
+
+#banner {
+  float: left;
+}
+
+#player_menu {
+  float: right;
+  text-align: right;
+}
+
+#main {
+  border-top: 5px solid #333333;
+  clear: both;
+  padding: 5px;
+}
+
+#navigator {
+  margin-bottom: 10px;
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+#flags {
+  float: left;
+  width: 40px;
+}
+
+#flags img {
+  clear: both;
+  width: 40px;
+  border: none;
+}
+
+#footer {
+  clear: both;
+  margin-right: 50px;
+  font-weight: bold;
+  text-align: center;
+  padding: 5px;
+}
+
+/*----------------------------------------------------------------------------*/
+
+.notice {
+  color: green;
+  font-weight: bold;
+}
+
+.left {
+  float: left;
+  width: 49%;
+}
+
+.right {
+  float: left;
+  width: 49%;
+  padding-left: 2%;
+}
+
+/*----------------------------------------------------------------------------*/
+
+ul#menu {
+  clear: both;
+  float: left;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul#menu li {
+  float: left;
+  margin-left: 5px;
+  line-height: 1.4;
+}
+
+ul#menu li a {
+  color: white;
+  text-shadow: 2px 2px 1px #2a2a2f;
+  text-decoration: none;
+  font-weight: bold;
+  text-align: center;
+  width: 85px;
+  height: 20px;
+  padding-top: 5px;
+  display: block;
+  background-image: url(/images/tab.gif);
+  background-repeat: no-repeat;
+  background-position: center left;
+}
+
+ul#menu li a:hover, ul#menu li a:active {
+  background-position: top left;
+}
+
+ul#menu li a.selected {
+  background-position: bottom left;
+}
+
+.comment {
+  margin-top: 5px;
+  border-top: 1px solid #CCCCCC;
+}
+
+.comment_info {
+  padding-top: 4px;
+}
+
+.comment_info a {
+  font-weight: bold;
+}
+
+.comment_message {
+  padding-top: 5px;
+  overflow: auto;
+}
+
+pre {
+  margin: 0;
+  padding: 0;
+  font-family: Arial,sans-serif;
+  white-space: pre-wrap;       /* css-3 */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.page_navi {
+  color: #8d8d8d;
+  font-size: 1.6em;
+  letter-spacing: -0.05em;
+  margin: 0.2em 0 0.5em 0;
+}
+
+.page_navi a {
+  font-size: 0.5em;
+  border: 1px solid #595959;
+  padding: 3px 6px;
+  margin: 0 2px;
+}
+
+/*----------------------------------------------------------------------------*/
+
+#friends {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+#pendings {
+  margin-bottom: 5px;
+}
+
+/*----------------------------------------------------------------------------*/
+
+.fieldWithErrors {
+  padding: 1px;
+  background-color: red;
+}
+
+#errorExplanation {
+  border: 1px solid red;
+  padding: 5px;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+  background-color: #f0f0f0;
+}
+
+#errorExplanation h2 {
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 5px 5px 15px;
+  font-size: 12px;
+  margin: -5px;
+  background-color: #c00;
+  color: #fff;
+}
+
+#errorExplanation ul {
+  padding-left: 15px;
+}

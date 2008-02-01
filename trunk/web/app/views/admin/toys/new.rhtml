@@ -1,0 +1,27 @@
+<% @flag_destination = new_admin_toy_path %>
+<% @navigator = _('Upload new toy') %>
+
+<%= error_messages_for(@toy, []) %>
+<%= form_tag admin_toys_path, :multipart => true %>
+  <table>
+    <tr>
+      <th>toy.swf</th>
+      <td><%= file_field_tag 'toy', :id => nil %></td>
+      <th><%= _('Toy name') %></th>
+    </tr>
+    <tr>
+      <th>en.mo</th>
+      <td>&nbsp;</td>
+      <td><%= text_field_tag "name_en", (@toy.nil?)? '' : @toy.name('en') %></td>
+    </tr>
+<% locales = LOCALES.dup; locales.delete('en') %>
+<% locales.each do |l| %>
+    <tr>
+      <th><%= l %>.mo</th>
+      <td><%= file_field_tag "mo_#{l}", :id => nil %></td>
+      <td><%= text_field_tag "name_#{l}", (@toy.nil?)? '' : @toy.name(l), :id => nil %></td>
+    </tr>
+<% end %>
+  </table>
+  <%= submit_tag _('Upload') %>
+</form>

@@ -1,0 +1,1 @@
+﻿package {	import flash.display.MovieClip;		public class Dice extends MovieClip{		public function Dice() {		}				private function throwDice() {			start();		}				private function stopDice(frame:int) {			stop(frame);		}	}}

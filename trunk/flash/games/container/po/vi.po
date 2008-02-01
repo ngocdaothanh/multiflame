@@ -1,0 +1,236 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-01-04 04:44+0900\n"
+"PO-Revision-Date: 2008-01-04 04:45+0900\n"
+"Last-Translator: Ngoc DAO <ngocdaothanh@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: net/web20games/client/LoginScreen.as:52
+msgid "(Can be anything)"
+msgstr "(Gì cũng được)"
+
+#: net/web20games/client/ChatTab.as:80
+msgid "<b>{0}</b> has logged in"
+msgstr "<b>{0}</b> vừa đăng nhập"
+
+#: net/web20games/client/ChatTab.as:83
+msgid "<b>{0}</b> has logged out"
+msgstr "<b>{0}</b> vừa đăng xuất"
+
+#: net/web20games/client/LoginScreen.as:62
+#: net/web20games/client/RuleTab.as:32
+msgid "About this game:"
+msgstr "Giới thiệu về game này:"
+
+#: net/web20games/client/GameChatRuleScreen.as:55
+msgid "Chat"
+msgstr "Chat"
+
+#: net/web20games/client/ChatTab.as:45
+msgid "Clear"
+msgstr "Xóa"
+
+#: net/web20games/client/LoginScreen.as:49
+msgid "Code"
+msgstr "Chữ trong ảnh"
+
+#: net/web20games/client/LoginScreen.as:149
+msgid "Could not find the game, please refresh this web page or clean the browser's cache"
+msgstr "Không tìm thấy game, xin refresh trang web này hoặc xóa cache của trình duyệt"
+
+#: net/web20games/client/LoadScreen.as:95
+msgid "Could not find the game."
+msgstr "Không tìm thấy game."
+
+#: net/web20games/client/LoadScreen.as:66
+#: net/web20games/client/LoadScreen.as:80
+msgid "Could not load game."
+msgstr "Không thể load game."
+
+#: net/web20games/client/GameChatRuleScreen.as:54
+msgid "Game"
+msgstr "Game"
+
+#: net/web20games/client/ChatTab.as:124
+#: net/web20games/client/GameChatRuleScreen.as:182
+msgid "Game over"
+msgstr "Hết game"
+
+#: net/web20games/client/ChatTab.as:117
+msgid "Game started"
+msgstr "Game đã bắt đầu"
+
+#: net/web20games/client/LoginScreen.as:48
+msgid "Guest"
+msgstr "Khách"
+
+#: net/web20games/client/ConfigDlg.as:47
+msgid "Join"
+msgstr "Tham gia"
+
+#: net/web20games/client/GameChatRuleScreen.as:57
+msgid "Leave"
+msgstr "Rời game"
+
+#: net/web20games/client/LoadScreen.as:75
+msgid "Loading game information..."
+msgstr "Đang load thông tin về game..."
+
+#: net/web20games/client/LoadScreen.as:57
+msgid "Loading game..."
+msgstr "Đang load game..."
+
+#: net/web20games/client/LoginScreen.as:114
+msgid "Logging in..."
+msgstr "Đang đăng nhập..."
+
+#: net/web20games/client/LoginScreen.as:53
+msgid "Login"
+msgstr "Đăng nhập"
+
+#: net/web20games/client/ConfigDlg.as:48
+#: net/web20games/client/GameChatRuleScreen.as:152
+msgid "New game"
+msgstr "Game mới"
+
+#: net/web20games/client/ChatTab.as:112
+msgid "New game..."
+msgstr "Game mới..."
+
+#: net/web20games/client/LoginScreen.as:50
+msgid "Nick"
+msgstr "Nick"
+
+#: net/web20games/client/LoginScreen.as:51
+msgid "Password"
+msgstr "Mật mã"
+
+#: net/web20games/client/LoginScreen.as:158
+msgid "People in this channel are playing an older version of the game, you cannot play with them"
+msgstr "Những người trong kênh này đang dùng phiên bản game cũ, nên bạn không thể chơi với họ"
+
+#: net/web20games/client/LoginScreen.as:155
+msgid "People in this channel are using an older version of this flash file, you cannot play with them"
+msgstr "Những người trong kênh này đang dùng phiên bản cũ, nên bạn không thể chơi với họ"
+
+#: net/web20games/client/ChatTab.as:46
+msgid "Player"
+msgstr "Người chơi"
+
+#: net/web20games/client/ConfigDlg.as:44
+msgid "Players"
+msgstr "Người chơi"
+
+#: net/web20games/client/LoginScreen.as:110
+msgid "Please input your nick"
+msgstr "Xin nhập nick"
+
+#: net/web20games/client/LoginScreen.as:112
+msgid "Please input your password"
+msgstr "Xin nhập mật mã"
+
+#: net/web20games/client/LoadScreen.as:81
+#: net/web20games/client/LoadScreen.as:88
+msgid "Please refresh this page after a few minutes."
+msgstr "Xin refresh trang web này sau vài phút nữa."
+
+#: net/web20games/client/LoadScreen.as:92
+#: net/web20games/client/LoadScreen.as:96
+#: net/web20games/client/LoadScreen.as:100
+msgid "Please refresh this web page or clean the browser's cache."
+msgstr "Xin refresh trang web này hoặc xóa cache của trình duyệt."
+
+#: net/web20games/client/LoginScreen.as:61
+msgid "Register:"
+msgstr "Đăng kí"
+
+#: net/web20games/client/LoginScreen.as:47
+msgid "Registered player"
+msgstr "Người đã đăng kí"
+
+#: net/web20games/client/GameChatRuleScreen.as:56
+msgid "Rule"
+msgstr "Luật"
+
+#: net/web20games/client/ChatTab.as:47
+msgid "Send"
+msgstr "Gửi"
+
+#: net/web20games/client/TimeoutStatusBar.as:67
+msgid "TIMEOUT"
+msgstr "HẾT GIỜ"
+
+#: net/web20games/client/LoginScreen.as:152
+msgid "The game file is old, please refresh this web page or clean the browser's cache"
+msgstr "File chứa game đã cũ, xin refresh trang web này hoặc xóa cache của trình duyệt"
+
+#: net/web20games/client/LoadScreen.as:99
+msgid "The game file is old."
+msgstr "File game đã cũ."
+
+#: net/web20games/client/ChatTab.as:152
+msgid "The server will close in a few minutes for maintenance, sorry for this inconvenience"
+msgstr "Server sẽ down trong vài phút nữa để bảo trì, xin lỗi bạn"
+
+#: net/web20games/client/LoginScreen.as:164
+msgid "There's already a person with the same nick name in this channel"
+msgstr "Đã có người có cùng nick ở trong kênh này"
+
+#: net/web20games/client/LoginScreen.as:146
+msgid "This flash file is old, please refresh this web page or clean the browser's cache"
+msgstr "File đã cũ, xin refresh trang web này hoặc xóa cache của trình duyệt"
+
+#: net/web20games/client/LoadScreen.as:91
+msgid "This flash file is old."
+msgstr "File flash đã cũ."
+
+#: net/web20games/client/ConfigDlg.as:45
+msgid "Time for one move [s]"
+msgstr "Thời gian 1 nước đi [giây]"
+
+#: net/web20games/client/ConfigDlg.as:46
+msgid "Total time [m]"
+msgstr "Tổng thời gian [phút]"
+
+#: net/web20games/client/LoginScreen.as:108
+#: net/web20games/client/LoginScreen.as:161
+msgid "Wrong code"
+msgstr "Sai chữ trong ảnh"
+
+#: net/web20games/client/LoginScreen.as:167
+msgid "Wrong nick or password"
+msgstr "Sai nick hoặc password"
+
+#: net/web20games/client/ConfigDlg.as:146
+#: net/web20games/client/ChatTab.as:137
+msgid "draw"
+msgstr "hòa"
+
+#: net/web20games/client/ConfigDlg.as:143
+#: net/web20games/client/ChatTab.as:134
+msgid "lost"
+msgstr "thua"
+
+#: net/web20games/client/ConfigDlg.as:149
+#: net/web20games/client/ChatTab.as:140
+msgid "won"
+msgstr "thắng"
+
+#: net/web20games/client/LoginScreen.as:143
+msgid "{0} is down for maintenance, please refresh this page after a few minutes"
+msgstr "{0} đang down để bảo trì, xin refresh trang web này sau vài phút nữa"
+
+#: net/web20games/client/LoadScreen.as:87
+msgid "{0} is down for maintenance."
+msgstr "{0} đang down để bảo trì."
+

@@ -1,0 +1,8 @@
+== Requirements
+
+* RMagick: for creating CAPTCHA images
+http://rubyforge.org/projects/rmagick/
+* EventMachine: for creating server
+gem install eventmachine
+* JSON: for serializing and deserializing text data between games and the server
+gem install json
