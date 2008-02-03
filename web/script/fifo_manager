@@ -31,15 +31,30 @@ ActiveRecord::Base.establish_connection(database_config)
 class FifoManager
   include ReventServer
 
+  # Web -> manager
+  CMD_WM_CHANNEL_KEYS_GET = 0
+  CMD_WM_CG_RELOAD        = 1
+
   # Manager -> fifo
   CMD_MF_READY            = 0
   CMD_MF_CG_SET           = 1
   CMD_MF_CAPTCHA_SALT_SET = 2
 
+  # Fifo -> manager
+  CMD_FM_CHANNEL_KEYS_SET = 10
+  CMD_FM_CHANNEL_CREATE   = 11
+
   def initialize
     @mutex_channel_keys = Mutex.new
     @channel_keys = {}
     @ready = false
+
+    @on_calls = {
+      CMD_WM_CHANNEL_KEYS_GET => method(:on_call_wm_channel_keys_get),
+      CMD_WM_CG_RELOAD        => method(:on_call_wm_cg_reload),
+      CMD_FM_CHANNEL_KEYS_SET => method(:on_call_fm_channel_keys_set),
+      CMD_FM_CHANNEL_CREATE   => method(:on_call_fm_channel_create)
+    }
 
     cg_reload
     EventMachine::add_timer(CONFIG[:startup_wait_time]) do
@@ -61,6 +76,8 @@ class FifoManager
   end
 
   def on_call(client, cmd, arg)
+    m = @on_calls[cmd]
+    m.call(client, arg)
   end
 
   def on_result(client, cmd, error)
@@ -73,7 +90,16 @@ private
 
   # Web server -> manager ------------------------------------------------------
 
-  def on_wm_cg_reload
+  def on_call_wm_channel_keys_get(client, arg)
+    ret = {}
+    @channel_keys.each do |fifo, keys|
+      k = {:host => fifo.remote_ip, :port => fifo.property[:port]}
+      ret[k] = {:players_limit => fifo.property[:players_limit], :keys => keys}
+    end
+    ret
+  end
+
+  def on_call_wm_cg_reload
     cg_reload
 
     clients.each { |fifo| mf_cg_set(fifo) }
@@ -97,8 +123,8 @@ private
   # Fifos -> manager -----------------------------------------------------------
 
   # The fifos call this right after connecting to the manager.
-  def on_fm_channel_keys_set(fifo, arg)
-    @mutex_channels.synchronize do
+  def on_call_fm_channel_keys_set(fifo, arg)
+    @mutex_channel_keys.synchronize do
       fifo.property = arg[:property]
       @channel_keys[fifo] = arg[:channel_keys]
     end
@@ -107,36 +133,34 @@ private
 
   # Ask the manager to create a channel. If the channel has already existed, let
   # the fifo know where to redirect the container to.
-  def on_fm_channel_create(fifo, arg)
+  # Returns nil if this 
+  def on_call_fm_channel_create(fifo, arg)
     @mutex_channel_keys.synchronize do
-      the_key = channel_key(arg[:game_id], arg[:channel_name])
+      key = arg
       host = port = nil
       @channel_keys.each do |f, keys|
-        if keys.include?(the_key)
+        if keys.include?(key)
           host = f.remote_ip
           port = f.property[:port]
           break
         end
       end
+
       if host.nil?
-        host = fifo.remote_ip
-        port = fifo.property[:port]
-        @channel_keys[fifo] << the_key
+        destination =  nil
+        @channel_keys[fifo] << key
+      else
+        destination =  {:host => host, :port => port}
       end
-      return {:host => host, :port => port}
+      return {:key => key, :destination => destination}
     end
   end
 
   # The channel has been deleted on the fifo.
-  def on_fm_channel_delete(fifo, arg)
+  def on_call_fm_channel_delete(fifo, arg)
     @mutex_channel_keys.synchronize do
-      the_key = channel_key(arg[:game_id], arg[:channel_name])
-      @channels.each do |f, keys|
-        if keys.include?(the_key)
-          keys.delete(the_key)
-          break
-        end
-      end
+      key = arg
+      @channel_keys[fifo].delete(key)
     end
     nil
   end

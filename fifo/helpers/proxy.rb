@@ -4,7 +4,8 @@ class Proxy
   include ReventClient
 
   # Fifo -> manager
-  CMD_FM_CHANNEL_KEYS_SET = 0
+  CMD_FM_CHANNEL_KEYS_SET = 10
+  CMD_FM_CHANNEL_CREATE   = 11
 
   # Manager -> fifo
   CMD_MF_READY            = 0
@@ -13,15 +14,20 @@ class Proxy
 
   def initialize
     @on_calls = {
-      CMD_MF_READY  => method(:on_mf_ready),
-      CMD_MF_CG_SET => method(:on_mf_cg_set),
-      CMD_MF_CAPTCHA_SALT_SET => method(:on_mf_captcha_salt_set)
+      CMD_MF_READY            => method(:on_call_mf_ready),
+      CMD_MF_CG_SET           => method(:on_call_mf_cg_set),
+      CMD_MF_CAPTCHA_SALT_SET => method(:on_call_mf_captcha_salt_set)
+    }
+    @on_results = {
+      CMD_FM_CHANNEL_KEYS_SET => method(:on_result_fm_channel_keys_set),
+      CMD_FM_CHANNEL_CREATE   => method(:on_result_fm_channel_create)
     }
 
     on_close
   end
 
   def on_connect
+    fm_channel_keys_set
   end
 
   def on_close
@@ -35,6 +41,8 @@ class Proxy
   end
 
   def on_result(cmd, result)
+    m = @on_results[cmd]
+    m.call(result)
   end
 
   def on_error(cmd, error)
@@ -61,8 +69,6 @@ class Proxy
     Channel::LOGIN_OK
   end
 
-private
-
   # Fifo -> manager ------------------------------------------------------------
 
   def reconnect
@@ -77,28 +83,33 @@ private
   end
 
   def fm_channel_keys_set
-    property = {:port => CONFIG[:port], :limit => Stats.instance.players_limit}
-    call(CMD_FM_CHANNEL_KEYS_SET, {:property => property, :channel_keys => Stats.instance.channel_keys})
+    property = {:port => CONFIG[:port], :players_limit => Stats.instance.players_limit}
+    call(CMD_FM_CHANNEL_KEYS_SET, {:property => property, :channel_keys => Channel.keys})
   end
 
-  def fm_channel_create(channel_key)
-    
+  def on_result_fm_channel_keys_set
   end
 
-  def on_fm_channel_create_result(result)
-    
+  def fm_channel_create(key)
+    call(CMD_FM_CHANNEL_CREATE, key)
+  end
+
+  def on_result_fm_channel_create(result)
+    PendedChannel.login_pended(result[:key], result[:destination])
   end
 
   # Manager -> fifo ------------------------------------------------------------
 
-  def on_mf_ready(arg)
+  def on_call_mf_ready(arg)
     @manager_ready = true
   end
 
-  def on_mf_cg_set(arg)
+  def on_call_mf_cg_set(arg)
     @cg = arg
+    nil
   end
 
-  def on_mf_captcha_salt_set(arg)
+  def on_call_mf_captcha_salt_set(arg)
+    nil
   end
 end

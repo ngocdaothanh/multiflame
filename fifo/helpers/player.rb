@@ -52,7 +52,7 @@ EOF
   GAME_INFO_NO_GAME          = 2
 
   # Read and write by the channel
-  attr_accessor :nick, :room
+  attr_accessor :nick, :channel, :room
 
   # Called by the network connection -------------------------------------------
 
@@ -138,7 +138,7 @@ private
 
     if cmd == CMD_LOGIN
       if @channel.nil?
-        @channel = Channel.login(self, arg)
+        Channel.login(self, arg)
       else
         $LOGGER.debug('@player: CMD_LOGIN but already logged in')
         close_connection
@@ -190,7 +190,6 @@ private
         info = Proxy.instance.game_info(id, locale)
         code = info.nil? ? GAME_INFO_NO_GAME : GAME_INFO_OK
       rescue
-      p $!
         info = nil
         code = GAME_INFO_CONNECTION_ERROR
       end

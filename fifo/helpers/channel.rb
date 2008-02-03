@@ -13,6 +13,7 @@ class Channel
   LOGIN_OLD_CONTAINER_VERSION       = 6
   LOGIN_NO_GAME                     = 7
   LOGIN_OLD_GAME_VERSION            = 8
+  LOGIN_REDIRECT                    = 9
 
   NICK_MAX    = 32
   NICK_FORMAT = /^([a-zA-Z0-9_-])+$/
@@ -37,80 +38,102 @@ class Channel
     nick              = arg[6].to_s.strip
     batch_game        = (arg[7] == CLASS_BATCH)? true : false
 
-    code = validate(player, container_version, game_id, game_version,
+    return unless validate(player, container_version, game_id, game_version,
         captcha_code, encrypted_code, nick)
 
-    if code == LOGIN_OK
-      player.nick = nick
-      key = self.key(game_id, channel_name)
-      channel = @@channels[key]
-      if channel.nil?
-        channel = Channel.new(key, player, container_version, game_version, batch_game)
-        @@channels[key] = channel
-      else
-        code = channel.login(player, container_version, game_version, batch_game)
-      end
-    end
-
-    if code != LOGIN_OK
-      player.invoke(Player::CMD_LOGIN, [code, nil])
-      player.close_connection_after_writing
-      return nil
+    player.nick = nick
+    key = self.key(game_id, channel_name)
+    channel = @@channels[key]
+    if channel.nil?
+      PendedChannel.login(key, player, container_version, game_version, batch_game)
     else
-      return channel
+      channel.login(player, container_version, game_version, batch_game)
     end
   end
 
   # Returns login code.
   def self.validate(player, container_version, game_id, game_version, captcha_code, encrypted_code, nick)
-    # Security
+    # Security check
     # game_id can be negative when developing games on localhost
     if game_id < 0 and player.remote_ip != '127.0.0.1'
       player.close_connection
-      return LOGIN_NO_GAME
+      return
     end
 
     code = LOGIN_OK
+    if nick.empty? or nick.length > NICK_MAX or nick !~ NICK_FORMAT
+      code = LOGIN_DUPLICATE_NICK
+    elsif code == LOGIN_OK and !Captcha.instance.correct?(captcha_code, encrypted_code)
+      code = LOGIN_WRONG_CAPTCHA
+    elsif code == LOGIN_OK and game_id >= 0
+      code = Proxy.instance.check_login(container_version, game_id, game_version)
+    end
+    return true if code == LOGIN_OK
 
-    # Nick
-    code = LOGIN_DUPLICATE_NICK if nick.empty? or nick.length > NICK_MAX or nick !~ NICK_FORMAT
-
-    # Captcha
-    code = LOGIN_WRONG_CAPTCHA if code == LOGIN_OK and !Captcha.instance.correct?(captcha_code, encrypted_code)
-
-    # Versions and game
-    code = Proxy.instance.check_login(container_version, game_id, game_version) if code == LOGIN_OK and game_id >= 0
-
-    code
+    player.invoke(Player::CMD_LOGIN, [code, nil])
+    player.close_connection_after_writing
+    return false
   end
 
   # ----------------------------------------------------------------------------
 
-  def initialize(key, player, container_version, game_version, batch_game)
+  def self.keys
+    @@channels.keys
+  end
+
+  # ----------------------------------------------------------------------------
+
+  def initialize(key, players, container_version, game_version, batch_game)
+    @@channels[key] = self
     @key = key  # Used to delete this channel
-    @lobby = Lobby.new(player)
-    player.room = @lobby
+
+    @lobby = Lobby.new(players)
     @rooms = []
 
     @container_version = container_version
     @game_version      = game_version
     @batch_game        = batch_game
 
-    player.invoke(Player::CMD_LOGIN, [LOGIN_OK, snapshot])
+    s = snapshot
+    players.each do |p|
+      p.channel = self
+      p.room = @lobby
+      p.invoke(Player::CMD_LOGIN, [LOGIN_OK, s])
+    end
   end
 
-  # Returns login code.
   def login(player, container_version, game_version, batch_game)
-    return LOGIN_DUPLICATE_NICK if @lobby.nicks.include?(player.nick)
-    @rooms.each { |r| return LOGIN_DUPLICATE_NICK if r.nicks.include?(player.nick) }
-    return LOGIN_DIFFERENT_CONTAINER_VERSION if container_version != @container_version
-    return LOGIN_DIFFERENT_GAME_VERSION if game_version != @game_version
-    return LOGIN_DIFFERENT_GAME_VERSION if batch_game != @batch_game
+    code = LOGIN_OK
+    if @lobby.nicks.include?(player.nick)
+      code = LOGIN_DUPLICATE_NICK
+    else
+      @rooms.each do |r|
+        if r.nicks.include?(player.nick)
+          code = LOGIN_DUPLICATE_NICK
+          break
+        end
+      end
+    end
+    if code == LOGIN_OK
+      if container_version != @container_version
+        code = LOGIN_DIFFERENT_CONTAINER_VERSION
+      elsif game_version != @game_version
+        code = LOGIN_DIFFERENT_GAME_VERSION
+      elsif batch_game != @batch_game
+        code = LOGIN_DIFFERENT_GAME_VERSION
+      end
+    end
 
+    if code != LOGIN_OK
+      player.invoke(Player::CMD_LOGIN, [code, nil])
+      player.close_connection_after_writing
+      return
+    end
+
+    player.channel = self
     @lobby.process(player, Player::CMD_LOGIN, nil)
     player.room = @lobby
     player.invoke(Player::CMD_LOGIN, [LOGIN_OK, snapshot])
-    LOGIN_OK
   end
 
   # ----------------------------------------------------------------------------

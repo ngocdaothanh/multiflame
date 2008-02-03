@@ -5,8 +5,8 @@
 # A channel has one lobby and many rooms. Cross-room management is done by the
 # channel.
 class Lobby
-  def initialize(player)
-    @players = [player]
+  def initialize(players)
+    @players = players
     @methods = {
       Player::CMD_LOGIN      => method('login'),
       Player::CMD_WILL_CLOSE => method('will_close'),
