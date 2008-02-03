@@ -1,12 +1,12 @@
 require 'rubygems'
 require 'eventmachine'
+require 'revent'
 require 'json'
 require 'singleton'
 require 'logger'
 
 require 'config'
 require 'helpers/player'
-require 'helpers/game'
 require 'helpers/captcha'
 require 'helpers/channel'
 require 'helpers/lobby'
@@ -17,11 +17,13 @@ require 'helpers/batch_move'
 require 'helpers/proxy'
 require 'helpers/stats'
 
-logdev = STDOUT
-$LOGGER = Logger.new(logdev, 'daily')
+$LOGGER = Logger.new(STDOUT, 'daily')
 
 EventMachine::run do
-  puts 'TODO: synchronize everything'
-  puts "Fifo started on #{CONFIG[:host]}:#{CONFIG[:port]}"
+  $LOGGER.info('TODO: synchronize everything')
+
   EventMachine::start_server(CONFIG[:host], CONFIG[:port], Player)
+  $LOGGER.info("Fifo started on #{CONFIG[:host]}:#{CONFIG[:port]}")
+
+  Proxy.instance
 end

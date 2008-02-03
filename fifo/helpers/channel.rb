@@ -10,11 +10,9 @@ class Channel
   LOGIN_DIFFERENT_CONTAINER_VERSION = 3
   LOGIN_DIFFERENT_GAME_VERSION      = 4
   LOGIN_DUPLICATE_NICK              = 5
-
-  # Not used here, used by the Fifo manager
-  #LOGIN_OLD_CONTAINER_VERSION       = 6
-  #LOGIN_NO_GAME                     = 7
-  #LOGIN_OLD_GAME_VERSION            = 8
+  LOGIN_OLD_CONTAINER_VERSION       = 6
+  LOGIN_NO_GAME                     = 7
+  LOGIN_OLD_GAME_VERSION            = 8
 
   NICK_MAX    = 32
   NICK_FORMAT = /^([a-zA-Z0-9_-])+$/
@@ -22,6 +20,10 @@ class Channel
   @@channels = {}
 
   # ----------------------------------------------------------------------------
+
+  def self.key(game_id, channel_name)
+    "#{game_id}/#{channel_name}"
+  end
 
   # out: [code, snapshot]
   # Returns the channel this player has logged in
@@ -40,11 +42,11 @@ class Channel
 
     if code == LOGIN_OK
       player.nick = nick
-      name = "#{game_id}/#{channel_name}"
-      channel = @@channels[name]
+      key = self.key(game_id, channel_name)
+      channel = @@channels[key]
       if channel.nil?
-        channel = Channel.new(name, player, container_version, game_version, batch_game)
-        @@channels[name] = channel
+        channel = Channel.new(key, player, container_version, game_version, batch_game)
+        @@channels[key] = channel
       else
         code = channel.login(player, container_version, game_version, batch_game)
       end
@@ -60,8 +62,7 @@ class Channel
   end
 
   # Returns login code.
-  def self.validate(player, container_version, game_id, game_version,
-      captcha_code, encrypted_code, nick)
+  def self.validate(player, container_version, game_id, game_version, captcha_code, encrypted_code, nick)
     # Security
     # game_id can be negative when developing games on localhost
     if game_id < 0 and player.remote_ip != '127.0.0.1'
@@ -78,19 +79,15 @@ class Channel
     code = LOGIN_WRONG_CAPTCHA if code == LOGIN_OK and !Captcha.instance.correct?(captcha_code, encrypted_code)
 
     # Versions and game
-    begin
-      code = Proxy.instance.check_login(container_version, game_id, game_version) if code == LOGIN_OK and game_id >= 0
-    rescue DRb::DRbConnError
-      code = LOGIN_SERVER_ERROR
-    end
+    code = Proxy.instance.check_login(container_version, game_id, game_version) if code == LOGIN_OK and game_id >= 0
 
     code
   end
 
   # ----------------------------------------------------------------------------
 
-  def initialize(name, player, container_version, game_version, batch_game)
-    @name = name  # Used to delete this channel
+  def initialize(key, player, container_version, game_version, batch_game)
+    @key = key  # Used to delete this channel
     @lobby = Lobby.new(player)
     player.room = @lobby
     @rooms = []
@@ -149,7 +146,7 @@ private
     end
 
     if @rooms.empty? and @lobby.nicks.empty?
-      @@channels.delete(@name)
+      @@channels.delete(@key)
     end
   end
 

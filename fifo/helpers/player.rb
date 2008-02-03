@@ -2,8 +2,6 @@
 # are in JSON format:
 # [<command number>, <argument object>]
 # Array is used extensively instead of hash to shorten the JSON text.
-
-# Player will be embeded into network connection instances.
 module Player
   # Because this is a FIFO (queue), CMD_xxx has 2 meanings: command invocation
   # and notification.
@@ -69,16 +67,15 @@ EOF
       return
     end
 
-    $LOGGER.debug("in: #{@sz}")
-
     while true
       len = @sz.index(0)
       return if len.nil?
 
-      cmd = @sz.slice!(0, len)
+      cmd_sz = @sz.slice!(0, len)
       @sz.slice!(0, 1)  # Remove the leading \0
 
-      process(cmd)
+      $LOGGER.debug("in: #{cmd_sz}")
+      process_sz(cmd_sz)
     end
   rescue
     $LOGGER.error($!)
@@ -96,9 +93,9 @@ EOF
 
   # Invoke a command on the container
   def invoke(cmd, arg)
-    s = [cmd, arg].to_json  + "\0"
-    $LOGGER.debug("out: #{s}")
-    send_data(s)
+    sz = [cmd, arg].to_json  + "\0"
+    $LOGGER.debug("out: #{sz}")
+    send_data(sz)
   end
 
   # IP of the container
@@ -110,14 +107,14 @@ EOF
 
 private
 
-  def process(cmd)
-    if cmd == CMD_POLICY
+  def process_sz(cmd_sz)
+    if cmd_sz == CMD_POLICY
       send_data(POLICY + "\0")
       close_connection_after_writing
       return
     end
 
-    if cmd == CMD_CAPTCHA
+    if cmd_sz == CMD_CAPTCHA
       if @channel.nil?
         captcha
       else
@@ -127,7 +124,7 @@ private
       return
     end
 
-    cmd, arg = JSON.parse(cmd)
+    cmd, arg = JSON.parse(cmd_sz)
 
     if cmd == CMD_GAME_INFO
       if @channel.nil?
@@ -183,17 +180,23 @@ private
   # in: [id, locale]
   # out: [code, info]
   def game_info(arg)
-    begin
-      id     = arg[0]
-      locale = arg[1]
-      info = Game.info(id, locale)
-      arg = [GAME_INFO_OK, info]
-    rescue DRb::DRbConnError
-      arg = [GAME_INFO_CONNECTION_ERROR, nil]
-    rescue
-      arg = [GAME_INFO_NO_GAME, nil]
+    id, locale = arg
+
+    if id < 0 and remote_ip == '127.0.0.1'
+      info = {'name' => 'My killer game'}
+      code = GAME_INFO_OK
+    else
+      begin
+        info = Proxy.instance.game_info(id, locale)
+        code = info.nil? ? GAME_INFO_NO_GAME : GAME_INFO_OK
+      rescue
+      p $!
+        info = nil
+        code = GAME_INFO_CONNECTION_ERROR
+      end
     end
-    invoke(CMD_GAME_INFO, arg)
+
+    invoke(CMD_GAME_INFO, [code, info])
     close_connection_after_writing
   end
 end

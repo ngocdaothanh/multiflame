@@ -2,9 +2,8 @@
 
 abort "Usage: #{__FILE__} <environment>" unless ARGV[0]
 
-require 'drb'
-require 'drb/acl'
 require 'rubygems'
+require 'revent'
 require 'yaml'
 require File.dirname(__FILE__) + '/../config/boot'
 require 'actionmailer'
@@ -14,43 +13,158 @@ require 'activerecord'
 require File.dirname(__FILE__) + '/../app/models/game'
 require File.dirname(__FILE__) + '/../app/models/game_container'
 
-PORT = 1935
-
 database_yaml = YAML.load_file("config/database.yml")
 abort "Environment '#{ARGV[0]}' not found" unless database_config = database_yaml[ARGV[0]]
-
 ActiveRecord::Base.establish_connection(database_config)
 
-class FifoManager
-  # Check login
-  LOGIN_OK                          = 0
-  LOGIN_OLD_CONTAINER_VERSION       = 6
-  LOGIN_NO_GAME                     = 7
-  LOGIN_OLD_GAME_VERSION            = 8
+# ------------------------------------------------------------------------------
 
-  def game_info(id, locale)
-    game = Game.find(id)
-    {'name' => game.name(locale)}
+# Game information is rarely changed. On startup, the manager will load
+# information about all games into memory. When a fifo connects, it will be passed
+# this information. When there is a change, the web server will notify the manager,
+# and the manager in turn will push this change to all the fifos.
+#
+# Moreover, the manager may be down while the fifos are still alive. In this case,
+# the fifos will try to connect to the manager every ~15sec. On startup, the
+# manager will wait ~1min for all the fifos to connect and report their status
+# (list of channels they are serving...).
+class FifoManager
+  include ReventServer
+
+  # Manager -> fifo
+  CMD_MF_READY            = 0
+  CMD_MF_CG_SET           = 1
+  CMD_MF_CAPTCHA_SALT_SET = 2
+
+  def initialize
+    @mutex_channel_keys = Mutex.new
+    @channel_keys = {}
+    @ready = false
+
+    cg_reload
+    EventMachine::add_timer(CONFIG[:startup_wait_time]) do
+      @ready = true
+      clients.each { |fifo| mf_ready(fifo) }
+    end
+    start_server(CONFIG[:fifo_manager_host], CONFIG[:fifo_manager_port])
   end
 
-  def check_login(container_version, game_id, game_version)
-    cv = GameContainer.instance.updated_at.to_i
-    return LOGIN_OLD_CONTAINER_VERSION if container_version != cv
+  def on_connect(client)
+    mf_cg_set(client)
+    mf_ready(client) if @ready
+  end
 
-    g = Game.find_by_id(game_id)
-    return LOGIN_NO_GAME if g.nil?
-    gv = g.updated_at.to_i
-    return LOGIN_OLD_GAME_VERSION if game_version != gv
+  def on_close(client)
+    @mutex_channel_keys.synchronize do
+      @channel_keys.delete(client)
+    end
+  end
 
-    LOGIN_OK
+  def on_call(client, cmd, arg)
+  end
+
+  def on_result(client, cmd, error)
+  end
+
+  def on_error(client, cmd, error)
+  end
+
+private
+
+  # Web server -> manager ------------------------------------------------------
+
+  def on_wm_cg_reload
+    cg_reload
+
+    clients.each { |fifo| mf_cg_set(fifo) }
+    nil
+  end
+
+  # Load all information about the container and all games into a data
+  # structure using only hash and arrays.
+  def cg_reload
+    container = GameContainer.instance
+    games = Game.find(:all)
+    @cg = {:c => {:version => container.updated_at.to_i}, :g => {}}
+    games.each do |g|
+      @cg[:g][g.id] = {:version => g.updated_at.to_i, :names => {}}
+      LOCALES.each do |l|
+        @cg[:g][g.id][:names][l] = g.name(l)
+      end
+    end
+  end
+
+  # Fifos -> manager -----------------------------------------------------------
+
+  # The fifos call this right after connecting to the manager.
+  def on_fm_channel_keys_set(fifo, arg)
+    @mutex_channels.synchronize do
+      fifo.property = arg[:property]
+      @channel_keys[fifo] = arg[:channel_keys]
+    end
+    nil
+  end
+
+  # Ask the manager to create a channel. If the channel has already existed, let
+  # the fifo know where to redirect the container to.
+  def on_fm_channel_create(fifo, arg)
+    @mutex_channel_keys.synchronize do
+      the_key = channel_key(arg[:game_id], arg[:channel_name])
+      host = port = nil
+      @channel_keys.each do |f, keys|
+        if keys.include?(the_key)
+          host = f.remote_ip
+          port = f.property[:port]
+          break
+        end
+      end
+      if host.nil?
+        host = fifo.remote_ip
+        port = fifo.property[:port]
+        @channel_keys[fifo] << the_key
+      end
+      return {:host => host, :port => port}
+    end
+  end
+
+  # The channel has been deleted on the fifo.
+  def on_fm_channel_delete(fifo, arg)
+    @mutex_channel_keys.synchronize do
+      the_key = channel_key(arg[:game_id], arg[:channel_name])
+      @channels.each do |f, keys|
+        if keys.include?(the_key)
+          keys.delete(the_key)
+          break
+        end
+      end
+    end
+    nil
+  end
+
+  # Manager -> fifos -----------------------------------------------------------
+
+  def mf_ready(fifo)
+    fifo.call(CMD_MF_READY, nil)
+  end
+
+  def mf_cg_set(fifo)
+    fifo.call(CMD_MF_CG_SET, @cg)
+  end
+
+  def mf_captcha_salt_set(fifo)
+    fifo.call(CMD_MF_CAPTCHA_SALT_SET, @captcha_salt)
+  end
+
+  def channel_key(game_id, channel_name)
+    "#{game_id}/#{channel_name}"
   end
 end
 
-acl = ACL.new(%w(
-deny all
-allow localhost))
-DRb.install_acl(acl)
+# ------------------------------------------------------------------------------
 
-DRb.start_service("druby://localhost:#{PORT}", FifoManager.new)
-puts "Fifo manager started on localhost:#{PORT}"
-DRb.thread.join
+$LOGGER = Logger.new(STDOUT, 'daily')
+
+EventMachine::run do
+  FifoManager.new
+  $LOGGER.info("Fifo manager started on #{CONFIG[:fifo_manager_host]}:#{CONFIG[:fifo_manager_port]}")
+end

@@ -15,7 +15,8 @@ rake gettext:makemo
 
 == Running
 
-* Start web server
-ruby script/server
-* Start Fifo manager
+* Start the fifo manager first
 ruby script/fifo_manager
+
+* Then start the web server(s)
+ruby script/server
