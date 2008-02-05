@@ -13,7 +13,9 @@ class Channel
   LOGIN_OLD_CONTAINER_VERSION       = 6
   LOGIN_NO_GAME                     = 7
   LOGIN_OLD_GAME_VERSION            = 8
-  LOGIN_REDIRECT                    = 9
+  LOGIN_WRONG_NICK_OR_PASSWORD      = 9
+  LOGIN_NOT_FRIENDS                 = 10
+  LOGIN_REDIRECT                    = 11
 
   NICK_MAX    = 32
   NICK_FORMAT = /^([a-zA-Z0-9_-])+$/

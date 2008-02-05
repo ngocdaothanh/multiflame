@@ -2,7 +2,7 @@ ActionController::Routing::Routes.draw do |map|
   # URLs for the SWF files, fixed in agreement with other parts of the system
   map.game_container_without_versions 'cwov/:id/:channel/:locale',
     :controller => 'swf', :action => 'game_container_without_versions'
-  map.game_container_with_versions 'cwv/:id/:channel/:locale/:container_version/:game_version',
+  map.game_container_with_versions 'cwv/:id/:channel/:locale/:container_version/:game_version/:h/:p',
     :controller => 'swf', :action => 'game_container_with_versions'
   map.game_with_version 'gwv/:id/:version',
     :controller => 'swf', :action => 'game_with_version'

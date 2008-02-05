@@ -22,13 +22,13 @@ class PendedChannel
 
       unless destination.nil?
         channel.players.each do |p|
-          p.invoke(Player::CMD_LOGIN, [Channel::LOGIN_REDIRECT, destination])
+          p.invoke(Player::CMD_LOGIN, [Channel::LOGIN_REDIRECT, [destination[:host], destination[:port]]])
           p.close_connection_after_writing
         end
       else
         Channel.new(key, channel.players, channel.container_version, channel.game_version, channel.batch_game)
-        @@channels.delete(key)
       end
+      @@channels.delete(key)
     end
   end
 

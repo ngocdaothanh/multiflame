@@ -16,28 +16,25 @@
 	public class Channel extends EventDispatcher {
 		public static const WEB_HOST:String = "web20games.net";
 
-		public static const DEFAULT_FIFO_HOST:String = "web20games.net";
-		public static const DEFAULT_FIFO_PORT:int    = 443;
-
 		// Commands to send to the server
-		public static const CMD_CAPTCHA:String      = '0'
-		public static const CMD_GAME_INFO:int       = 1;
-		public static const CMD_LOGIN:int           = 2;
-		public static const CMD_WILL_CLOSE:int      = 3;
-		public static const CMD_LOGOUT:int          = 4;
-		public static const CMD_ROOM_ENTER:int      = 5;
-		public static const CMD_ROOM_LEAVE:int      = 6;
-		public static const CMD_CHAT:int            = 7;
-		public static const CMD_NEW_INIT:int        = 8;
-		public static const CMD_NEW_JOIN:int        = 9;
-		public static const CMD_NEW_UNJOIN:int      = 10;
-		public static const CMD_NEW_TIMEOUT:int     = 11;
-		public static const CMD_PLAY_MOVE:int       = 12;
-		public static const CMD_PLAY_RESIGN:int     = 13;
-		public static const CMD_PLAY_TIMEOUT:int    = 14;
-		public static const CMD_GAME_OVER:int       = 15;
-		public static const CMD_JUDGE:int           = 16;
-		public static const CMD_RESULT:int          = 17;
+		public static const CMD_CAPTCHA:String   = '0'
+		public static const CMD_GAME_INFO:int    = 1;
+		public static const CMD_LOGIN:int        = 2;
+		public static const CMD_WILL_CLOSE:int   = 3;
+		public static const CMD_LOGOUT:int       = 4;
+		public static const CMD_ROOM_ENTER:int   = 5;
+		public static const CMD_ROOM_LEAVE:int   = 6;
+		public static const CMD_CHAT:int         = 7;
+		public static const CMD_NEW_INIT:int     = 8;
+		public static const CMD_NEW_JOIN:int     = 9;
+		public static const CMD_NEW_UNJOIN:int   = 10;
+		public static const CMD_NEW_TIMEOUT:int  = 11;
+		public static const CMD_PLAY_MOVE:int    = 12;
+		public static const CMD_PLAY_RESIGN:int  = 13;
+		public static const CMD_PLAY_TIMEOUT:int = 14;
+		public static const CMD_GAME_OVER:int    = 15;
+		public static const CMD_JUDGE:int        = 16;
+		public static const CMD_RESULT:int       = 17;
 
 		// States
 		public static const NOT_GOT_GAME_INFO:int = -3;
@@ -57,12 +54,13 @@
 		public var state:int;
 
 		// Local game info
-		public var host:String;
 		public var id:int;
 		public var channel:String;
 		public var locale:String;
 		public var containerVersion:int;
 		public var gameVersion:int;
+		public var host:String;
+		public var port:int;
 		
 		// Remote game info
 		public var gameRemoteInfo:Object;
@@ -99,16 +97,17 @@
 		
 		// --------------------------------------------------------------------------
 	
-		public function broadcastGameInfoLocal(host:String, id:int, channel:String, locale:String,
-				 containerVersion:int, gameVersion:int):void {
-			this.host             = host;
+		public function broadcastGameInfoLocal(id:int, channel:String, locale:String,
+				 containerVersion:int, gameVersion:int, host:String, port:int):void {
 			this.id               = id;
 			this.channel          = channel;
 			this.locale           = locale;
 			this.containerVersion = containerVersion;
 			this.gameVersion      = gameVersion;
+			this.host             = host;
+			this.port             = port;
 
-			_transporter = new Transporter(host, 443);
+			_transporter = new Transporter(host, port);
 
 			_transporter.addEventListener("" + TransporterEvent.CONNECTION_ERROR, onConnectionError);
 			_transporter.addEventListener("" + TransporterEvent.CONNECTION_CLOSE, onConnectionClose);
@@ -217,18 +216,26 @@
 		// [[nicks in lobby], [nicks in room0], [nicks in room1]...]
 		private function onLoginMe(event:TransporterEvent):void {
 			var a:Array = event.arg as Array;
-			var code:int       = a[0];
-			var snapshot:Array = a[1];
+			var code:int = a[0];
+			var snapshot:Array;
+			var redirect:Array;
 
-			if (code == LoginoutEvent.OK) {
-				state = IN_LOBBY;
-				nicks = snapshot[0];
+			if (code == LoginoutEvent.REDIRECT) {
+				redirect = a[1];
+				host = redirect[0];
+				port = redirect[1];
+				_transporter.redirect(host, port);
+			} else {
+				if (code == LoginoutEvent.OK) {
+					snapshot = a[1];
+					state = IN_LOBBY;
+					nicks = snapshot[0];
+				}
+				var e:LoginoutEvent = new LoginoutEvent(LoginoutEvent.LOGIN_ME, nick);
+				e.code = code;
+				e.snapshot = snapshot;
+				dispatchEvent(e);
 			}
-
-			var e:LoginoutEvent = new LoginoutEvent(LoginoutEvent.LOGIN_ME, nick);
-			e.code = code;
-			e.snapshot = snapshot;
-			dispatchEvent(e);
 		}
 
 		// --------------------------------------------------------------------------

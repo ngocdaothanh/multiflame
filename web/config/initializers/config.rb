@@ -21,7 +21,8 @@ CONFIG = {
   :swf_width             => 500,
   :swf_height            => 560,
 
-  :fifo_manager_host     => 'localhost',
-  :fifo_manager_port     => 1943,
-  :startup_wait_time     => 5   # [sec], wait for the fifos to reconnect
+  :fifo_manager_host              => 'localhost',
+  :fifo_manager_port              => 1943,
+  :fifo_manager_startup_delay     => 5,  # [sec], wait for the fifos to reconnect
+  :fifo_manager_snapshot_interval => 1   # [min], snapshots of the whole system, for statistics
 }.freeze

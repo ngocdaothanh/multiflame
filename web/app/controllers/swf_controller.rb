@@ -6,12 +6,27 @@ class SwfController < ApplicationController
   def game_container_without_versions
     game_container = GameContainer.instance
     game = Game.find(params[:id])
+
+    fm = FifoManager.new(FifoManager::CMD_WM_WHICH_HOST,
+      {:game_id => game.id, :channel_name => params[:channel]})
+    if fm.result_or_error == :result
+      host = fm.result[:host]
+      port = fm.result[:port]
+    else
+      host = 0
+      port = 0
+    end
+p host
+p port
     redirect_to game_container_with_versions_path(
       :id                => game.id,
       :channel           => Base64.b64encode(CGI.escape(params[:channel])),
       :locale            => params[:locale],
       :container_version => game_container.updated_at.to_i,
-      :game_version      => game.updated_at.to_i)
+      :game_version      => game.updated_at.to_i,
+      :h                 => Base64.b64encode(CGI.escape(host)),
+      :p                 => port
+    )
   end
 
   def game_container_with_versions

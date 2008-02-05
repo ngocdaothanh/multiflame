@@ -9,9 +9,11 @@
 
 	public class Transporter extends EventDispatcher {
 		private var _socket:XMLSocket;
-		private var _pendingInvocation:Array;
 		private var _host:String;
 		private var _port:int;
+		private var _pendingInvocation:Array;
+		private var _lastInvocation:Array;
+		private var _redirecting:Boolean;
 
 		public function Transporter(host:String, port:int):void {
 			_socket = new XMLSocket();
@@ -25,12 +27,19 @@
 			_socket.connect(host, port);
 		}
 
+		public function redirect(host:String, port:int):void {
+			_host = host;
+			_port = port;
+			_redirecting = true;
+			_socket.close();
+		}
+
 		public function invoke(cmd:int, arg:Object) {
-			var a = [cmd, arg];
+			_lastInvocation = [cmd, arg];
 			if (_socket.connected) {
-				_socket.send(JSON.encode(a));
+				_socket.send(JSON.encode(_lastInvocation));
 			} else {
-				_pendingInvocation = a;
+				_pendingInvocation = _lastInvocation;
 				_socket.connect(_host, _port);
 			}
 		}
@@ -60,7 +69,13 @@
 		}
 
 		private function onClose(event:Event):void {
-			dispatchEvent(new TransporterEvent(TransporterEvent.CONNECTION_CLOSE, null));
+			if (_redirecting) {
+				_redirecting = false;
+				_pendingInvocation = _lastInvocation;
+				_socket.connect(_host, _port);
+			} else {
+				dispatchEvent(new TransporterEvent(TransporterEvent.CONNECTION_CLOSE, null));
+			}
 		}
 	}
 }

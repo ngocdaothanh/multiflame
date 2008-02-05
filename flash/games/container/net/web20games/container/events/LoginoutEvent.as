@@ -19,6 +19,7 @@
 		public static const OLD_GAME_VERSION:int            = 8;
 		public static const WRONG_NICK_OR_PASSWORD:int      = 9;
 		public static const NOT_FRIENDS:int                 = 10;
+		public static const REDIRECT:int                    = 11;
 
 		public var code:int;
 

@@ -5,6 +5,8 @@ abort "Usage: #{__FILE__} <environment>" unless ARGV[0]
 require 'rubygems'
 require 'revent'
 require 'yaml'
+require 'zlib'
+
 require File.dirname(__FILE__) + '/../config/boot'
 require 'actionmailer'
 require File.dirname(__FILE__) + '/../config/initializers/config'
@@ -12,6 +14,7 @@ require 'activerecord'
 
 require File.dirname(__FILE__) + '/../app/models/game'
 require File.dirname(__FILE__) + '/../app/models/game_container'
+require File.dirname(__FILE__) + '/../app/models/stat'
 
 database_yaml = YAML.load_file("config/database.yml")
 abort "Environment '#{ARGV[0]}' not found" unless database_config = database_yaml[ARGV[0]]
@@ -32,7 +35,7 @@ class FifoManager
   include ReventServer
 
   # Web -> manager
-  CMD_WM_CHANNEL_KEYS_GET = 0
+  CMD_WM_WHICH_FIFO       = 0
   CMD_WM_CG_RELOAD        = 1
 
   # Manager -> fifo
@@ -50,17 +53,22 @@ class FifoManager
     @ready = false
 
     @on_calls = {
-      CMD_WM_CHANNEL_KEYS_GET => method(:on_call_wm_channel_keys_get),
+      CMD_WM_WHICH_FIFO       => method(:on_call_wm_which_fifo),
       CMD_WM_CG_RELOAD        => method(:on_call_wm_cg_reload),
       CMD_FM_CHANNEL_KEYS_SET => method(:on_call_fm_channel_keys_set),
       CMD_FM_CHANNEL_CREATE   => method(:on_call_fm_channel_create)
     }
 
     cg_reload
-    EventMachine::add_timer(CONFIG[:startup_wait_time]) do
+    EventMachine::add_timer(CONFIG[:fifo_manager_startup_delay]) do
       @ready = true
       clients.each { |fifo| mf_ready(fifo) }
     end
+
+    EventMachine::add_periodic_timer(CONFIG[:fifo_manager_snapshot_interval]*60) do
+      create_snapshot
+    end
+
     start_server(CONFIG[:fifo_manager_host], CONFIG[:fifo_manager_port])
   end
 
@@ -90,16 +98,36 @@ private
 
   # Web server -> manager ------------------------------------------------------
 
-  def on_call_wm_channel_keys_get(client, arg)
-    ret = {}
-    @channel_keys.each do |fifo, keys|
-      k = {:host => fifo.remote_ip, :port => fifo.property[:port]}
-      ret[k] = {:players_limit => fifo.property[:players_limit], :keys => keys}
+  # Which fifo should handle a certain channel?
+  # Input: {:game_id, :channel_name}
+  # Output: {:game_id, :channel_name, :host, :port}
+  def on_call_wm_which_fifo(fifo, arg)
+    @mutex_channel_keys.synchronize do
+      return nil if @channel_keys.empty?
+
+      # Take out the fifo the is handling this channel
+      key = channel_key(arg[:game_id], [:channel_name])
+      fifos = @channel_keys.each do |f, keys|
+        return arg.update({:host => f.remote_ip, :port => f.property[:port]}) if keys.include?(key)
+      end
+
+      # Take out the the emptiest fifo
+      fifos = @channel_keys.keys
+      max_fifo = fifos[0]
+      max = fifos[0].property[:players_avalable]
+      (1...fifos.size).each do |i|
+        f = fifos[i]
+        a = f.property[:players_avalable]
+        if max < a
+          max_fifo = f
+          max = a
+        end
+      end
+      return arg.update({:host => max_fifo.remote_ip, :port => max_fifo.property[:port]})
     end
-    ret
   end
 
-  def on_call_wm_cg_reload
+  def on_call_wm_cg_reload(client, arg)
     cg_reload
 
     clients.each { |fifo| mf_cg_set(fifo) }
@@ -126,6 +154,7 @@ private
   def on_call_fm_channel_keys_set(fifo, arg)
     @mutex_channel_keys.synchronize do
       fifo.property = arg[:property]
+      fifo.property[:players_avalable] = fifo.property[:players_limit]
       @channel_keys[fifo] = arg[:channel_keys]
     end
     nil
@@ -148,6 +177,7 @@ private
 
       if host.nil?
         destination =  nil
+        fifo.property[:players_available] -= 1
         @channel_keys[fifo] << key
       else
         destination =  {:host => host, :port => port}
@@ -181,6 +211,23 @@ private
 
   def channel_key(game_id, channel_name)
     "#{game_id}/#{channel_name}"
+  end
+
+  # ----------------------------------------------------------------------------
+
+  def prepare_snapshot
+    ret = {}
+    @channel_keys.each do |fifo, keys|
+      k = {:host => fifo.remote_ip, :port => fifo.property[:port]}
+      ret[k] = {:players_limit => fifo.property[:players_limit], :keys => keys}
+    end
+    ret
+  end
+
+  def create_snapshot
+    s = Stat.new
+    s.snapshot = Zlib::Deflate.deflate(Marshal.dump(prepare_snapshot))
+    s.save
   end
 end
 
