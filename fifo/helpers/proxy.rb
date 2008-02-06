@@ -6,6 +6,7 @@ class Proxy
   # Fifo -> manager
   CMD_FM_CHANNEL_KEYS_SET = 10
   CMD_FM_CHANNEL_CREATE   = 11
+  CMD_FM_CHANNEL_DELETE   = 12
 
   # Manager -> fifo
   CMD_MF_READY            = 0
@@ -19,8 +20,9 @@ class Proxy
       CMD_MF_CAPTCHA_SALT_SET => method(:on_call_mf_captcha_salt_set)
     }
     @on_results = {
-      CMD_FM_CHANNEL_KEYS_SET => method(:on_result_fm_channel_keys_set),
-      CMD_FM_CHANNEL_CREATE   => method(:on_result_fm_channel_create)
+      CMD_FM_CHANNEL_KEYS_SET => method(:on_result),
+      CMD_FM_CHANNEL_CREATE   => method(:on_result_fm_channel_create),
+      CMD_FM_CHANNEL_DELETE   => method(:on_result)
     }
 
     on_close
@@ -89,15 +91,16 @@ class Proxy
     call(CMD_FM_CHANNEL_KEYS_SET, {:property => property, :channel_keys => Channel.keys})
   end
 
-  def on_result_fm_channel_keys_set
-  end
-
   def fm_channel_create(key)
     call(CMD_FM_CHANNEL_CREATE, key)
   end
 
   def on_result_fm_channel_create(result)
     PendedChannel.login_pended(result[0], result[1], result[2])
+  end
+
+  def fm_channel_delete(key)
+    call(CMD_FM_CHANNEL_DELETE, key)
   end
 
   # Manager -> fifo ------------------------------------------------------------

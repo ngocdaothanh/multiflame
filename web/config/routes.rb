@@ -18,7 +18,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect 'admin', :controller => 'admin/statistics'
   map.namespace :admin do |admin|
-    admin.resources :statistics
+    admin.resources :stats
     admin.resource  :game_container, :controller => 'game_container'
     admin.resources :games
     admin.resources :toys
