@@ -47,7 +47,11 @@ class Channel
     key = self.key(game_id, channel_name)
     channel = @@channels[key]
     if channel.nil?
-      PendedChannel.login(key, player, container_version, game_version, batch_game)
+      if game_id < 0 and player.remote_ip == '127.0.0.1'
+        @@channels[key] = Channel.new(key, [player], container_version, game_version, batch_game)
+      else
+        PendedChannel.login(key, player, container_version, game_version, batch_game)
+      end
     else
       channel.login(player, container_version, game_version, batch_game)
     end
@@ -65,9 +69,9 @@ class Channel
     code = LOGIN_OK
     if nick.empty? or nick.length > NICK_MAX or nick !~ NICK_FORMAT
       code = LOGIN_DUPLICATE_NICK
-    elsif code == LOGIN_OK and !Captcha.instance.correct?(captcha_code, encrypted_code)
+    elsif !Captcha.instance.correct?(captcha_code, encrypted_code)
       code = LOGIN_WRONG_CAPTCHA
-    elsif code == LOGIN_OK and game_id >= 0
+    elsif game_id >= 0
       code = Proxy.instance.check_login(container_version, game_id, game_version)
     end
     return true if code == LOGIN_OK
