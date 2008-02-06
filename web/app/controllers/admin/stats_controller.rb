@@ -10,12 +10,12 @@ module Admin
 
     def show
       # Search back the selected host
-      host = params[:id]
+      hostport = params[:id]
       stat = Stat.find(:first, :order => 'created_at DESC')
       snapshot = stat.unzipped_snapshot
       @fifo = nil
       snapshot.each_key do |k|
-        if k[:host].delete('.') == host
+        if "#{k[:host].delete('.')}#{k[:port]}" == hostport
           @fifo = k
           break
         end

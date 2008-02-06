@@ -1,11 +1,25 @@
-<h2><%= @fifo[:host] %>:<%= @fifo[:port] %></h2>
+<% @navigator = "#{@fifo[:host]}:#{@fifo[:port]}" %>
+
+<table class="data">
+  <tr>
+    <th><%= _('Game') %></th>
+    <th><%= _('Channel') %></th>
+    <th><%= _('Number of players') %></th>
+  </tr>
 
 <% @gc.each do |gc| %>
-<h3><%=h gc[:game].name %>: <%= _('%s channels') % gc[:channel_names].size %></h3>
+  <tr>
+    <th><%=h gc[:game].name %> (<%= _('%s channels') % gc[:channel_names].size %>)</th>
+    <td><%= link_to gc[:channel_names][0], play_path(:id => gc[:game].id, :channel => gc[:channel_names][0]) %></td>
+    <td></td>
+  </tr>
 
-<ul>
-  <% gc[:channel_names].each do |name| %>
-  <li><%= link_to name, play_path(:id => gc[:game].id, :channel => name) %></li>
+  <% (1...gc[:channel_names].size).each do |i| %>
+  <tr>
+    <td></td>
+    <td><%= link_to gc[:channel_names][i], play_path(:id => gc[:game].id, :channel => gc[:channel_names][i]) %></td>
+    <td></td>
+  </tr>
   <% end %>
-</ul>
 <% end %>
+</table>
