@@ -53,11 +53,11 @@
 				port             = 443;
 			} else {
 				id               = a[4];
-				channel          = (new URLVariables("x=" + DataInURL.decode(a[5]))).x;
+				channel          = DataInURL.decode(a[5]);
 				locale           = a[6];
 				containerVersion = int(a[7]);
 				gameVersion      = int(a[8]);
-				host             = (new URLVariables("x=" + DataInURL.decode(a[9]))).x;
+				host             = DataInURL.decode(a[9]);
 				port             = int(a[10]);
 			}
 			_channel.broadcastGameInfoLocal(id, channel, locale, containerVersion, gameVersion, host, port);

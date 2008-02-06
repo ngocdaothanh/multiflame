@@ -127,10 +127,9 @@ private
     end
   end
 
-  def on_call_wm_cg_reload(client, arg)
+  def on_call_wm_cg_reload(web, arg)
     cg_reload
-
-    clients.each { |fifo| mf_cg_set(fifo) }
+    clients.each { |f| mf_cg_set(f) }
     nil
   end
 
@@ -162,7 +161,7 @@ private
 
   # Ask the manager to create a channel. If the channel has already existed, let
   # the fifo know where to redirect the container to.
-  # Returns nil if this 
+  # Returns nil if the calling fifo should handle the channel.
   def on_call_fm_channel_create(fifo, arg)
     @mutex_channel_keys.synchronize do
       key = arg
@@ -178,6 +177,9 @@ private
       if host.nil?
         fifo.property[:players_available] -= 1
         @channel_keys[fifo] << key
+      elsif fifo.remote_ip == host and fifo.property[:port] == port
+        host = nil
+        port = nil
       end
       return [key, host, port]
     end

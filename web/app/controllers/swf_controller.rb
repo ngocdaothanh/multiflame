@@ -7,24 +7,23 @@ class SwfController < ApplicationController
     game_container = GameContainer.instance
     game = Game.find(params[:id])
 
-    fm = FifoManager.new(FifoManager::CMD_WM_WHICH_HOST,
-      {:game_id => game.id, :channel_name => params[:channel]})
+    fm = FifoManager.new(FifoManager::CMD_WM_WHICH_FIFO,
+      FifoManager.channel_key(game.id, params[:channel]))
     if fm.result_or_error == :result
-      host = fm.result[:host]
-      port = fm.result[:port]
+      host = fm.result[1]
+      port = fm.result[2]
     else
       host = 0
       port = 0
     end
-p host
-p port
+
     redirect_to game_container_with_versions_path(
       :id                => game.id,
-      :channel           => Base64.b64encode(CGI.escape(params[:channel])),
+      :channel           => Base64.b64encode(params[:channel]).strip,
       :locale            => params[:locale],
       :container_version => game_container.updated_at.to_i,
       :game_version      => game.updated_at.to_i,
-      :h                 => Base64.b64encode(CGI.escape(host)),
+      :h                 => Base64.b64encode(host).strip,
       :p                 => port
     )
   end
@@ -52,7 +51,7 @@ p port
       # Security check: make sure that this is an integer
       id = params[:id].to_i
       send_file("#{RAILS_ROOT}/public/games/#{id}/game.swf",
-        :filename    => 'container.swf',
+        :filename    => 'game.swf',
         :type        => 'application/x-shockwave-flash',
         :disposition => 'inline',
         :stream      => false)

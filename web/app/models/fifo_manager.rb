@@ -3,8 +3,14 @@ require 'revent'
 class FifoManager
   include ReventClient
 
-  CMD_WM_WHICH_HOST       = 0
+  CMD_WM_WHICH_FIFO       = 0
   CMD_WM_CG_RELOAD        = 1
+
+  def self.channel_key(game_id, channel_name)
+    "#{game_id}/#{channel_name}"
+  end
+
+  # ----------------------------------------------------------------------------
 
   attr_reader :result_or_error, :result, :error
 
@@ -40,11 +46,5 @@ puts error.backtrace.join("\n")
   def on_close
     EventMachine::stop_event_loop
     Thread.pass
-  end
-
-  # ----------------------------------------------------------------------------
-
-  def destination(controller, condition_variable)
-    return nil unless connected?
   end
 end

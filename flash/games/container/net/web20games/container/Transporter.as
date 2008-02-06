@@ -1,7 +1,7 @@
 ﻿package net.web20games.container {
 	import flash.events.EventDispatcher;
 	import flash.net.XMLSocket;
-	import flash.utils.Timer;
+	import flash.utils.*;
 	import flash.events.*;
 	import com.adobe.serialization.json.JSON;
 	
@@ -22,8 +22,10 @@
 			_socket.addEventListener(Event.CONNECT, onConnect);
 			_socket.addEventListener(DataEvent.DATA, onData);
 			_socket.addEventListener(Event.CLOSE, onClose);
+
 			_host = host;
 			_port = port;
+			_redirecting = false;
 			_socket.connect(host, port);
 		}
 
@@ -31,7 +33,9 @@
 			_host = host;
 			_port = port;
 			_redirecting = true;
+			_pendingInvocation = _lastInvocation;
 			_socket.close();
+			setTimeout(reconnectOnRedirect, 1000);
 		}
 
 		public function invoke(cmd:int, arg:Object) {
@@ -56,8 +60,8 @@
 			if (_pendingInvocation != null) {
 				var cmd:int    = _pendingInvocation[0];
 				var arg:Object = _pendingInvocation[1];
-				invoke(cmd, arg);
 				_pendingInvocation = null;
+				invoke(cmd, arg);
 			}
 		}
 
@@ -69,13 +73,14 @@
 		}
 
 		private function onClose(event:Event):void {
-			if (_redirecting) {
-				_redirecting = false;
-				_pendingInvocation = _lastInvocation;
-				_socket.connect(_host, _port);
-			} else {
+			if (!_redirecting) {
 				dispatchEvent(new TransporterEvent(TransporterEvent.CONNECTION_CLOSE, null));
 			}
+		}
+
+		private function reconnectOnRedirect() {
+			_redirecting = false;
+			_socket.connect(_host, _port);
 		}
 	}
 }

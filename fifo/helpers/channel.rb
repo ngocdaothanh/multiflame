@@ -41,7 +41,7 @@ class Channel
     batch_game        = (arg[7] == CLASS_BATCH)? true : false
 
     return unless validate(player, container_version, game_id, game_version,
-        captcha_code, encrypted_code, nick)
+      captcha_code, encrypted_code, nick)
 
     player.nick = nick
     key = self.key(game_id, channel_name)

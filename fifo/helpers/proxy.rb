@@ -47,7 +47,7 @@ class Proxy
 
   def on_error(cmd, error)
     backtrace = error.backtrace.join("\n")
-    $LOGGER.error("proxy error: cmd = #{cmd}, error = #{backtrace}"}
+    $LOGGER.error("proxy error: cmd = #{cmd}, error = #{backtrace}")
   end
 
   # ----------------------------------------------------------------------------
