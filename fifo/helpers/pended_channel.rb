@@ -6,8 +6,7 @@ class PendedChannel
     @@mutex_channels.synchronize do
       channel = @@channels[key]
       if channel.nil?
-        channel = PendedChannel.new(key, player, container_version, game_version, batch_game)
-        @@channels[key] = channel
+        PendedChannel.new(key, player, container_version, game_version, batch_game)
         Proxy.instance.fm_channel_create(key)
       else
         channel.login(player, container_version, game_version, batch_game)
@@ -15,14 +14,14 @@ class PendedChannel
     end
   end
 
-  def self.login_pended(key, destination)
+  def self.login_pended(key, host, port)
     @@mutex_channels.synchronize do
       channel = @@channels[key]
       return if channel.nil?
 
-      unless destination.nil?
+      unless host.nil?
         channel.players.each do |p|
-          p.invoke(Player::CMD_LOGIN, [Channel::LOGIN_REDIRECT, [destination[:host], destination[:port]]])
+          p.invoke(Player::CMD_LOGIN, [Channel::LOGIN_REDIRECT, [host, port]])
           p.close_connection_after_writing
         end
       else
@@ -35,6 +34,8 @@ class PendedChannel
   attr_reader :players, :container_version, :game_version, :batch_game
 
   def initialize(key, player, container_version, game_version, batch_game)
+    @@channels[key] = self
+
     player.channel = self
     @players = [player]
 

@@ -48,7 +48,7 @@ class Channel
     channel = @@channels[key]
     if channel.nil?
       if game_id < 0 and player.remote_ip == '127.0.0.1'
-        @@channels[key] = Channel.new(key, [player], container_version, game_version, batch_game)
+        Channel.new(key, [player], container_version, game_version, batch_game)
       else
         PendedChannel.login(key, player, container_version, game_version, batch_game)
       end

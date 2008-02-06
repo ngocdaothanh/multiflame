@@ -46,6 +46,8 @@ class Proxy
   end
 
   def on_error(cmd, error)
+    backtrace = error.backtrace.join("\n")
+    $LOGGER.error("proxy error: cmd = #{cmd}, error = #{backtrace}"}
   end
 
   # ----------------------------------------------------------------------------
@@ -95,7 +97,7 @@ class Proxy
   end
 
   def on_result_fm_channel_create(result)
-    PendedChannel.login_pended(result[:key], result[:destination])
+    PendedChannel.login_pended(result[0], result[1], result[2])
   end
 
   # Manager -> fifo ------------------------------------------------------------

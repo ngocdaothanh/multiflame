@@ -106,9 +106,9 @@ private
       return nil if @channel_keys.empty?
 
       # Take out the fifo the is handling this channel
-      key = channel_key(arg[:game_id], [:channel_name])
+      key = arg
       fifos = @channel_keys.each do |f, keys|
-        return arg.update({:host => f.remote_ip, :port => f.property[:port]}) if keys.include?(key)
+        return [key, f.remote_ip, f.property[:port]] if keys.include?(key)
       end
 
       # Take out the the emptiest fifo
@@ -123,7 +123,7 @@ private
           max = a
         end
       end
-      return arg.update({:host => max_fifo.remote_ip, :port => max_fifo.property[:port]})
+      return [key, max_fifo.remote_ip, max_fifo.property[:port]]
     end
   end
 
@@ -154,7 +154,7 @@ private
   def on_call_fm_channel_keys_set(fifo, arg)
     @mutex_channel_keys.synchronize do
       fifo.property = arg[:property]
-      fifo.property[:players_avalable] = fifo.property[:players_limit]
+      fifo.property[:players_available] = fifo.property[:players_limit]
       @channel_keys[fifo] = arg[:channel_keys]
     end
     nil
@@ -176,13 +176,10 @@ private
       end
 
       if host.nil?
-        destination =  nil
         fifo.property[:players_available] -= 1
         @channel_keys[fifo] << key
-      else
-        destination =  {:host => host, :port => port}
       end
-      return {:key => key, :destination => destination}
+      return [key, host, port]
     end
   end
 
