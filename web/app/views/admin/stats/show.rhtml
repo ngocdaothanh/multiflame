@@ -1,0 +1,11 @@
+<h2><%= @fifo[:host] %>:<%= @fifo[:port] %></h2>
+
+<% @gc.each do |gc| %>
+<h3><%=h gc[:game].name %>: <%= _('%s channels') % gc[:channel_names].size %></h3>
+
+<ul>
+  <% gc[:channel_names].each do |name| %>
+  <li><%= link_to name, play_path(:id => gc[:game].id, :channel => name) %></li>
+  <% end %>
+</ul>
+<% end %>

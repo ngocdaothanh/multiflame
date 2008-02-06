@@ -14,9 +14,9 @@
       </div>
 
       <ul id="menu">
-        <li><%= link_to _('Statistics'), admin_statistics_path, :class => ('admin/statistics' == params[:controller])                           ? 'selected' : '' %></li>
-        <li><%= link_to _('Games'),      admin_games_path,      :class => ['admin/games', 'admin/game_container'].include?(params[:controller]) ? 'selected' : '' %></li>
-        <li><%= link_to _('Toys'),       admin_toys_path,       :class => ['admin/toys', 'admin/toy_container'].include?(params[:controller])   ? 'selected' : '' %></li>
+        <li><%= link_to _('Statistics'), admin_stats_path, :class => ('admin/stats' == params[:controller])                                ? 'selected' : '' %></li>
+        <li><%= link_to _('Games'),      admin_games_path, :class => ['admin/games', 'admin/game_container'].include?(params[:controller]) ? 'selected' : '' %></li>
+        <li><%= link_to _('Toys'),       admin_toys_path,  :class => ['admin/toys', 'admin/toy_container'].include?(params[:controller])   ? 'selected' : '' %></li>
       </ul>
 
       <div id="main">

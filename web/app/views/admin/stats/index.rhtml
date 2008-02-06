@@ -1,0 +1,16 @@
+<table class="data">
+  <tr>
+    <th><%= _('Host') %></th>
+    <th><%= _('Port') %></th>
+    <th><%= _('Players limit') %></th>
+    <th><%= _('Number of channels') %></th>
+  </tr>
+<% @snapshot.each do |k, v| %>
+  <tr>
+    <td><%= k[:host] %></td>
+    <td><%= k[:port] %></td>
+    <td><%= v[:players_limit] %></td>
+    <td><%= (v[:keys].size == 0)? v[:keys].size : link_to(v[:keys].size, admin_stat_path(k[:host].delete('.'))) %></td>
+  </tr>
+<% end %>
+</table>

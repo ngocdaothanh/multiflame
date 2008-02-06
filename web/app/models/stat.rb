@@ -1,18 +1,11 @@
 require 'zlib'
 
 class Stat < ActiveRecord::Base
-  # Returns an array of Fifo servers.
-  def fifos
-    obj.keys
-  end
-
-private
-
   # Returns the unzipped unmarshaled snapshot
-  def obj
-    return @obj if @obj
+  def unzipped_snapshot
+    return @unzipped_snapshot if @unzipped_snapshot
 
-    @obj = Marshal.load(Zlib::Inflate.inflate(snapshot))
-    @obj
+    @unzipped_snapshot = Marshal.load(Zlib::Inflate.inflate(snapshot))
+    @unzipped_snapshot
   end
 end
