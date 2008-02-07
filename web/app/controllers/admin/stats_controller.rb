@@ -4,6 +4,7 @@ module Admin
     before_filter :check_login_admin
 
     def index
+    p 799
       stat = Stat.find(:first, :order => 'created_at DESC')
       if stat.nil?
         render :text => _('No data yet'), :layout => true

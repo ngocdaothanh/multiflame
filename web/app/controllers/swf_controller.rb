@@ -13,6 +13,7 @@ class SwfController < ApplicationController
       host = fm.result[1]
       port = fm.result[2]
     else
+      # The game container will fail to connect and display message that the server is down
       host = "0"
       port = 0
     end
