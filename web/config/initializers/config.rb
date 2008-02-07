@@ -13,7 +13,8 @@ CONFIG = {
   :fifo_manager_host              => 'localhost',
   :fifo_manager_port              => 1943,
   :fifo_manager_startup_delay     => 5,  # [sec], wait for the fifos to reconnect
-  :fifo_manager_snapshot_interval => 1  # [min], snapshots of the whole system, for statistics
+  :fifo_manager_snapshot_interval => 1,  # [min], snapshots of the whole system, for statistics
+  :captcha_salt_renew_interval    => 1   # [min]
 }.freeze
 
 # Make Active Record use UTC-base instead of local time

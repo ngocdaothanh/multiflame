@@ -57,6 +57,7 @@ class FifoManager
   def initialize
     @mutex_channel_keys = Mutex.new
     @channel_keys = {}
+
     @ready = false
 
     @on_calls = {
@@ -74,7 +75,7 @@ class FifoManager
       clients.each { |fifo| mf_ready_set(fifo) }
     end
 
-    EventMachine::add_timer(17) do
+    EventMachine::add_timer(CONFIG[:captcha_salt_renew_interval]*60) do
       mf_captcha_salt_set
     end
 
@@ -236,6 +237,7 @@ private
 
   # ----------------------------------------------------------------------------
 
+  # client is not nil if this method is strigged by the web.
   # Returns 0 if there's no fifo, nil if the snapshot will be written to DB.
   def on_call_wm_snapshot_create(client, arg)
     return 0 if !client.nil? and clients.size == 1

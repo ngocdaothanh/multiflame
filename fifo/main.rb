@@ -21,8 +21,6 @@ require 'helpers/stats'
 $LOGGER = Logger.new(STDOUT, 'daily')
 
 EventMachine::run do
-  $LOGGER.info('TODO: synchronize everything')
-
   EventMachine::start_server(CONFIG[:host], CONFIG[:port], Player)
   $LOGGER.info("Fifo started on #{CONFIG[:host]}:#{CONFIG[:port]}")
 

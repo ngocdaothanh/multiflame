@@ -21,6 +21,7 @@ class Channel
   NICK_FORMAT = /^([a-zA-Z0-9_-])+$/
 
   @@channels = {}
+  @@mutex_channels = Mutex.new
 
   # ----------------------------------------------------------------------------
 
@@ -45,7 +46,9 @@ class Channel
 
     player.nick = nick
     key = self.key(game_id, channel_name)
-    channel = @@channels[key]
+    @@mutex_channels.synchronize do
+      channel = @@channels[key]
+    end
     if channel.nil?
       if game_id < 0 and player.remote_ip == '127.0.0.1'
         Channel.new(key, [player], container_version, game_version, batch_game)
@@ -84,71 +87,81 @@ class Channel
   # ----------------------------------------------------------------------------
 
   def self.keys
-    @@channels.keys
+    @@mutex_channels.synchronize do
+      return @@channels.keys
+    end
   end
 
   # Returns {channel_key => remote_ips} of all channels.
   def self.remote_ips
-    ret = {}
-    @@channels.each do |k, c|
-      ret[k] = c.remote_ips
+    @@mutex_channels.synchronize do
+      ret = {}
+      @@channels.each do |k, c|
+        ret[k] = c.remote_ips
+      end
+      return ret
     end
-    ret
   end
 
   # ----------------------------------------------------------------------------
 
   def initialize(key, players, container_version, game_version, batch_game)
-    @@channels[key] = self
-    @key = key  # Used to delete this channel
+    @@mutex_channels.synchronize do
+      @@channels[key] = self
+      @mutex_self = Mutex.new
 
-    @lobby = Lobby.new(players)
-    @rooms = []
+      @key = key  # Used to delete this channel
 
-    @container_version = container_version
-    @game_version      = game_version
-    @batch_game        = batch_game
+      @lobby = Lobby.new(players)
+      @rooms = []
 
-    s = snapshot
-    players.each do |p|
-      p.channel = self
-      p.room = @lobby
-      p.invoke(Player::CMD_LOGIN, [LOGIN_OK, s])
+      @container_version = container_version
+      @game_version      = game_version
+      @batch_game        = batch_game
+
+      s = snapshot
+      players.each do |p|
+        p.channel = self
+        p.room = @lobby
+        p.invoke(Player::CMD_LOGIN, [LOGIN_OK, s])
+      end
     end
   end
 
   def login(player, container_version, game_version, batch_game)
-    code = LOGIN_OK
-    if @lobby.nicks.include?(player.nick)
-      code = LOGIN_DUPLICATE_NICK
-    else
-      @rooms.each do |r|
-        if r.nicks.include?(player.nick)
-          code = LOGIN_DUPLICATE_NICK
-          break
+    @mutex_self.synchronize do
+      code = LOGIN_OK
+      if @lobby.nicks.include?(player.nick)
+        code = LOGIN_DUPLICATE_NICK
+      else
+        @rooms.each do |r|
+          if r.nicks.include?(player.nick)
+            code = LOGIN_DUPLICATE_NICK
+            break
+          end
         end
       end
-    end
-    if code == LOGIN_OK
-      if container_version != @container_version
-        code = LOGIN_DIFFERENT_CONTAINER_VERSION
-      elsif game_version != @game_version
-        code = LOGIN_DIFFERENT_GAME_VERSION
-      elsif batch_game != @batch_game
-        code = LOGIN_DIFFERENT_GAME_VERSION
+      if code == LOGIN_OK
+        if container_version != @container_version
+          code = LOGIN_DIFFERENT_CONTAINER_VERSION
+        elsif game_version != @game_version
+          code = LOGIN_DIFFERENT_GAME_VERSION
+        elsif batch_game != @batch_game
+          code = LOGIN_DIFFERENT_GAME_VERSION
+        end
       end
-    end
 
-    if code != LOGIN_OK
-      player.invoke(Player::CMD_LOGIN, [code, nil])
-      player.close_connection_after_writing
-      return
-    end
+      if code != LOGIN_OK
+        player.invoke(Player::CMD_LOGIN, [code, nil])
+        player.close_connection_after_writing
+        return
+      end
 
-    player.channel = self
-    @lobby.process(player, Player::CMD_LOGIN, nil)
-    player.room = @lobby
-    player.invoke(Player::CMD_LOGIN, [LOGIN_OK, snapshot])
+      player.channel = self
+      @lobby.process(player, Player::CMD_LOGIN, nil)
+      player.room = @lobby
+      player.invoke(Player::CMD_LOGIN, [LOGIN_OK, snapshot])
+    end
   end
 
   # ----------------------------------------------------------------------------
@@ -168,32 +181,38 @@ class Channel
   end
 
   def remote_ips
-    ret = @lobby.remote_ips
-    @rooms.each do |r|
-      ret.concat(r.remote_ips)
+    @mutex_self.synchronize do
+      ret = @lobby.remote_ips
+      @rooms.each do |r|
+        ret.concat(r.remote_ips)
+      end
+      return ret
     end
-    ret
   end
 
 private
 
   def logout(player)
-    if player.room != @lobby
-      iroom = @rooms.index(player.room)
+    @mutex_self.synchronize do
+      if player.room != @lobby
+        iroom = @rooms.index(player.room)
 
-      player.room.process(player, Player::CMD_ROOM_LEAVE, nil)
-      if player.room.nicks.empty?
-        @rooms.delete_at(iroom)
+        player.room.process(player, Player::CMD_ROOM_LEAVE, nil)
+        if player.room.nicks.empty?
+          @rooms.delete_at(iroom)
+        end
+
+        @lobby.process(player, Player::CMD_LOGOUT, iroom)
+      else
+        @lobby.process(player, Player::CMD_LOGOUT, nil)
       end
 
-      @lobby.process(player, Player::CMD_LOGOUT, iroom)
-    else
-      @lobby.process(player, Player::CMD_LOGOUT, nil)
-    end
-
-    if @rooms.empty? and @lobby.nicks.empty?
-      Proxy.instance.fm_channel_delete(@key)
-      @@channels.delete(@key)
+      if @rooms.empty? and @lobby.nicks.empty?
+        Proxy.instance.fm_channel_delete(@key)
+        @@mutex_channels.synchronize do
+          @@channels.delete(@key)
+        end
+      end
     end
   end
 
@@ -203,16 +222,18 @@ private
   # * For the player who entered the room:  room snapshot
   # * For the players who are in the lobby: [iroom, nick]
   def room_enter(player, arg)
-    iroom = arg
-    if iroom < 0
-      room = Room.new(player, @batch_game)
-      @rooms << room
-      iroom = @rooms.size - 1
-    else
-      room = @rooms[iroom]
-      room.process(player, Player::CMD_ROOM_ENTER, nil)
+    @mutex_self.synchronize do
+      iroom = arg
+      if iroom < 0
+        room = Room.new(player, @batch_game)
+        @rooms << room
+        iroom = @rooms.size - 1
+      else
+        room = @rooms[iroom]
+        room.process(player, Player::CMD_ROOM_ENTER, nil)
+      end
+      @lobby.process(player, Player::CMD_ROOM_ENTER, iroom)
     end
-    @lobby.process(player, Player::CMD_ROOM_ENTER, iroom)
   end
 
   # out:
@@ -220,23 +241,25 @@ private
   # * For the players who are in the lobby: [iroom, nick]
   # * For the player who left:              room snapshot
   def room_leave(player, arg)
-    if player.room == @lobby
-      $LOGGER.debug('@channel: room_leave: No room to leave')
-      player.close_connection
-      return
+    @mutex_self.synchronize do
+      if player.room == @lobby
+        $LOGGER.debug('@channel: room_leave: No room to leave')
+        player.close_connection
+        return
+      end
+
+      iroom = @rooms.index(player.room)
+
+      player.room.process(player, Player::CMD_ROOM_LEAVE, nil)
+      if player.room.nicks.empty?
+        @rooms.delete_at(iroom)
+      end
+
+      @lobby.process(player, Player::CMD_ROOM_LEAVE, iroom)
+
+      player.room = @lobby
+      player.invoke(Player::CMD_ROOM_LEAVE, snapshot)
     end
-
-    iroom = @rooms.index(player.room)
-
-    player.room.process(player, Player::CMD_ROOM_LEAVE, nil)
-    if player.room.nicks.empty?
-      @rooms.delete_at(iroom)
-    end
-
-    @lobby.process(player, Player::CMD_ROOM_LEAVE, iroom)
-
-    player.room = @lobby
-    player.invoke(Player::CMD_ROOM_LEAVE, snapshot)
   end
 
   # out: [[nicks in lobby], [nicks in room0], [nicks in room1]...]
