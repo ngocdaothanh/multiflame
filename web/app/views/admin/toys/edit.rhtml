@@ -9,7 +9,7 @@
       <td><%= file_field_tag 'toy', :id => nil %></td>
       <th><%= _('Toy name') %></th>
     </tr>
-<% LOCALES.each do |l| %>
+<% CONFIG[:locales].each do |l| %>
     <tr>
       <th><%= l %>.mo</th>
       <td><%= file_field_tag "mo_#{l}", :id => nil %></td>

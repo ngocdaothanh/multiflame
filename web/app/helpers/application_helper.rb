@@ -3,7 +3,7 @@ module ApplicationHelper
   def flags_to_locales
     ret = ''
     destination = @flag_destination || url_for
-    LOCALES.each do |l|
+    CONFIG[:locales].each do |l|
       ret << "<div>#{link_to image_tag("flags/#{l}.png", :alt => ''), "#{destination}?lang=#{l}"}</div>"
     end
     ret

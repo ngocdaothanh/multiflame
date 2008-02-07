@@ -12,7 +12,7 @@
       <th>container.swf</th>
       <td><%= file_field_tag 'container', :id => nil %></td>
     </tr>
-<% locales = LOCALES.dup; locales.delete('en') %>
+<% locales = CONFIG[:locales].dup; locales.delete('en') %>
 <% locales.each do |l| %>
     <tr>
       <th><%= l %>.mo</th>

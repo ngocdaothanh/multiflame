@@ -9,6 +9,8 @@ class Captcha
   JIGGLE = 15
   WOBBLE = 20
 
+  attr_writer :salt
+
   def initialize
     @salt = 'xxx'
   end

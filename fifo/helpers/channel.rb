@@ -87,6 +87,15 @@ class Channel
     @@channels.keys
   end
 
+  # Returns {channel_key => remote_ips} of all channels.
+  def self.remote_ips
+    ret = {}
+    @@channels.each do |k, c|
+      ret[k] = c.remote_ips
+    end
+    ret
+  end
+
   # ----------------------------------------------------------------------------
 
   def initialize(key, players, container_version, game_version, batch_game)
@@ -158,6 +167,14 @@ class Channel
     end
   end
 
+  def remote_ips
+    ret = @lobby.remote_ips
+    @rooms.each do |r|
+      ret.concat(r.remote_ips)
+    end
+    ret
+  end
+
 private
 
   def logout(player)
@@ -175,6 +192,7 @@ private
     end
 
     if @rooms.empty? and @lobby.nicks.empty?
+      Proxy.instance.fm_channel_delete(@key)
       @@channels.delete(@key)
     end
   end

@@ -31,6 +31,10 @@ class Lobby
     @players.map { |p| p.nick }
   end
 
+  def remote_ips
+    @players.map { |p| p.remote_ip }
+  end
+
 private
 
   def login(player, arg)

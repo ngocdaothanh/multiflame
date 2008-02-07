@@ -100,9 +100,12 @@ EOF
 
   # IP of the container
   def remote_ip
+    return @remote_ip if @remote_ip
+
     a = get_peername[2,6].unpack("nC4")
     a.delete_at(0)
-    a.join('.')
+    @remote_ip = a.join('.')
+    @remote_ip
   end
 
 private

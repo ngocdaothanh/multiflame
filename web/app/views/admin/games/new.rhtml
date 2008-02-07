@@ -14,7 +14,7 @@
       <td>&nbsp;</td>
       <td><%= text_field_tag "name_en", (@game.nil?)? '' : @game.name('en') %></td>
     </tr>
-<% locales = LOCALES.dup; locales.delete('en') %>
+<% locales = CONFIG[:locales].dup; locales.delete('en') %>
 <% locales.each do |l| %>
     <tr>
       <th><%= l %>.mo</th>

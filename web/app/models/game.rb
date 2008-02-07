@@ -9,14 +9,14 @@ class Game < ActiveRecord::Base
   # Validates and creates game, returns false if there is error
   def upload_and_create(params)
     files = {'game' => 'game.swf'}
-    locales = LOCALES.dup;
+    locales = CONFIG[:locales].dup;
     locales.delete('en')
     locales.each do |l|
       files["mo_#{l}"] = "#{l}.mo"
     end
 
     self.names = names = {}
-    LOCALES.each do |l|
+    CONFIG[:locales].each do |l|
       names[l] = params["name_#{l}"]
       self.names[l] = names[l] unless names[l].blank?
     end
@@ -49,12 +49,12 @@ class Game < ActiveRecord::Base
   # Validates and updates game, returns false if there is error
   def upload_and_update(params)
     files = {'game' => 'game.swf'}
-    LOCALES.each do |l|
+    CONFIG[:locales].each do |l|
       files["mo_#{l}"] = "#{l}.mo"
     end
 
     self.names = names = {}
-    LOCALES.each do |l|
+    CONFIG[:locales].each do |l|
       names[l] = params["name_#{l}"]
       self.names[l] = names[l] unless names[l].blank?
     end

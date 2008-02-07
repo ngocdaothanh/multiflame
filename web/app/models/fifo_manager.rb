@@ -5,6 +5,7 @@ class FifoManager
 
   CMD_WM_WHICH_FIFO       = 0
   CMD_WM_CG_RELOAD        = 1
+  CMD_WM_SNAPSHOT_CREATE  = 2
 
   def self.channel_key(game_id, channel_name)
     "#{game_id}/#{channel_name}"
@@ -30,14 +31,13 @@ class FifoManager
   end
 
   def on_result(cmd, result)
-p result
     @result_or_error = :result
     @result = result
     close
   end
 
   def on_error(cmd, error)
-puts error.backtrace.join("\n")
+    logger.error.backtrace.join("\n")
     @result_or_error = :error
     @error = error
     close

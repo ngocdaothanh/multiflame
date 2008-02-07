@@ -64,6 +64,10 @@ class Room
     @players.map { |p| p.nick }
   end
 
+  def remote_ips
+    @players.map { |p| p.remote_ip }
+  end
+
 private
 
   def will_close(player, arg)

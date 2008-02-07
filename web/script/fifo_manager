@@ -3,22 +3,24 @@
 abort "Usage: #{__FILE__} <environment>" unless ARGV[0]
 
 require 'rubygems'
-require 'revent'
+require 'activerecord'
 require 'yaml'
+require 'revent'
 require 'zlib'
 
-require File.dirname(__FILE__) + '/../config/boot'
-require 'actionmailer'
-require File.dirname(__FILE__) + '/../config/initializers/config'
-require 'activerecord'
+RAILS_ROOT = "#{File.dirname(__FILE__)}/.."
+require "#{RAILS_ROOT}/config/initializers/config"
+require "#{RAILS_ROOT}/app/models/game"
+require "#{RAILS_ROOT}/app/models/game_container"
+require "#{RAILS_ROOT}/app/models/stat"
 
-require File.dirname(__FILE__) + '/../app/models/game'
-require File.dirname(__FILE__) + '/../app/models/game_container'
-require File.dirname(__FILE__) + '/../app/models/stat'
-
-database_yaml = YAML.load_file("config/database.yml")
+database_yaml = YAML.load_file("#{RAILS_ROOT}/config/database.yml")
 abort "Environment '#{ARGV[0]}' not found" unless database_config = database_yaml[ARGV[0]]
+
+$LOGGER = Logger.new(STDOUT, 'daily')
+
 ActiveRecord::Base.establish_connection(database_config)
+ActiveRecord::Base.logger = $LOGGER
 
 # ------------------------------------------------------------------------------
 
@@ -37,16 +39,20 @@ class FifoManager
   # Web -> manager
   CMD_WM_WHICH_FIFO       = 0
   CMD_WM_CG_RELOAD        = 1
+  CMD_WM_SNAPSHOT_CREATE  = 2
 
   # Manager -> fifo
-  CMD_MF_READY            = 0
+  CMD_MF_READY_SET        = 0
   CMD_MF_CG_SET           = 1
-  CMD_MF_CAPTCHA_SALT_SET = 2
+  CMD_MF_REMOTE_IPS_GET   = 2
+  CMD_MF_CAPTCHA_SALT_SET = 3
 
   # Fifo -> manager
   CMD_FM_CHANNEL_KEYS_SET = 10
   CMD_FM_CHANNEL_CREATE   = 11
   CMD_FM_CHANNEL_DELETE   = 12
+
+  SALT_LENGTH = 6
 
   def initialize
     @mutex_channel_keys = Mutex.new
@@ -56,6 +62,7 @@ class FifoManager
     @on_calls = {
       CMD_WM_WHICH_FIFO       => method(:on_call_wm_which_fifo),
       CMD_WM_CG_RELOAD        => method(:on_call_wm_cg_reload),
+      CMD_WM_SNAPSHOT_CREATE  => method(:on_call_wm_snapshot_create),
       CMD_FM_CHANNEL_KEYS_SET => method(:on_call_fm_channel_keys_set),
       CMD_FM_CHANNEL_CREATE   => method(:on_call_fm_channel_create),
       CMD_FM_CHANNEL_DELETE   => method(:on_call_fm_channel_delete)
@@ -64,11 +71,15 @@ class FifoManager
     cg_reload
     EventMachine::add_timer(CONFIG[:fifo_manager_startup_delay]) do
       @ready = true
-      clients.each { |fifo| mf_ready(fifo) }
+      clients.each { |fifo| mf_ready_set(fifo) }
+    end
+
+    EventMachine::add_timer(17) do
+      mf_captcha_salt_set
     end
 
     EventMachine::add_periodic_timer(CONFIG[:fifo_manager_snapshot_interval]*60) do
-      create_snapshot
+      on_call_wm_snapshot_create(nil, nil)
     end
 
     start_server(CONFIG[:fifo_manager_host], CONFIG[:fifo_manager_port])
@@ -76,7 +87,7 @@ class FifoManager
 
   def on_connect(client)
     mf_cg_set(client)
-    mf_ready(client) if @ready
+    mf_ready_set(client) if @ready
   end
 
   def on_close(client)
@@ -90,10 +101,15 @@ class FifoManager
     m.call(client, arg)
   end
 
-  def on_result(client, cmd, error)
+  def on_result(client, cmd, result)
+    if cmd == CMD_MF_REMOTE_IPS_GET
+      on_result_mf_remote_ips_get(client, result)
+    end
   end
 
   def on_error(client, cmd, error)
+    backtrace = error.backtrace.join("\n")
+    $LOGGER.error("cmd = #{cmd}, error = #{backtrace}")
   end
 
 private
@@ -143,7 +159,7 @@ private
     @cg = {:c => {:version => container.updated_at.to_i}, :g => {}}
     games.each do |g|
       @cg[:g][g.id] = {:version => g.updated_at.to_i, :names => {}}
-      LOCALES.each do |l|
+      CONFIG[:locales].each do |l|
         @cg[:g][g.id][:names][l] = g.name(l)
       end
     end
@@ -198,16 +214,20 @@ private
 
   # Manager -> fifos -----------------------------------------------------------
 
-  def mf_ready(fifo)
-    fifo.call(CMD_MF_READY, nil)
+  def mf_ready_set(fifo)
+    fifo.call(CMD_MF_READY_SET, nil)
   end
 
   def mf_cg_set(fifo)
     fifo.call(CMD_MF_CG_SET, @cg)
   end
 
-  def mf_captcha_salt_set(fifo)
-    fifo.call(CMD_MF_CAPTCHA_SALT_SET, @captcha_salt)
+  def mf_captcha_salt_set
+    chars = ('A'..'Z').to_a
+    salt_array = []
+    1.upto(SALT_LENGTH) { salt_array << chars[rand(chars.length)] }
+    salt = salt_array.join('')
+    clients.each { |fifo| fifo.call(CMD_MF_CAPTCHA_SALT_SET, salt) }
   end
 
   def channel_key(game_id, channel_name)
@@ -216,25 +236,27 @@ private
 
   # ----------------------------------------------------------------------------
 
-  def prepare_snapshot
-    ret = {}
-    @channel_keys.each do |fifo, keys|
-      k = {:host => fifo.remote_ip, :port => fifo.property[:port]}
-      ret[k] = {:players_limit => fifo.property[:players_limit], :keys => keys}
-    end
-    ret
+  # Returns 0 if there's no fifo, nil if the snapshot will be written to DB.
+  def on_call_wm_snapshot_create(client, arg)
+    return 0 if !client.nil? and clients.size == 1
+
+    @remote_ips_got = {}
+    clients.each { |fifo| fifo.call(CMD_MF_REMOTE_IPS_GET, nil) }
+    nil
   end
 
-  def create_snapshot
+  def on_result_mf_remote_ips_get(fifo, result)
+    k = {:host => fifo.remote_ip, :port => fifo.property[:port], :players_limit => fifo.property[:players_limit]}
+    @remote_ips_got[k] = result
+    return if @remote_ips_got.size < clients.size
+
     s = Stat.new
-    s.snapshot = Zlib::Deflate.deflate(Marshal.dump(prepare_snapshot))
+    s.snapshot = Zlib::Deflate.deflate(Marshal.dump(@remote_ips_got))
     s.save
   end
 end
 
 # ------------------------------------------------------------------------------
-
-$LOGGER = Logger.new(STDOUT, 'daily')
 
 EventMachine::run do
   FifoManager.new

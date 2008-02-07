@@ -1,3 +1,13 @@
+<% unless flash[:notice].nil? %><p class="notice"><%= flash[:notice] %></p><% end %>
+
+<p><%= _('Latest data') %>: <%= distance_of_time_in_words(@created_at.to_i, Time.now.to_i) %></p>
+
+<%= form_tag %>
+  <input type="submit" value="<%= _('Refresh') %>" />
+</form>
+
+<br />
+
 <table class="data">
   <tr>
     <th><%= _('Host') %></th>
@@ -8,11 +18,11 @@
   </tr>
 <% @snapshot.each do |k, v| %>
   <tr>
-    <td><%= link_to k[:host], admin_stat_path("#{k[:host].delete('.')}#{k[:port]}") %></td>
+    <td><%= (v.size == 0)? k[:host] : link_to(k[:host], admin_stat_path("#{k[:host].delete('.')}#{k[:port]}")) %></td>
     <td><%= k[:port] %></td>
-    <td><%= v[:players_limit] %></td>
-    <td><%= v[:keys].size %></td>
-    <td></td>
+    <td><%= k[:players_limit] %></td>
+    <td><%= v.size %></td>
+    <td><%= @num_players %></td>
   </tr>
 <% end %>
 </table>

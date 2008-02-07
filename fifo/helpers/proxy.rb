@@ -9,20 +9,20 @@ class Proxy
   CMD_FM_CHANNEL_DELETE   = 12
 
   # Manager -> fifo
-  CMD_MF_READY            = 0
+  CMD_MF_READY_SET        = 0
   CMD_MF_CG_SET           = 1
-  CMD_MF_CAPTCHA_SALT_SET = 2
+  CMD_MF_REMOTE_IPS_GET   = 2
+  CMD_MF_CAPTCHA_SALT_SET = 3
 
   def initialize
     @on_calls = {
-      CMD_MF_READY            => method(:on_call_mf_ready),
+      CMD_MF_READY_SET        => method(:on_call_mf_ready_set),
       CMD_MF_CG_SET           => method(:on_call_mf_cg_set),
+      CMD_MF_REMOTE_IPS_GET   => method(:on_call_mf_remote_ips_get),
       CMD_MF_CAPTCHA_SALT_SET => method(:on_call_mf_captcha_salt_set)
     }
     @on_results = {
-      CMD_FM_CHANNEL_KEYS_SET => method(:on_result),
-      CMD_FM_CHANNEL_CREATE   => method(:on_result_fm_channel_create),
-      CMD_FM_CHANNEL_DELETE   => method(:on_result)
+      CMD_FM_CHANNEL_CREATE => method(:on_result_fm_channel_create)
     }
 
     on_close
@@ -44,12 +44,12 @@ class Proxy
 
   def on_result(cmd, result)
     m = @on_results[cmd]
-    m.call(result)
+    m.call(result) unless m.nil?
   end
 
   def on_error(cmd, error)
     backtrace = error.backtrace.join("\n")
-    $LOGGER.error("proxy error: cmd = #{cmd}, error = #{backtrace}")
+    $LOGGER.error("@proxy: cmd = #{cmd}, error = #{backtrace}")
   end
 
   # ----------------------------------------------------------------------------
@@ -105,8 +105,9 @@ class Proxy
 
   # Manager -> fifo ------------------------------------------------------------
 
-  def on_call_mf_ready(arg)
+  def on_call_mf_ready_set(arg)
     @manager_ready = true
+    nil
   end
 
   def on_call_mf_cg_set(arg)
@@ -114,7 +115,12 @@ class Proxy
     nil
   end
 
+  def on_call_mf_remote_ips_get(arg)
+    Channel.remote_ips
+  end
+
   def on_call_mf_captcha_salt_set(arg)
+    Captcha.instance.salt = arg
     nil
   end
 end

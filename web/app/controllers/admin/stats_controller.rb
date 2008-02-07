@@ -5,13 +5,37 @@ module Admin
 
     def index
       stat = Stat.find(:first, :order => 'created_at DESC')
+      if stat.nil?
+        render :text => _('No data yet'), :layout => true
+        return
+      end
+      @created_at = stat.created_at
       @snapshot = stat.unzipped_snapshot
+      @num_players = @snapshot.values.inject(0) { |sum, a| sum += a.size }
+    end
+
+    def create
+      fm = FifoManager.new(FifoManager::CMD_WM_SNAPSHOT_CREATE, nil)
+      if fm.result_or_error == :result
+        if fm.result == 0
+          flash[:notice] = _('No fifo for now')
+        else
+          sleep(3)
+        end
+      else
+        flash[:notice] = _('Error creating new snapshot')
+      end
+      redirect_to(:action => 'index')
     end
 
     def show
-      # Search back the selected host
+      # Search back the selected fifo
       hostport = params[:id]
       stat = Stat.find(:first, :order => 'created_at DESC')
+      if stat.nil?
+        redirect_to(:action => 'index')
+        return
+      end
       snapshot = stat.unzipped_snapshot
       @fifo = nil
       snapshot.each_key do |k|
@@ -25,16 +49,19 @@ module Admin
         return
       end
 
+      @created_at = stat.created_at
+
       # Take out game -> channel names
-      keys = snapshot[@fifo][:keys].sort
+      key_ips = snapshot[@fifo]
+      keys = key_ips.keys.sort
       game, channel_name = parse_channel_key(keys[0])
-      @gc = [{:game => game, :channel_names => [channel_name]}]
+      @gc = [{:game => game, :name_nums => [{:name => channel_name, :num => key_ips[keys[0]].size}]}]
       (1...keys.size).each do |i|
         game, channel_name = parse_channel_key(keys[i])
         if game.id == @gc[@gc.size - 1][:game].id
-          @gc[@gc.size - 1][:channel_names] << channel_name
+          @gc[@gc.size - 1][:name_nums] << {:name => channel_name, :num => key_ips[keys[i]].size}
         else
-          @gc << {:game => game, :channel_names => [channel_name]}
+          @gc << {:game => game, :name_nums => [{:name => channel_name, :num => key_ips[keys[0]].size}]}
         end
       end
     end
