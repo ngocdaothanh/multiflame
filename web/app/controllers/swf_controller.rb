@@ -9,11 +9,11 @@ class SwfController < ApplicationController
 
     fm = FifoManager.new(FifoManager::CMD_WM_WHICH_FIFO,
       FifoManager.channel_key(game.id, params[:channel]))
-    if fm.result_or_error == :result
+    if !fm.nil? and fm.result_or_error == :result and !fm.result.nil?
       host = fm.result[1]
       port = fm.result[2]
     else
-      host = 0
+      host = "0"
       port = 0
     end
 
