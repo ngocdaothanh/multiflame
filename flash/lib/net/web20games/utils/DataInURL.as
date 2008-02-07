@@ -1,13 +1,32 @@
 ﻿package net.web20games.utils {
+	import flash.net.URLVariables;
+
 	public class DataInURL {
+		/**
+		 * input -> unescape URL -> decode base64 -> output
+		 */
 		public static function encode(str:String):String {
+			var v:URLVariables = new URLVariables();
+			v.x = str;
+			var ret:String = v.toString();
+			ret = ret.slice(2);  // Remove "x="
+
 			var encoder:DataInURL = new DataInURL();
-			return encoder.encodeBase64(str);
+			ret = encoder.encodeBase64(ret);
+			ret = StringUtil.trim(ret);
+			return ret;
 		}
 
+		/**
+		 * input -> decode base64 -> unescape URL -> output
+		 */
 		public static function decode(str:String):String {
 			var decoder:DataInURL = new DataInURL();
-			return decoder.decodeBase64(str);
+			var ret:String = decoder.decodeBase64(str);
+
+			var v:URLVariables = new URLVariables("x=" + ret);
+			ret = v.x;
+			return ret;
 		}
 
 		private static  var _endOfInput = -1;

@@ -126,7 +126,7 @@ private
       # Take out the fifo the is handling this channel
       key = arg
       fifos = @channel_keys.each do |f, keys|
-        return [key, f.remote_ip, f.property[:port]] if keys.include?(key)
+        return [key, f.property[:swf_host], f.property[:swf_port]] if keys.include?(key)
       end
 
       # Take out the the emptiest fifo
@@ -141,7 +141,7 @@ private
           max = a
         end
       end
-      return [key, max_fifo.remote_ip, max_fifo.property[:port]]
+      return [key, max_fifo.property[:swf_host], max_fifo.property[:swf_port]]
     end
   end
 
@@ -186,8 +186,8 @@ private
       host = port = nil
       @channel_keys.each do |f, keys|
         if keys.include?(key)
-          host = f.remote_ip
-          port = f.property[:port]
+          host = f.property[:swf_host]
+          port = f.property[:swf_port]
           break
         end
       end
@@ -195,7 +195,7 @@ private
       if host.nil?
         fifo.property[:players_available] -= 1
         @channel_keys[fifo] << key
-      elsif fifo.remote_ip == host and fifo.property[:port] == port
+      elsif fifo.property[:swf_host] == host and fifo.property[:swf_port] == port
         host = nil
         port = nil
       end
@@ -246,7 +246,7 @@ private
   end
 
   def on_result_mf_remote_ips_get(fifo, result)
-    k = {:host => fifo.remote_ip, :port => fifo.property[:port], :players_limit => fifo.property[:players_limit]}
+    k = {:host => fifo.property[:swf_host], :port => fifo.property[:swf_port], :players_limit => fifo.property[:players_limit]}
     @remote_ips_got[k] = result
     return if @remote_ips_got.size < clients.size
 

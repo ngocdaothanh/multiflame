@@ -19,12 +19,14 @@ class SwfController < ApplicationController
 
     redirect_to game_container_with_versions_path(
       :id                => game.id,
-      :channel           => Base64.b64encode(params[:channel]).strip,
+      :channel           => Base64.b64encode(CGI.escape(params[:channel])).strip,
       :locale            => params[:locale],
       :container_version => game_container.updated_at.to_i,
       :game_version      => game.updated_at.to_i,
-      :h                 => Base64.b64encode(host).strip,
-      :p                 => port
+
+      # Not "host" and "port" to avoid conflict with Rails
+      :h                 => Base64.b64encode(CGI.escape(host)).strip,
+      :p                 => Base64.b64encode(port.to_s).strip
     )
   end
 

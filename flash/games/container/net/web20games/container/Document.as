@@ -58,7 +58,7 @@
 				containerVersion = int(a[7]);
 				gameVersion      = int(a[8]);
 				host             = DataInURL.decode(a[9]);
-				port             = int(a[10]);
+				port             = int(DataInURL.decode(a[10]));
 			}
 			_channel.broadcastGameInfoLocal(id, channel, locale, containerVersion, gameVersion, host, port);
 		}

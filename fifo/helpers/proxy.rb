@@ -87,7 +87,7 @@ class Proxy
   end
 
   def fm_channel_keys_set
-    property = {:port => CONFIG[:port], :players_limit => Stats.instance.players_limit}
+    property = {:swf_host => CONFIG[:swf_host], :swf_port => CONFIG[:swf_port], :players_limit => Stats.instance.players_limit}
     call(CMD_FM_CHANNEL_KEYS_SET, {:property => property, :channel_keys => Channel.keys})
   end
 
