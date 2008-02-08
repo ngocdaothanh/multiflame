@@ -26,8 +26,8 @@
 			_nick1.defaultTextFormat = format;
 			_nick0.selectable = false;
 			_nick1.selectable = false;
-			_nick0.text = _("Black player");
-			_nick1.text = _("White player");
+			_nick0.text = "";
+			_nick1.text = "";
 
 			var p:Piece;
 

@@ -138,7 +138,7 @@
 				_statusLbl.htmlText = _("Wrong nick or password");
 				break;
 			case LoginoutEvent.NOT_FRIENDS:
-				_statusLbl.htmlText = StringUtil.substitute(_("This channel is private.<br />You mus be a friend of {0} in order to login."), _channel.channel);
+				_statusLbl.htmlText = StringUtil.substitute(_("This channel is private.<br />You must be a friend of {0} in order to login."), _channel.channel);
 				break;
 			}
 

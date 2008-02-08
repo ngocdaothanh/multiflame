@@ -1,6 +1,7 @@
 ﻿package {
 	import flash.display.Sprite;
 	import flash.text.TextField;
+	import flash.text.TextFormat;
 
 	public class IntroSprite extends Sprite {
 		private var _game:Game;
@@ -8,12 +9,19 @@
 		public function IntroSprite(game:Game):void {
 			_game = game;
 
+			var format:TextFormat = new TextFormat();
+			format.font = "_sans";
+			format.size = 12;
+
 			var text:TextField = new TextField();
+			text.defaultTextFormat = format;
 			text.multiline = true;
-			text.width = 500;
-			text.height = 500;
+			text.x = 10;
+			text.y = 10;
+			text.width = 480;
+			text.height = 480;
 			text.wordWrap = true;
-			text.htmlText = _("Tic-tac-toe, also called noughts and crosses, hugs and kisses, and many other names, is a pencil-and-paper game for two players, O and X, who take turns to mark the spaces in a 3×3 grid. The player who succeeds in placing three respective marks in a horizontal, vertical or diagonal row wins the game.");
+			text.htmlText = _("Please see <a href='http://en.wikipedia.org/wiki/Reversi'>http://en.wikipedia.org/wiki/Reversi</a>");
 			addChild(text);
 		}
 
