@@ -46,6 +46,7 @@ class Channel
 
     player.nick = nick
     key = self.key(game_id, channel_name)
+    channel = nil
     @@mutex_channels.synchronize do
       channel = @@channels[key]
     end

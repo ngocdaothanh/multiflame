@@ -64,9 +64,7 @@ class Room
   end
 
   def nicks
-    @mutex_self.synchronize do
-      return @players.map { |p| p.nick }
-    end
+    return @players.map { |p| p.nick }
   end
 
   def remote_ips
