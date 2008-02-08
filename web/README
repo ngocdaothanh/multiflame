@@ -1,8 +1,8 @@
 == Requirements
 
 * Rails 2+
-* RubyGettext
-* For Windows: Install poedit and add its bin directory to system path
+* RubyGettext (for Windows: install poedit and add its bin directory to system path)
+* Revent
 
 == Installation
 

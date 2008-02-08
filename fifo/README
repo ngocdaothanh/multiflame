@@ -4,5 +4,7 @@
 http://rubyforge.org/projects/rmagick/
 * EventMachine: for creating server
 gem install eventmachine
+* Revent:
+gem install revent
 * JSON: for serializing and deserializing text data between games and the server
 gem install json
