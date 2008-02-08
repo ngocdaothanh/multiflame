@@ -240,17 +240,22 @@ private
   # client is not nil if this method is strigged by the web.
   # Returns 0 if there's no fifo, nil if the snapshot will be written to DB.
   def on_call_wm_snapshot_create(client, arg)
-    return 0 if !client.nil? and clients.size == 1
+    if !client.nil?
+      @num_fifos = clients.size - 1
+      return 0 if @num_fifos == 0
+    end
 
     @remote_ips_got = {}
-    clients.each { |fifo| fifo.call(CMD_MF_REMOTE_IPS_GET, nil) }
+    clients.each do |fifo|
+      fifo.call(CMD_MF_REMOTE_IPS_GET, nil) if fifo != client
+    end
     nil
   end
 
   def on_result_mf_remote_ips_get(fifo, result)
     k = {:host => fifo.property[:swf_host], :port => fifo.property[:swf_port], :players_limit => fifo.property[:players_limit]}
     @remote_ips_got[k] = result
-    return if @remote_ips_got.size < clients.size
+    return if @remote_ips_got.size < @num_fifos
 
     s = Stat.new
     s.snapshot = Zlib::Deflate.deflate(Marshal.dump(@remote_ips_got))
