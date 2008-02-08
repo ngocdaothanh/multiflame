@@ -5,7 +5,7 @@ abort "Usage: #{__FILE__} <environment>" unless ARGV[0]
 require 'rubygems'
 require 'activerecord'
 require 'yaml'
-require 'revent'
+require 'revent/r_r'
 require 'zlib'
 
 RAILS_ROOT = "#{File.dirname(__FILE__)}/.."
@@ -34,7 +34,7 @@ ActiveRecord::Base.logger = $LOGGER
 # manager will wait ~1min for all the fifos to connect and report their status
 # (list of channels they are serving...).
 class FifoManager
-  include ReventServer
+  include Revent::RRServer
 
   # Web -> manager
   CMD_WM_WHICH_FIFO       = 0
@@ -54,7 +54,7 @@ class FifoManager
 
   SALT_LENGTH = 6
 
-  def initialize
+  def initialize(host, port)
     @mutex_channel_keys = Mutex.new
     @channel_keys = {}
 
@@ -83,7 +83,7 @@ class FifoManager
       on_call_wm_snapshot_create(nil, nil)
     end
 
-    start_server(CONFIG[:fifo_manager_host], CONFIG[:fifo_manager_port])
+    start_server(host, port)
   end
 
   def on_connect(client)
@@ -97,19 +97,19 @@ class FifoManager
     end
   end
 
-  def on_call(client, cmd, arg)
+  def on_call(client, cmd, value)
     m = @on_calls[cmd]
-    m.call(client, arg)
+    m.call(client, value)
   end
 
-  def on_result(client, cmd, result)
+  def on_result(client, cmd, value)
     if cmd == CMD_MF_REMOTE_IPS_GET
-      on_result_mf_remote_ips_get(client, result)
+      on_result_mf_remote_ips_get(client, value)
     end
   end
 
-  def on_error(client, cmd, error)
-    backtrace = error.backtrace.join("\n")
+  def on_error(client, cmd, value)
+    backtrace = value.backtrace.join("\n")
     $LOGGER.error("cmd = #{cmd}, error = #{backtrace}")
   end
 
@@ -120,12 +120,12 @@ private
   # Which fifo should handle a certain channel?
   # Input: {:game_id, :channel_name}
   # Output: {:game_id, :channel_name, :host, :port}
-  def on_call_wm_which_fifo(fifo, arg)
+  def on_call_wm_which_fifo(fifo, value)
     @mutex_channel_keys.synchronize do
       return nil if @channel_keys.empty?
 
       # Take out the fifo the is handling this channel
-      key = arg
+      key = value
       fifos = @channel_keys.each do |f, keys|
         return [key, f.property[:swf_host], f.property[:swf_port]] if keys.include?(key)
       end
@@ -146,7 +146,7 @@ private
     end
   end
 
-  def on_call_wm_cg_reload(web, arg)
+  def on_call_wm_cg_reload(web, value)
     cg_reload
     clients.each { |f| mf_cg_set(f) }
     nil
@@ -169,11 +169,11 @@ private
   # Fifos -> manager -----------------------------------------------------------
 
   # The fifos call this right after connecting to the manager.
-  def on_call_fm_channel_keys_set(fifo, arg)
+  def on_call_fm_channel_keys_set(fifo, value)
     @mutex_channel_keys.synchronize do
-      fifo.property = arg[:property]
+      fifo.property = value[:property]
       fifo.property[:players_available] = fifo.property[:players_limit]
-      @channel_keys[fifo] = arg[:channel_keys]
+      @channel_keys[fifo] = value[:channel_keys]
     end
     nil
   end
@@ -181,9 +181,9 @@ private
   # Ask the manager to create a channel. If the channel has already existed, let
   # the fifo know where to redirect the container to.
   # Returns nil if the calling fifo should handle the channel.
-  def on_call_fm_channel_create(fifo, arg)
+  def on_call_fm_channel_create(fifo, value)
     @mutex_channel_keys.synchronize do
-      key = arg
+      key = value
       host = port = nil
       @channel_keys.each do |f, keys|
         if keys.include?(key)
@@ -205,9 +205,9 @@ private
   end
 
   # The channel has been deleted on the fifo.
-  def on_call_fm_channel_delete(fifo, arg)
+  def on_call_fm_channel_delete(fifo, value)
     @mutex_channel_keys.synchronize do
-      key = arg
+      key = value
       @channel_keys[fifo].delete(key)
     end
     nil
@@ -239,7 +239,7 @@ private
 
   # client is not nil if this method is strigged by the web.
   # Returns 0 if there's no fifo, nil if the snapshot will be written to DB.
-  def on_call_wm_snapshot_create(client, arg)
+  def on_call_wm_snapshot_create(client, value)
     if !client.nil?
       @num_fifos = clients.size - 1
       return 0 if @num_fifos == 0
@@ -252,9 +252,9 @@ private
     nil
   end
 
-  def on_result_mf_remote_ips_get(fifo, result)
+  def on_result_mf_remote_ips_get(fifo, value)
     k = {:host => fifo.property[:swf_host], :port => fifo.property[:swf_port], :players_limit => fifo.property[:players_limit]}
-    @remote_ips_got[k] = result
+    @remote_ips_got[k] = value
     return if @remote_ips_got.size < @num_fifos
 
     s = Stat.new
@@ -266,6 +266,6 @@ end
 # ------------------------------------------------------------------------------
 
 EventMachine::run do
-  FifoManager.new
+  FifoManager.new(CONFIG[:fifo_manager_host], CONFIG[:fifo_manager_port])
   $LOGGER.info("Fifo manager started on #{CONFIG[:fifo_manager_host]}:#{CONFIG[:fifo_manager_port]}")
 end

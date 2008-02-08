@@ -1,7 +1,7 @@
 # Proxy that talks to the manager.
 class Proxy
   include Singleton
-  include ReventClient
+  include Revent::RRClient
 
   # Fifo -> manager
   CMD_FM_CHANNEL_KEYS_SET = 10
@@ -37,18 +37,18 @@ class Proxy
     reconnect
   end
 
-  def on_call(cmd, arg)
+  def on_call(cmd, value)
     m = @on_calls[cmd]
-    m.call(arg)
+    m.call(value)
   end
 
-  def on_result(cmd, result)
+  def on_result(cmd, value)
     m = @on_results[cmd]
-    m.call(result) unless m.nil?
+    m.call(value) unless m.nil?
   end
 
-  def on_error(cmd, error)
-    backtrace = error.backtrace.join("\n")
+  def on_error(cmd, value)
+    backtrace = value.backtrace.join("\n")
     $LOGGER.error("@proxy: cmd = #{cmd}, error = #{backtrace}")
   end
 
@@ -105,22 +105,22 @@ class Proxy
 
   # Manager -> fifo ------------------------------------------------------------
 
-  def on_call_mf_ready_set(arg)
+  def on_call_mf_ready_set(value)
     @manager_ready = true
     nil
   end
 
-  def on_call_mf_cg_set(arg)
-    @cg = arg
+  def on_call_mf_cg_set(value)
+    @cg = value
     nil
   end
 
-  def on_call_mf_remote_ips_get(arg)
+  def on_call_mf_remote_ips_get(value)
     Channel.remote_ips
   end
 
-  def on_call_mf_captcha_salt_set(arg)
-    Captcha.instance.salt = arg
+  def on_call_mf_captcha_salt_set(value)
+    Captcha.instance.salt = value
     nil
   end
 end

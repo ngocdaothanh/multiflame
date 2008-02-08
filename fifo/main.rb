@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'eventmachine'
-require 'revent'
+require 'revent/r_r'
 require 'json'
 require 'singleton'
 require 'logger'
