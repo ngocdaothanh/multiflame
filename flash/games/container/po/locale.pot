@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-08 08:24+0900\n"
+"POT-Creation-Date: 2008-02-08 10:05+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,17 +20,21 @@ msgstr ""
 msgid "(can be anything)"
 msgstr ""
 
-#: net/web20games/container/ChatDlg.as:135
+#: net/web20games/container/ChatDlg.as:136
 msgid "<b>{0}</b> has logged in"
 msgstr ""
 
-#: net/web20games/container/ChatDlg.as:137
+#: net/web20games/container/ChatDlg.as:138
 msgid "<b>{0}</b> has logged out"
 msgstr ""
 
 #: net/web20games/container/EmbedTab.as:36
 #: net/web20games/container/EmbedTab.as:44
 msgid "Channel name"
+msgstr ""
+
+#: net/web20games/container/ChatDlg.as:55
+msgid "Chat"
 msgstr ""
 
 #: net/web20games/container/LoginTab.as:54
@@ -112,6 +116,10 @@ msgstr ""
 msgid "New game"
 msgstr ""
 
+#: net/web20games/container/LobbyTab.as:29
+msgid "New room"
+msgstr ""
+
 #: net/web20games/container/LoginTab.as:55
 msgid "Nick"
 msgstr ""
@@ -128,7 +136,7 @@ msgid ""
 "you cannot play with them."
 msgstr ""
 
-#: net/web20games/container/ChatDlg.as:192
+#: net/web20games/container/ChatDlg.as:193
 msgid "Players ({0})"
 msgstr ""
 
@@ -154,6 +162,10 @@ msgstr ""
 msgid "Room"
 msgstr ""
 
+#: net/web20games/container/LobbyTab.as:28
+msgid "Rooms:"
+msgstr ""
+
 #: net/web20games/container/TimeoutStatusBar.as:68
 msgid "TIMEOUT"
 msgstr ""
@@ -164,7 +176,7 @@ msgid ""
 "browser's cache."
 msgstr ""
 
-#: net/web20games/container/ChatDlg.as:144
+#: net/web20games/container/ChatDlg.as:145
 msgid ""
 "The server will close in a few minutes for maintenance, sorry for this "
 "inconvenience"
@@ -227,15 +239,15 @@ msgstr ""
 msgid "won"
 msgstr ""
 
-#: net/web20games/container/ChatDlg.as:158
+#: net/web20games/container/ChatDlg.as:159
 msgid "{0} has entered"
 msgstr ""
 
-#: net/web20games/container/ChatDlg.as:153
+#: net/web20games/container/ChatDlg.as:154
 msgid "{0} has entered room #{1}"
 msgstr ""
 
-#: net/web20games/container/ChatDlg.as:163
+#: net/web20games/container/ChatDlg.as:164
 msgid "{0} has left"
 msgstr ""
 

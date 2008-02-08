@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-08 08:24+0900\n"
-"PO-Revision-Date: 2008-02-08 08:25+0900\n"
+"POT-Creation-Date: 2008-02-08 10:05+0900\n"
+"PO-Revision-Date: 2008-02-08 10:05+0900\n"
 "Last-Translator: Ngoc Dao <ngocdaothanh@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,11 +19,11 @@ msgstr ""
 msgid "(can be anything)"
 msgstr "(何でもいいです)"
 
-#: net/web20games/container/ChatDlg.as:135
+#: net/web20games/container/ChatDlg.as:136
 msgid "<b>{0}</b> has logged in"
 msgstr "<b>{0}</b> がログインしました"
 
-#: net/web20games/container/ChatDlg.as:137
+#: net/web20games/container/ChatDlg.as:138
 msgid "<b>{0}</b> has logged out"
 msgstr "<b>{0}</b> がログアウトしました"
 
@@ -31,6 +31,10 @@ msgstr "<b>{0}</b> がログアウトしました"
 #: net/web20games/container/EmbedTab.as:44
 msgid "Channel name"
 msgstr "チャンネル名"
+
+#: net/web20games/container/ChatDlg.as:55
+msgid "Chat"
+msgstr "チャット"
 
 #: net/web20games/container/LoginTab.as:54
 msgid "Code"
@@ -89,7 +93,7 @@ msgstr "ゲームをロードしています..."
 #: net/web20games/container/GameScreen.as:260
 #: net/web20games/container/GameScreen.as:297
 msgid "Lobby"
-msgstr "廊下"
+msgstr "ロビー"
 
 #: net/web20games/container/LoginTab.as:86
 msgid "Logging in..."
@@ -109,6 +113,10 @@ msgstr "他のゲームは {0} にあります。"
 msgid "New game"
 msgstr "新しいゲーム"
 
+#: net/web20games/container/LobbyTab.as:29
+msgid "New room"
+msgstr "新しいルーム"
+
 #: net/web20games/container/LoginTab.as:55
 msgid "Nick"
 msgstr "ニック"
@@ -121,7 +129,7 @@ msgstr "このチャネルにいる人たちが古いバージョンを使って
 msgid "People in this channel are using an older version<br />of this flash file, you cannot play with them."
 msgstr "このチャネルにいる人たちが古いバージョンを使っています<br />のでこのチャネルに参加できません。"
 
-#: net/web20games/container/ChatDlg.as:192
+#: net/web20games/container/ChatDlg.as:193
 msgid "Players ({0})"
 msgstr "プレイヤー ({0})"
 
@@ -147,6 +155,10 @@ msgstr "ゲームを出る"
 msgid "Room"
 msgstr "ルーム"
 
+#: net/web20games/container/LobbyTab.as:28
+msgid "Rooms:"
+msgstr "ルーム："
+
 #: net/web20games/container/TimeoutStatusBar.as:68
 msgid "TIMEOUT"
 msgstr "タイムアウト"
@@ -155,7 +167,7 @@ msgstr "タイムアウト"
 msgid "The game file is old.<br />Please refresh this web page or clean the browser's cache."
 msgstr "ゲームファイルが古いです。<br />このウェブページを更新するかブラウザのキャッシュを削除してください。"
 
-#: net/web20games/container/ChatDlg.as:144
+#: net/web20games/container/ChatDlg.as:145
 msgid "The server will close in a few minutes for maintenance, sorry for this inconvenience"
 msgstr "メンテナンスのためサーバーがしばらくダウンになります。申し訳ございません。"
 
@@ -213,15 +225,15 @@ msgstr "秒/回"
 msgid "won"
 msgstr "勝ち"
 
-#: net/web20games/container/ChatDlg.as:158
+#: net/web20games/container/ChatDlg.as:159
 msgid "{0} has entered"
 msgstr "{0} が出かけた"
 
-#: net/web20games/container/ChatDlg.as:153
+#: net/web20games/container/ChatDlg.as:154
 msgid "{0} has entered room #{1}"
 msgstr "{0} が ルーム #{1} に入室した"
 
-#: net/web20games/container/ChatDlg.as:163
+#: net/web20games/container/ChatDlg.as:164
 msgid "{0} has left"
 msgstr "{0} が出かけた"
 

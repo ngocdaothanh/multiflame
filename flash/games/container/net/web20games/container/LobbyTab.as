@@ -25,6 +25,8 @@
 			if (event.target != this) {
 				return;
 			}
+			_roomsLbl.text = _("Rooms:");
+			_newRoomBtn.label = _("New room");
 		}
 
 		private function onNewRoomClick(event:MouseEvent):void {

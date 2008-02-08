@@ -52,6 +52,7 @@
 			if (event.target != this) {
 				return;
 			}
+			_chatRadio.label = _("Chat");
 			_chatRadio.selected = true;
 			_playerList.x = _chatOutput.x;
 			_playerList.y = _chatOutput.y;

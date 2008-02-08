@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-08 08:24+0900\n"
-"PO-Revision-Date: 2008-02-08 08:24+0900\n"
+"POT-Creation-Date: 2008-02-08 10:05+0900\n"
+"PO-Revision-Date: 2008-02-08 10:05+0900\n"
 "Last-Translator: Ngoc Dao <ngocdaothanh@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,11 +19,11 @@ msgstr ""
 msgid "(can be anything)"
 msgstr "(gì cũng được)"
 
-#: net/web20games/container/ChatDlg.as:135
+#: net/web20games/container/ChatDlg.as:136
 msgid "<b>{0}</b> has logged in"
 msgstr "<b>{0}</b> vừa đăng nhập"
 
-#: net/web20games/container/ChatDlg.as:137
+#: net/web20games/container/ChatDlg.as:138
 msgid "<b>{0}</b> has logged out"
 msgstr "<b>{0}</b> vừa đăng xuất"
 
@@ -31,6 +31,10 @@ msgstr "<b>{0}</b> vừa đăng xuất"
 #: net/web20games/container/EmbedTab.as:44
 msgid "Channel name"
 msgstr "Tên kênh"
+
+#: net/web20games/container/ChatDlg.as:55
+msgid "Chat"
+msgstr "Chat"
 
 #: net/web20games/container/LoginTab.as:54
 msgid "Code"
@@ -109,6 +113,10 @@ msgstr "Còn nhiều game nữa ở {0}"
 msgid "New game"
 msgstr "Game mới"
 
+#: net/web20games/container/LobbyTab.as:29
+msgid "New room"
+msgstr "Phòng mới"
+
 #: net/web20games/container/LoginTab.as:55
 msgid "Nick"
 msgstr "Nick"
@@ -121,7 +129,7 @@ msgstr "Những người trong kênh này đang dùng phiên bản game cũ,<br 
 msgid "People in this channel are using an older version<br />of this flash file, you cannot play with them."
 msgstr "Những người trong kênh này đang dùng phiên bản cũ,<br /> nên bạn không thể chơi với họ."
 
-#: net/web20games/container/ChatDlg.as:192
+#: net/web20games/container/ChatDlg.as:193
 msgid "Players ({0})"
 msgstr "Người chơi ({0})"
 
@@ -147,6 +155,10 @@ msgstr "Rời game"
 msgid "Room"
 msgstr "Phòng"
 
+#: net/web20games/container/LobbyTab.as:28
+msgid "Rooms:"
+msgstr "Phòng:"
+
 #: net/web20games/container/TimeoutStatusBar.as:68
 msgid "TIMEOUT"
 msgstr "HẾT GIỜ"
@@ -155,7 +167,7 @@ msgstr "HẾT GIỜ"
 msgid "The game file is old.<br />Please refresh this web page or clean the browser's cache."
 msgstr "File chứa game đã cũ.<br />Xin refresh trang web này hoặc xóa cache của trình duyệt."
 
-#: net/web20games/container/ChatDlg.as:144
+#: net/web20games/container/ChatDlg.as:145
 msgid "The server will close in a few minutes for maintenance, sorry for this inconvenience"
 msgstr "Server sẽ down trong vài phút nữa để bảo trì, xin lỗi bạn"
 
@@ -213,15 +225,15 @@ msgstr "giây/nước"
 msgid "won"
 msgstr "thắng"
 
-#: net/web20games/container/ChatDlg.as:158
+#: net/web20games/container/ChatDlg.as:159
 msgid "{0} has entered"
 msgstr "{0} đã vào phòng"
 
-#: net/web20games/container/ChatDlg.as:153
+#: net/web20games/container/ChatDlg.as:154
 msgid "{0} has entered room #{1}"
 msgstr "{0} đã vào phòng #{1}"
 
-#: net/web20games/container/ChatDlg.as:163
+#: net/web20games/container/ChatDlg.as:164
 msgid "{0} has left"
 msgstr "{0} đã rời phòng"
 
