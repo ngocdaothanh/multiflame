@@ -32,39 +32,39 @@ class Room
     end
 
     @methods = {
-      Player::CMD_WILL_CLOSE   => method('will_close'),
-      Player::CMD_ROOM_ENTER   => method('enter'),
-      Player::CMD_ROOM_LEAVE   => method('leave'),
-      Player::CMD_CHAT         => method('chat'),
-      Player::CMD_NEW_INIT     => method('new_init'),
-      Player::CMD_NEW_JOIN     => method('new_join'),
-      Player::CMD_NEW_UNJOIN   => method('new_unjoin'),
-      Player::CMD_NEW_TIMEOUT  => method('new_timeout'),
-      Player::CMD_PLAY_MOVE    => method('play_move'),
-      Player::CMD_PLAY_RESIGN  => method('play_resign'),
-      Player::CMD_PLAY_TIMEOUT => method('play_timeout'),
-      Player::CMD_GAME_OVER    => method('game_over'),
-      Player::CMD_RESULT       => method('result')
+      Server::CMD_WILL_CLOSE   => method('will_close'),
+      Server::CMD_ROOM_ENTER   => method('enter'),
+      Server::CMD_ROOM_LEAVE   => method('leave'),
+      Server::CMD_CHAT         => method('chat'),
+      Server::CMD_NEW_INIT     => method('new_init'),
+      Server::CMD_NEW_JOIN     => method('new_join'),
+      Server::CMD_NEW_UNJOIN   => method('new_unjoin'),
+      Server::CMD_NEW_TIMEOUT  => method('new_timeout'),
+      Server::CMD_PLAY_MOVE    => method('play_move'),
+      Server::CMD_PLAY_RESIGN  => method('play_resign'),
+      Server::CMD_PLAY_TIMEOUT => method('play_timeout'),
+      Server::CMD_GAME_OVER    => method('game_over'),
+      Server::CMD_RESULT       => method('result')
     }
 
-    player.room = self
-    player.invoke(Player::CMD_ROOM_ENTER, snapshot)
+    player.property[:room] = self
+    player.call(Server::CMD_ROOM_ENTER, snapshot)
   end
 
-  def process(player, cmd, arg)
+  def process(player, cmd, value)
     @mutex_self.synchronize do
       m = @methods[cmd]
       if m.nil?
         $LOGGER.debug("@lobby: Invalid command: #{cmd}")
         player.close_connection
       else
-        m.call(player, arg)
+        m.call(player, value)
       end
     end
   end
 
   def nicks
-    return @players.map { |p| p.nick }
+    return @players.map { |p| p.property[:nick] }
   end
 
   def remote_ips
@@ -75,26 +75,26 @@ class Room
 
 private
 
-  def will_close(player, arg)
+  def will_close(player, value)
   end
 
   # in: iroom
   # out:
   #   for the player who entered: snapshot
   #   for the others: nick
-  def enter(player, arg)
+  def enter(player, value)
     @players.each do |p|
-      p.invoke(Player::CMD_ROOM_ENTER, player.nick)
+      p.call(Server::CMD_ROOM_ENTER, player.property[:nick])
     end
 
     @players << player
 
-    player.room = self
-    player.invoke(Player::CMD_ROOM_ENTER, snapshot)
+    player.property[:room] = self
+    player.call(Server::CMD_ROOM_ENTER, snapshot)
   end
 
   # out: nick
-  def leave(player, arg)
+  def leave(player, value)
     @players.delete(player)
 
     # Notify joining/playing players (CMD_NEW_UNJOIN or CMD_PLAY_RESIGN)
@@ -108,22 +108,22 @@ private
 
     # Notify all players
     @players.each do |p|
-      p.invoke(Player::CMD_ROOM_LEAVE, player.nick)
+      p.call(Server::CMD_ROOM_LEAVE, player.property[:nick])
     end
   end
 
-  def chat(player, arg)
-    msg = arg
+  def chat(player, value)
+    msg = value
     index = @players.index(player)
     @players.each do |p|
-      p.invoke(Player::CMD_CHAT, [index, msg])
+      p.call(Server::CMD_CHAT, [index, msg])
     end
   end
 
-  def new_init(player, arg)
+  def new_init(player, value)
     return if @state != NEWABLE
 
-    a_base_config = arg[0]
+    a_base_config = value[0]
     @base_config = {
       :n_players    => a_base_config[0].to_i,
       :move_sec => a_base_config[1].to_i,
@@ -137,15 +137,15 @@ private
 
     @state = NEW
     @new_created_at = Time.now
-    @extended_config = arg[1]
+    @extended_config = value[1]
     @playing_players0 = [player]
 
     @players.each do |p|
-      p.invoke(Player::CMD_NEW_INIT, [player.nick, a_base_config, @extended_config])
+      p.call(Server::CMD_NEW_INIT, [player.property[:nick], a_base_config, @extended_config])
     end
   end
 
-  def new_join(player, arg)
+  def new_join(player, value)
     return if @state != NEW
     if @playing_players0.include?(player)
       player.close_connection
@@ -164,11 +164,11 @@ private
     end
 
     @players.each do |p|
-      p.invoke(Player::CMD_NEW_JOIN, player.nick)
+      p.call(Server::CMD_NEW_JOIN, player.property[:nick])
     end
   end
 
-  def new_unjoin(player, arg)
+  def new_unjoin(player, value)
     return if @state != NEW
     unless @playing_players0.include?(player)
       player.close_connection
@@ -179,11 +179,11 @@ private
     @state = NEWABLE if @playing_players0.empty?
 
     @players.each do |p|
-      p.invoke(Player::CMD_NEW_UNJOIN, player.nick)
+      p.call(Server::CMD_NEW_UNJOIN, player.property[:nick])
     end
   end
 
-  def new_timeout(player, arg)
+  def new_timeout(player, value)
     return if @state != NEW
     if Time.now - @new_created_at < NEW_TIMEOUT
       player.close_connection
@@ -193,11 +193,11 @@ private
     @state = NEWABLE
 
     @players.each do |p|
-      p.invoke(Player::CMD_NEW_TIMEOUT, nil)
+      p.call(Server::CMD_NEW_TIMEOUT, nil)
     end
   end
 
-  def play_move(player, arg)
+  def play_move(player, value)
     return if @state != PLAY
     unless @playing_players.include?(player)
       player.close_connection
@@ -205,14 +205,14 @@ private
     end
 
     index = @playing_players0.index(player)
-    if !play_move_util(index, arg)
+    if !play_move_util(index, value)
       @batch_game ?
-      play_move_batch(index, arg) :
-      play_move_immediate(index, arg)
+      play_move_batch(index, value) :
+      play_move_immediate(index, value)
     end
   end
 
-  def play_resign(player, arg)
+  def play_resign(player, value)
     return if @state != PLAY
     unless @playing_players.include?(player)
       player.close_connection
@@ -229,14 +229,14 @@ private
     a = @play_actions.resign(index)
 
     @players.each do |p|
-      p.invoke(Player::CMD_PLAY_RESIGN, a)
+      p.call(Server::CMD_PLAY_RESIGN, a)
     end
 
     # Broadcast for batch game if the batch is full with the new size
     broadcast_batch if @batch_game and @batch_move.resign(index)
   end
 
-  def play_timeout(player, arg)
+  def play_timeout(player, value)
     return if @state != PLAY
     unless @playing_players.include?(player)
       player.close_connection
@@ -251,7 +251,7 @@ private
     end
   end
 
-  def game_over(player, arg)
+  def game_over(player, value)
     return if @state != PLAY
     unless @playing_players.include?(player)
       player.close_connection
@@ -260,15 +260,15 @@ private
 
     @state = GAME_OVER
     @players.each do |p|
-      p.invoke(Player::CMD_GAME_OVER, nil)
+      p.call(Server::CMD_GAME_OVER, nil)
     end
     judge(player)
   end
 
   # TODO:
-  # * Validate arg, the code should be in each player
+  # * Validate value, the code should be in each player
   # * Judge mutiagently
-  def result(player, arg)
+  def result(player, value)
     return if @state != GAME_OVER
 
     @state = NEWABLE
@@ -278,7 +278,7 @@ private
     @batch_move.clear if @batch_game
 
     @players.each do |p|
-      p.invoke(Player::CMD_RESULT, arg)
+      p.call(Server::CMD_RESULT, value)
     end
   end
 
@@ -296,43 +296,43 @@ private
       nicks,
       a_base_config,
       @extended_config,
-      @playing_players0.map { |p| p.nick },
+      @playing_players0.map { |p| p.property[:nick] },
       @play_actions.to_a
     ]
   end
 
   # @return true if the move is util
-  def play_move_util(index, arg)
-    ret = Utils.instance.check(arg)
+  def play_move_util(index, value)
+    ret = Utils.instance.check(value)
     return false if ret.nil?
 
     a = @play_actions.move_immediate(index, ret)
     @players.each do |p|
-      p.invoke(Player::CMD_PLAY_MOVE, a)
+      p.call(Server::CMD_PLAY_MOVE, a)
     end
     true
   end
 
-  def play_move_immediate(index, arg)
-    a = @play_actions.move_immediate(index, arg)
+  def play_move_immediate(index, value)
+    a = @play_actions.move_immediate(index, value)
     @players.each do |p|
-      p.invoke(Player::CMD_PLAY_MOVE, a)
+      p.call(Server::CMD_PLAY_MOVE, a)
     end
   end
 
-  def play_move_batch(index, arg)
+  def play_move_batch(index, value)
     if @batch_move.include?(index)
       @players[index].close_connection
       return
     end
 
-    broadcast_batch if @batch_move.move(index, arg)
+    broadcast_batch if @batch_move.move(index, value)
   end
 
   def play_timeout_immediate(index)
     a = @play_actions.timeout(index)
     @players.each do |p|
-      p.invoke(Player::CMD_PLAY_TIMEOUT, a)
+      p.call(Server::CMD_PLAY_TIMEOUT, a)
     end
   end
 
@@ -368,7 +368,7 @@ private
     a = @play_actions.move_batch(@batch_move)
     @batch_move.clear
     @players.each do |p|
-      p.invoke(Player::CMD_PLAY_MOVE, a)
+      p.call(Server::CMD_PLAY_MOVE, a)
     end
     @last_batch_move_sent = Time.now
   end
@@ -382,7 +382,7 @@ private
       @base_config[:total_min]
     ]
     judgers.each do |j|
-      j.invoke(Player::CMD_JUDGE, [
+      j.call(Server::CMD_JUDGE, [
         a_base_config,
         @extended_config,
         @play_actions.to_a,

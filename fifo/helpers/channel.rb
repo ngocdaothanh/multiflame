@@ -31,20 +31,20 @@ class Channel
 
   # out: [code, snapshot]
   # Returns the channel this player has logged in
-  def self.login(player, arg)
-    container_version = arg[0].to_i
-    game_id           = arg[1].to_i
-    game_version      = arg[2].to_i
-    channel_name      = arg[3].to_s
-    captcha_code      = arg[4].to_s
-    encrypted_code    = arg[5].to_s
-    nick              = arg[6].to_s.strip
-    batch_game        = (arg[7] == CLASS_BATCH)? true : false
+  def self.login(player, value)
+    container_version = value[0].to_i
+    game_id           = value[1].to_i
+    game_version      = value[2].to_i
+    channel_name      = value[3].to_s
+    captcha_code      = value[4].to_s
+    encrypted_code    = value[5].to_s
+    nick              = value[6].to_s.strip
+    batch_game        = (value[7] == CLASS_BATCH)? true : false
 
     return unless validate(player, container_version, game_id, game_version,
       captcha_code, encrypted_code, nick)
 
-    player.nick = nick
+    player.property[:nick] = nick
     key = self.key(game_id, channel_name)
     channel = nil
     @@mutex_channels.synchronize do
@@ -61,13 +61,13 @@ class Channel
     end
   end
 
-  # Returns login code.
+  # Returns true if the validation was passed.
   def self.validate(player, container_version, game_id, game_version, captcha_code, encrypted_code, nick)
     # Security check
     # game_id can be negative when developing games on localhost
     if game_id < 0 and player.remote_ip != '127.0.0.1'
       player.close_connection
-      return
+      return false
     end
 
     code = LOGIN_OK
@@ -80,9 +80,8 @@ class Channel
     end
     return true if code == LOGIN_OK
 
-    player.invoke(Player::CMD_LOGIN, [code, nil])
-    player.close_connection_after_writing
-    return false
+    player.result(Server::CMD_LOGIN, [code, nil], true)
+    false
   end
 
   # ----------------------------------------------------------------------------
@@ -122,9 +121,9 @@ class Channel
 
       s = snapshot
       players.each do |p|
-        p.channel = self
-        p.room = @lobby
-        p.invoke(Player::CMD_LOGIN, [LOGIN_OK, s])
+        p.property[:channel] = self
+        p.property[:room] = @lobby
+        p.result(Server::CMD_LOGIN, [LOGIN_OK, s])
       end
     end
   end
@@ -132,11 +131,11 @@ class Channel
   def login(player, container_version, game_version, batch_game)
     @mutex_self.synchronize do
       code = LOGIN_OK
-      if @lobby.nicks.include?(player.nick)
+      if @lobby.nicks.include?(player.property[:nick])
         code = LOGIN_DUPLICATE_NICK
       else
         @rooms.each do |r|
-          if r.nicks.include?(player.nick)
+          if r.nicks.include?(player.property[:nick])
             code = LOGIN_DUPLICATE_NICK
             break
           end
@@ -153,31 +152,30 @@ class Channel
       end
 
       if code != LOGIN_OK
-        player.invoke(Player::CMD_LOGIN, [code, nil])
-        player.close_connection_after_writing
+        player.result(Server::CMD_LOGIN, [code, nil], true)
         return
       end
 
-      player.channel = self
-      @lobby.process(player, Player::CMD_LOGIN, nil)
-      player.room = @lobby
-      player.invoke(Player::CMD_LOGIN, [LOGIN_OK, snapshot])
+      player.property[:channel] = self
+      @lobby.process(player, Server::CMD_LOGIN, nil)
+      player.property[:room] = @lobby
+      player.result(Server::CMD_LOGIN, [LOGIN_OK, snapshot])
     end
   end
 
   # ----------------------------------------------------------------------------
 
-  def process(player, cmd, arg)
+  def process(player, cmd, value)
     # Cross-room related commands are processed here, the others are processed
     # in the room the player is currently in (lobby or game room)
-    if cmd == Player::CMD_LOGOUT
+    if cmd == Server::CMD_LOGOUT
       logout(player)
-    elsif cmd == Player::CMD_ROOM_ENTER
-      room_enter(player, arg)
-    elsif cmd == Player::CMD_ROOM_LEAVE
-      room_leave(player, arg)
+    elsif cmd == Server::CMD_ROOM_ENTER
+      room_enter(player, value)
+    elsif cmd == Server::CMD_ROOM_LEAVE
+      room_leave(player, value)
     else
-      player.room.process(player, cmd, arg)
+      player.property[:room].process(player, cmd, value)
     end
   end
 
@@ -195,17 +193,17 @@ private
 
   def logout(player)
     @mutex_self.synchronize do
-      if player.room != @lobby
-        iroom = @rooms.index(player.room)
+      if player.property[:room] != @lobby
+        iroom = @rooms.index(player.property[:room])
 
-        player.room.process(player, Player::CMD_ROOM_LEAVE, nil)
-        if player.room.nicks.empty?
+        player.property[:room].process(player, Server::CMD_ROOM_LEAVE, nil)
+        if player.property[:room].nicks.empty?
           @rooms.delete_at(iroom)
         end
 
-        @lobby.process(player, Player::CMD_LOGOUT, iroom)
+        @lobby.process(player, Server::CMD_LOGOUT, iroom)
       else
-        @lobby.process(player, Player::CMD_LOGOUT, nil)
+        @lobby.process(player, Server::CMD_LOGOUT, nil)
       end
 
       if @rooms.empty? and @lobby.nicks.empty?
@@ -222,18 +220,18 @@ private
   # * For the players who are in the room:  nick
   # * For the player who entered the room:  room snapshot
   # * For the players who are in the lobby: [iroom, nick]
-  def room_enter(player, arg)
+  def room_enter(player, value)
     @mutex_self.synchronize do
-      iroom = arg
+      iroom = value
       if iroom < 0
         room = Room.new(player, @batch_game)
         @rooms << room
         iroom = @rooms.size - 1
       else
         room = @rooms[iroom]
-        room.process(player, Player::CMD_ROOM_ENTER, nil)
+        room.process(player, Server::CMD_ROOM_ENTER, nil)
       end
-      @lobby.process(player, Player::CMD_ROOM_ENTER, iroom)
+      @lobby.process(player, Server::CMD_ROOM_ENTER, iroom)
     end
   end
 
@@ -241,25 +239,25 @@ private
   # * For the players who are in the room:  nick
   # * For the players who are in the lobby: [iroom, nick]
   # * For the player who left:              room snapshot
-  def room_leave(player, arg)
+  def room_leave(player, value)
     @mutex_self.synchronize do
-      if player.room == @lobby
+      if player.property[:room] == @lobby
         $LOGGER.debug('@channel: room_leave: No room to leave')
         player.close_connection
         return
       end
 
-      iroom = @rooms.index(player.room)
+      iroom = @rooms.index(player.property[:room])
 
-      player.room.process(player, Player::CMD_ROOM_LEAVE, nil)
-      if player.room.nicks.empty?
+      player.property[:room].process(player, Server::CMD_ROOM_LEAVE, nil)
+      if player.property[:room].nicks.empty?
         @rooms.delete_at(iroom)
       end
 
-      @lobby.process(player, Player::CMD_ROOM_LEAVE, iroom)
+      @lobby.process(player, Server::CMD_ROOM_LEAVE, iroom)
 
-      player.room = @lobby
-      player.invoke(Player::CMD_ROOM_LEAVE, snapshot)
+      player.property[:room] = @lobby
+      player.call(Server::CMD_ROOM_LEAVE, snapshot)
     end
   end
 

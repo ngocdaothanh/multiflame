@@ -17,7 +17,7 @@
 		public static const WEB_HOST:String = "web20games.net";
 
 		// Commands to send to the server
-		public static const CMD_CAPTCHA:String   = '0'
+		public static const CMD_CAPTCHA:int      = 0;
 		public static const CMD_GAME_INFO:int    = 1;
 		public static const CMD_LOGIN:int        = 2;
 		public static const CMD_WILL_CLOSE:int   = 3;
@@ -169,7 +169,7 @@
 		// --------------------------------------------------------------------------
 
 		public function getGameInfo():void {
-			_transporter.invoke(CMD_GAME_INFO, [id, locale]);
+			_transporter.call(CMD_GAME_INFO, [id, locale]);
 		}
 
 		private function onGameInfo(event:TransporterEvent):void {
@@ -190,7 +190,7 @@
 		// --------------------------------------------------------------------------
 
 		public function login(code:String, encryptedCode:String, nick:String):void {
-			_transporter.invoke(CMD_LOGIN, [
+			_transporter.call(CMD_LOGIN, [
 				containerVersion,
 				id,
 				gameVersion,
@@ -249,7 +249,7 @@
 		// --------------------------------------------------------------------------
 
 		public function room_enter(iroom:int):void {
-			_transporter.invoke(CMD_ROOM_ENTER, iroom);
+			_transporter.call(CMD_ROOM_ENTER, iroom);
 		}
 
 		// arg:
@@ -318,7 +318,7 @@
 		}
 
 		public function roomLeave():void {
-			_transporter.invoke(CMD_ROOM_LEAVE, null);
+			_transporter.call(CMD_ROOM_LEAVE, null);
 		}
 
 		// arg:
@@ -366,7 +366,7 @@
 		// --------------------------------------------------------------------------
 
 		public function chat(msg:String):void {
-			_transporter.invoke(CMD_CHAT, msg);
+			_transporter.call(CMD_CHAT, msg);
 		}
 
 		public function onChat(event:TransporterEvent):void {
@@ -380,7 +380,7 @@
 
 		public function newInit(baseConfig:Object, extendedConfig:Object):void {
 			var aBaseConfig:Array = [baseConfig.nPlayers, baseConfig.moveSec, baseConfig.totalMin];
-			_transporter.invoke(CMD_NEW_INIT, [aBaseConfig, extendedConfig]);
+			_transporter.call(CMD_NEW_INIT, [aBaseConfig, extendedConfig]);
 		}
 
 		private function onNewInit(event:TransporterEvent):void {
@@ -406,7 +406,7 @@
 		}
 
 		public function newJoin():void {
-			_transporter.invoke(CMD_NEW_JOIN, null);
+			_transporter.call(CMD_NEW_JOIN, null);
 		}
 
 		private function onNewJoin(event:TransporterEvent):void {
@@ -426,7 +426,7 @@
 		}
 
 		public function newUnjoin():void {
-			_transporter.invoke(CMD_NEW_UNJOIN, null);
+			_transporter.call(CMD_NEW_UNJOIN, null);
 		}
 
 		private function onNewUnjoin(event:TransporterEvent):void {
@@ -442,7 +442,7 @@
 		}
 
 		public function newTimeout():void {
-			_transporter.invoke(CMD_NEW_TIMEOUT, null);
+			_transporter.call(CMD_NEW_TIMEOUT, null);
 		}
 
 		private function onNewTimeout(event:TransporterEvent):void {
@@ -453,7 +453,7 @@
 		// --------------------------------------------------------------------------
 
 		public function playMove(data:Object):void {
-			_transporter.invoke(CMD_PLAY_MOVE, data);
+			_transporter.call(CMD_PLAY_MOVE, data);
 		}
 
 		private function onPlayMove(event:TransporterEvent):void {
@@ -465,7 +465,7 @@
 		}
 
 		public function playResign():void {
-			_transporter.invoke(CMD_PLAY_RESIGN, null);
+			_transporter.call(CMD_PLAY_RESIGN, null);
 		}
 		
 		private function onPlayResign(event:TransporterEvent):void {
@@ -481,7 +481,7 @@
 		}
 
 		public function playTimeout():void {
-			_transporter.invoke(CMD_PLAY_TIMEOUT, null);
+			_transporter.call(CMD_PLAY_TIMEOUT, null);
 		}
 		
 		private function onPlayTimeout(event:TransporterEvent):void {
@@ -495,7 +495,7 @@
 		// --------------------------------------------------------------------------
 	
 		public function gameOver():void {
-			_transporter.invoke(CMD_GAME_OVER, null);
+			_transporter.call(CMD_GAME_OVER, null);
 		}
 
 		private function onGameOver(event:TransporterEvent):void {
@@ -520,7 +520,7 @@
 			var indexReporter:int     = a[3]
 			var result = RoomTab.instance.onJudge(baseConfig, extendedConfig,
 				playActions, indexReporter);
-			_transporter.invoke(CMD_RESULT, result);
+			_transporter.call(CMD_RESULT, result);
 		}
 
 		private function onResult(event:TransporterEvent):void {

@@ -1,12 +1,11 @@
 require 'rubygems'
-require 'eventmachine'
+require 'revent/as_r'
 require 'revent/r_r'
-require 'json'
 require 'singleton'
 require 'logger'
 
 require 'config'
-require 'helpers/player'
+require 'helpers/server'
 require 'helpers/captcha'
 require 'helpers/channel'
 require 'helpers/pended_channel'
@@ -21,7 +20,7 @@ require 'helpers/stats'
 $LOGGER = Logger.new(STDOUT, 'daily')
 
 EventMachine::run do
-  EventMachine::start_server(CONFIG[:host], CONFIG[:port], Player)
+  Server.new(CONFIG[:host], CONFIG[:port])
   $LOGGER.info("Fifo started on #{CONFIG[:host]}:#{CONFIG[:port]}")
 
   Proxy.instance

@@ -9,30 +9,30 @@ class Lobby
     @mutex_self = Mutex.new
     @players = players
     @methods = {
-      Player::CMD_LOGIN      => method('login'),
-      Player::CMD_WILL_CLOSE => method('will_close'),
-      Player::CMD_LOGOUT     => method('logout'),
-      Player::CMD_ROOM_ENTER => method('room_enter'),
-      Player::CMD_ROOM_LEAVE => method('room_leave'),
-      Player::CMD_CHAT       => method('chat')
+      Server::CMD_LOGIN      => method('login'),
+      Server::CMD_WILL_CLOSE => method('will_close'),
+      Server::CMD_LOGOUT     => method('logout'),
+      Server::CMD_ROOM_ENTER => method('room_enter'),
+      Server::CMD_ROOM_LEAVE => method('room_leave'),
+      Server::CMD_CHAT       => method('chat')
     }
   end
 
-  def process(player, cmd, arg)
+  def process(player, cmd, value)
     @mutex_self.synchronize do
       m = @methods[cmd]
       if m.nil?
         $LOGGER.debug("@lobby: Invalid command: #{cmd}")
         player.close_connection
       else
-        m.call(player, arg)
+        m.call(player, value)
       end
     end
   end
 
   def nicks
     @mutex_self.synchronize do
-      return @players.map { |p| p.nick }
+      return @players.map { |p| p.property[:nick] }
     end
   end
 
@@ -44,47 +44,47 @@ class Lobby
 
 private
 
-  def login(player, arg)
+  def login(player, value)
     @players.each do |p|
-      p.invoke(Player::CMD_LOGIN, player.nick)
+      p.call(Server::CMD_LOGIN, player.property[:nick])
     end
     @players << player
   end
 
-  def will_close(player, arg)
+  def will_close(player, value)
   end
 
-  def logout(player, arg)
+  def logout(player, value)
     @players.delete(player)
     @players.each do |p|
-      p.invoke(Player::CMD_LOGOUT, player.nick)
+      p.call(Server::CMD_LOGOUT, player.property[:nick])
     end
   end
 
   # in: iroom
   # out: [iroom, nick]
-  def room_enter(player, arg)
-    iroom = arg
+  def room_enter(player, value)
+    iroom = value
     @players.delete(player)
     @players.each do |p|
-      p.invoke(Player::CMD_ROOM_ENTER, [iroom, player.nick])
+      p.call(Server::CMD_ROOM_ENTER, [iroom, player.property[:nick]])
     end
   end
 
-  def room_leave(player, arg)
-    iroom = arg
+  def room_leave(player, value)
+    iroom = value
     @players.each do |p|
-      p.invoke(Player::CMD_ROOM_LEAVE, [iroom, player.nick])
+      p.call(Server::CMD_ROOM_LEAVE, [iroom, player.property[:nick]])
     end
 
     @players << player
   end
 
-  def chat(player, arg)
-    msg = arg
+  def chat(player, value)
+    msg = value
     index = @players.index(player)
     @players.each do |p|
-      p.invoke(Player::CMD_CHAT, [index, msg])
+      p.call(Server::CMD_CHAT, [index, msg])
     end
   end
 end

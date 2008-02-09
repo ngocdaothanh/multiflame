@@ -21,8 +21,7 @@ class PendedChannel
 
       unless host.nil?
         channel.players.each do |p|
-          p.invoke(Player::CMD_LOGIN, [Channel::LOGIN_REDIRECT, [host, port]])
-          p.close_connection_after_writing
+          p.call(Server::CMD_LOGIN, [Channel::LOGIN_REDIRECT, [host, port]], true)
         end
       else
         Channel.new(key, channel.players, channel.container_version, channel.game_version, channel.batch_game)
@@ -36,7 +35,7 @@ class PendedChannel
   def initialize(key, player, container_version, game_version, batch_game)
     @@channels[key] = self
 
-    player.channel = self
+    player.property[:channel] = self
     @players = [player]
 
     @container_version = container_version
@@ -46,7 +45,7 @@ class PendedChannel
 
   def login(player, container_version, game_version, batch_game)
     code = Channel::LOGIN_OK
-    if nicks.include?(player.nick)
+    if nicks.include?(player.property[:nick])
       code = Channel::LOGIN_DUPLICATE_NICK 
     elsif container_version != @container_version
       code = Channel::LOGIN_DIFFERENT_CONTAINER_VERSION 
@@ -55,20 +54,19 @@ class PendedChannel
     end
 
     if code == Channel::LOGIN_OK
-      player.channel = self
+      player.property[:channel] = self
       @players << player
     else
-      player.invoke(Player::CMD_LOGIN, [code, nil])
-      player.close_connection_after_writing
+      player.call(Server::CMD_LOGIN, [code, nil], true)
     end
   end
 
   def nicks
-    @players.map { |p| p.nick }
+    @players.map { |p| p.property[:nick] }
   end
 
   def process(player, cmd, arg)
     @players.delete(player)
-    player.close_connection if cmd != Player::CMD_LOGOUT
+    player.close_connection if cmd != Server::CMD_LOGOUT
   end
 end

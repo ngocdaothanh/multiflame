@@ -1,0 +1,6 @@
+Revent library is needed:
+* gem install revent
+
+To set class path for Revent in Adode Flash:
+* Go to Files/Edit -> Preferences -> ActionScript -> ActionScript 3.0 Settings
+* Add the path to the "lib" directory of the installed Revent library

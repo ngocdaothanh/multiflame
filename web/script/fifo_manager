@@ -242,8 +242,10 @@ private
   def on_call_wm_snapshot_create(client, value)
     if !client.nil?
       @num_fifos = clients.size - 1
-      return 0 if @num_fifos == 0
+    else
+      @num_fifos = clients.size 
     end
+    return 0 if @num_fifos == 0
 
     @remote_ips_got = {}
     clients.each do |fifo|
