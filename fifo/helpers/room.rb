@@ -373,21 +373,20 @@ private
     @last_batch_move_sent = Time.now
   end
 
+  # TODO: enhance
   def judge(reporter)
-    # TODO: enhance
     judgers = @players.dup
+
     a_base_config = [
       @base_config[:n_players],
       @base_config[:move_sec],
       @base_config[:total_min]
     ]
+    info = [a_base_config, @extended_config, @play_actions.to_a, @playing_players0.index(reporter)]
+    bytes = Revent::ASRServer.compress(info)
+
     judgers.each do |j|
-      j.call(Server::CMD_JUDGE, [
-        a_base_config,
-        @extended_config,
-        @play_actions.to_a,
-        @playing_players0.index(reporter)
-      ])
+      j.call(Server::CMD_JUDGE, bytes)
     end
   end
 end

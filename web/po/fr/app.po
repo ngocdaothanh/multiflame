@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: latest\n"
-"POT-Creation-Date: 2008-01-26 01:54+0900\n"
+"POT-Creation-Date: 2008-02-09 16:11+0900\n"
 "PO-Revision-Date: 2007-12-29 03:04+0900\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,18 +64,46 @@ msgstr ""
 msgid "Please provide toy name in English"
 msgstr ""
 
-#: app/controllers/admin/games_controller.rb:16
+#: app/models/stat.rb:-
+msgid "stat"
+msgstr ""
+
+#: app/models/stat.rb:-
+msgid "Stat|Snapshot"
+msgstr ""
+
+#: app/models/stat.rb:-
+msgid "Stat|Created at"
+msgstr ""
+
+#: app/controllers/admin/game_container_controller.rb:13
+msgid "Container was updated"
+msgstr ""
+
+#: app/controllers/admin/games_controller.rb:17
 #: app/controllers/admin/toys_controller.rb:15
 msgid "%s was uploaded"
 msgstr ""
 
-#: app/controllers/admin/games_controller.rb:30
+#: app/controllers/admin/games_controller.rb:32
 #: app/controllers/admin/toys_controller.rb:29
 msgid "%s was updated"
 msgstr ""
 
-#: app/controllers/admin/game_container_controller.rb:12
-msgid "Container was updated"
+#: app/controllers/admin/stats_controller.rb:9
+msgid "No data yet"
+msgstr ""
+
+#: app/controllers/admin/stats_controller.rb:21
+msgid "No fifo for now"
+msgstr ""
+
+#: app/controllers/admin/stats_controller.rb:26
+msgid "Error creating new snapshot"
+msgstr ""
+
+#: app/controllers/admin/stats_controller.rb:70
+msgid "All specified games have become invalid"
 msgstr ""
 
 #: app/views/layouts/application.rhtml:17 app/views/layouts/admin.rhtml:18
@@ -93,6 +121,96 @@ msgstr ""
 
 #: app/views/layouts/admin.rhtml:17
 msgid "Statistics"
+msgstr ""
+
+#: app/views/admin/game_container/edit.rhtml:2
+msgid "Edit game container"
+msgstr ""
+
+#: app/views/admin/game_container/edit.rhtml:9
+#: app/views/admin/games/edit.rhtml:9
+msgid "(blank = no change)"
+msgstr ""
+
+#: app/views/admin/game_container/edit.rhtml:23
+#: app/views/admin/games/edit.rhtml:30 app/views/admin/toys/edit.rhtml:20
+msgid "Save"
+msgstr ""
+
+#: app/views/admin/games/edit.rhtml:2 app/views/admin/toys/edit.rhtml:2
+msgid "Edit %s"
+msgstr ""
+
+#: app/views/admin/games/edit.rhtml:14 app/views/admin/games/new.rhtml:10
+msgid "Game name"
+msgstr ""
+
+#: app/views/admin/games/index.rhtml:3
+msgid "Game container"
+msgstr ""
+
+#: app/views/admin/games/index.rhtml:4
+msgid "Update container"
+msgstr ""
+
+#: app/views/admin/games/index.rhtml:7 app/views/admin/games/new.rhtml:2
+msgid "Upload new game"
+msgstr ""
+
+#: app/views/admin/games/new.rhtml:26 app/views/admin/toys/new.rhtml:26
+msgid "Upload"
+msgstr ""
+
+#: app/views/admin/toys/edit.rhtml:10 app/views/admin/toys/new.rhtml:10
+msgid "Toy name"
+msgstr ""
+
+#: app/views/admin/toys/index.rhtml:3 app/views/admin/toys/new.rhtml:2
+msgid "Upload new toy"
+msgstr ""
+
+#: app/views/admin/stats/index.rhtml:4 app/views/admin/stats/show.rhtml:4
+msgid "Latest data (updated every %d minutes)"
+msgstr ""
+
+#: app/views/admin/stats/index.rhtml:5 app/views/admin/stats/show.rhtml:5
+msgid "%s ago"
+msgstr ""
+
+#: app/views/admin/stats/index.rhtml:9
+msgid "Update now"
+msgstr ""
+
+#: app/views/admin/stats/index.rhtml:16
+msgid "Host"
+msgstr ""
+
+#: app/views/admin/stats/index.rhtml:17
+msgid "Port"
+msgstr ""
+
+#: app/views/admin/stats/index.rhtml:18
+msgid "Players limit"
+msgstr ""
+
+#: app/views/admin/stats/index.rhtml:19
+msgid "Number of channels"
+msgstr ""
+
+#: app/views/admin/stats/index.rhtml:20 app/views/admin/stats/show.rhtml:12
+msgid "Number of players"
+msgstr ""
+
+#: app/views/admin/stats/show.rhtml:10
+msgid "Game"
+msgstr ""
+
+#: app/views/admin/stats/show.rhtml:11
+msgid "Channel"
+msgstr ""
+
+#: app/views/admin/stats/show.rhtml:17
+msgid "%s channels"
 msgstr ""
 
 #: app/views/games/show.rhtml:14
@@ -135,52 +253,6 @@ msgstr ""
 
 #: app/views/games/index.rhtml:5
 msgid "Play with your friends"
-msgstr ""
-
-#: app/views/admin/games/index.rhtml:3
-msgid "Game container"
-msgstr ""
-
-#: app/views/admin/games/index.rhtml:4
-msgid "Update container"
-msgstr ""
-
-#: app/views/admin/games/index.rhtml:7 app/views/admin/games/new.rhtml:2
-msgid "Upload new game"
-msgstr ""
-
-#: app/views/admin/games/edit.rhtml:2 app/views/admin/toys/edit.rhtml:2
-msgid "Edit %s"
-msgstr ""
-
-#: app/views/admin/games/edit.rhtml:9
-#: app/views/admin/game_container/edit.rhtml:9
-msgid "(blank = no change)"
-msgstr ""
-
-#: app/views/admin/games/edit.rhtml:14 app/views/admin/games/new.rhtml:10
-msgid "Game name"
-msgstr ""
-
-#: app/views/admin/games/edit.rhtml:30 app/views/admin/toys/edit.rhtml:20
-#: app/views/admin/game_container/edit.rhtml:23
-msgid "Save"
-msgstr ""
-
-#: app/views/admin/games/new.rhtml:26 app/views/admin/toys/new.rhtml:26
-msgid "Upload"
-msgstr ""
-
-#: app/views/admin/toys/index.rhtml:3 app/views/admin/toys/new.rhtml:2
-msgid "Upload new toy"
-msgstr ""
-
-#: app/views/admin/toys/new.rhtml:10 app/views/admin/toys/edit.rhtml:10
-msgid "Toy name"
-msgstr ""
-
-#: app/views/admin/game_container/edit.rhtml:2
-msgid "Edit game container"
 msgstr ""
 
 #: app/views/toys/index.rhtml:1

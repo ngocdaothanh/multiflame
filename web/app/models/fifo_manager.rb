@@ -1,7 +1,7 @@
-require 'revent'
+require 'revent/r_r'
 
 class FifoManager
-  include ReventClient
+  include Revent::RRClient
 
   CMD_WM_WHICH_FIFO       = 0
   CMD_WM_CG_RELOAD        = 1
@@ -33,14 +33,14 @@ class FifoManager
   def on_result(cmd, result)
     @result_or_error = :result
     @result = result
-    close
+    close_connection
   end
 
   def on_error(cmd, error)
     logger.error.backtrace.join("\n")
     @result_or_error = :error
     @error = error
-    close
+    close_connection
   end
 
   def on_close

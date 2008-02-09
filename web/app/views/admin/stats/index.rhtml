@@ -1,9 +1,12 @@
 <% unless flash[:notice].nil? %><p class="notice"><%= flash[:notice] %></p><% end %>
 
-<p><%= _('Latest data') %>: <%= distance_of_time_in_words(@created_at.to_i, Time.now.to_i) %></p>
+<p>
+  <%= _('Latest data (updated every %d minutes)') % CONFIG[:fifo_manager_snapshot_interval] %>:
+  <%= _('%s ago') % distance_of_time_in_words(@created_at.to_i, Time.now.to_i) %>
+</p>
 
 <%= form_tag admin_stats_path %>
-  <input type="submit" value="<%= _('Refresh') %>" />
+  <input type="submit" value="<%= _('Update now') %>" />
 </form>
 
 <br />

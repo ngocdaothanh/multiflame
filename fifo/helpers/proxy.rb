@@ -1,3 +1,5 @@
+require 'zlib'
+
 # Proxy that talks to the manager.
 class Proxy
   include Singleton
@@ -116,7 +118,8 @@ class Proxy
   end
 
   def on_call_mf_remote_ips_get(value)
-    Channel.remote_ips
+    s = Marshal.dump(Channel.remote_ips)
+    Zlib::Deflate.deflate(s)
   end
 
   def on_call_mf_captcha_salt_set(value)

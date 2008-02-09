@@ -58,6 +58,7 @@ class FifoManager
     @mutex_channel_keys = Mutex.new
     @channel_keys = {}
 
+    new_captcha_salt
     @ready = false
 
     @on_calls = {
@@ -88,6 +89,7 @@ class FifoManager
 
   def on_connect(client)
     mf_cg_set(client)
+    client.call(CMD_MF_CAPTCHA_SALT_SET, @captcha_salt)
     mf_ready_set(client) if @ready
   end
 
@@ -224,11 +226,15 @@ private
   end
 
   def mf_captcha_salt_set
+    new_captcha_salt
+    clients.each { |fifo| fifo.call(CMD_MF_CAPTCHA_SALT_SET, @captcha_salt) }
+  end
+
+  def new_captcha_salt
     chars = ('A'..'Z').to_a
     salt_array = []
     1.upto(SALT_LENGTH) { salt_array << chars[rand(chars.length)] }
-    salt = salt_array.join('')
-    clients.each { |fifo| fifo.call(CMD_MF_CAPTCHA_SALT_SET, salt) }
+    @captcha_salt = salt_array.join('')
   end
 
   def channel_key(game_id, channel_name)
@@ -255,6 +261,8 @@ private
   end
 
   def on_result_mf_remote_ips_get(fifo, value)
+    value = Zlib::Inflate.inflate(value)
+    value = Marshal.load(value)
     k = {:host => fifo.property[:swf_host], :port => fifo.property[:swf_port], :players_limit => fifo.property[:players_limit]}
     @remote_ips_got[k] = value
     return if @remote_ips_got.size < @num_fifos

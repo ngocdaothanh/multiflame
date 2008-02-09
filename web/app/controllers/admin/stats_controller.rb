@@ -52,16 +52,38 @@ module Admin
       @created_at = stat.created_at
 
       # Take out game -> channel names
+
+      # Sort by game id (because the keys are in the format "game_id/channel_name")
       key_ips = snapshot[@fifo]
       keys = key_ips.keys.sort
-      game, channel_name = parse_channel_key(keys[0])
-      @gc = [{:game => game, :name_nums => [{:name => channel_name, :num => key_ips[keys[0]].size}]}]
-      (1...keys.size).each do |i|
+
+      # Find the first game with valid id (because game id maybe become invalid when
+      # games are deleted etc., or < 0 when the container does not run in browser)
+      nonnil_game_index = 0
+      game = channel_name = nil
+      (0...keys.size).each do |i|
+        nonnil_game_index = i
         game, channel_name = parse_channel_key(keys[i])
+        break unless game.nil?
+      end
+      if game.nil?
+        flash[:notice] = _('All specified games have become invalid')
+        redirect_to(:action => 'index')
+        return
+      end
+
+      @gc = [{
+        :game => game,
+        :name_nums => [{:name => channel_name, :num => key_ips[keys[nonnil_game_index]].size}]
+      }]
+
+      ((nonnil_game_index + 1)...keys.size).each do |i|
+        game, channel_name = parse_channel_key(keys[i])
+        next if game.nil?
         if game.id == @gc[@gc.size - 1][:game].id
           @gc[@gc.size - 1][:name_nums] << {:name => channel_name, :num => key_ips[keys[i]].size}
         else
-          @gc << {:game => game, :name_nums => [{:name => channel_name, :num => key_ips[keys[0]].size}]}
+          @gc << {:game => game, :name_nums => [{:name => channel_name, :num => key_ips[keys[i]].size}]}
         end
       end
     end
@@ -74,7 +96,7 @@ module Admin
       game_id = key[0...i]
       channel_name = key[i + 1, key.length]
 
-      game = Game.find(game_id)
+      game = Game.find_by_id(game_id)
       [game, channel_name]
     end
   end

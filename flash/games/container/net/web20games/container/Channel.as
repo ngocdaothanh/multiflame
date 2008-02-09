@@ -2,6 +2,7 @@
 	import flash.events.EventDispatcher;
 	import flash.utils.ByteArray;
 
+	import revent.Client;
 	import net.web20games.container.events.*;
 	import net.web20games.utils.*;
 
@@ -509,7 +510,7 @@
 		// This is the only method where event is not used because the server wants
 		// the judge result immediately.
 		private function onJudge(event:TransporterEvent):void {
-			var a:Array = event.arg as Array;
+			var a:Array = Client.bytesToObject(event.arg as Array, true) as Array;
 			var baseConfig:Object = {
 				nPlayers: a[0][0],
 				moveSec:  a[0][1],

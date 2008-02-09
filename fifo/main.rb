@@ -17,6 +17,7 @@ require 'helpers/batch_move'
 require 'helpers/proxy'
 require 'helpers/stats'
 
+#$LOGGER = Logger.new('log/fifo.log', 'daily')
 $LOGGER = Logger.new(STDOUT, 'daily')
 
 EventMachine::run do
