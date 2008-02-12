@@ -20,7 +20,7 @@
 		// ---------------------------------------------------------------------------
 
 		/**
-		 * Called by the game.
+		 * Only called by the game.
 		 */
 
 		/**
@@ -58,6 +58,18 @@
 		function get indexMe();
 
 		/**
+		 * If move time is nearly over and enqueueMove() has not been called, the game
+		 * container will automatically call enqueueMove(defaultMove) if defaultMove
+		 * is not null.
+		 */
+		function set defaultMove(value:Object):void;
+
+		/**
+		 * defaultMove is reset to null after returned.
+		 */
+		function get defaultMove():Object;
+
+		/**
 		 * @return
 		 * Array of results (NONE/LOST/DREW/WON) for each player.
 		 */
@@ -93,7 +105,7 @@
 		// ---------------------------------------------------------------------------
 
 		/**
-		 * Called by the config dialog.
+		 * Only called by the config dialog.
 		 */
 
 		function get definition():Object;

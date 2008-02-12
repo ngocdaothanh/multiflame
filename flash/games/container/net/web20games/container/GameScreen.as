@@ -39,6 +39,7 @@
 			
 			_timeoutSB = new TimeoutStatusBar(_timeoutLbl);
 			_timeoutSB.setStatus("");
+			_timeoutSB.addEventListener(TimeoutStatusBar.ABOUT_MOVE_TIMEOUT, onAboutMoveTimeout);
 			_timeoutSB.addEventListener(TimeoutStatusBar.TIMEOUT, onTimeout);
 
 			_leaveBtn.addEventListener(MouseEvent.CLICK, onLeaveClick);
@@ -364,7 +365,13 @@
 		}
 		
 		// --------------------------------------------------------------------------
-		
+
+		private function onAboutMoveTimeout(event:Event):void {
+			if (RoomTab.instance.enqueueDefaultMove()) {
+				_timeoutSB.setStatus("");
+			}
+		}
+
 		private function onTimeout(event:Event):void {
 			if (_channel.state == Channel.NEW) {
 				_channel.newTimeout();

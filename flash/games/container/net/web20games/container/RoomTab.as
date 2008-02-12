@@ -29,6 +29,7 @@
 		private var _actionSystemTime:Number;
 		private var _actionTimestamp:Number;
 
+		private var _defaultMove:Object;
 		private var _gameResult:Array;
 		private var _lastActionResult:int;
 		private var _over:Boolean;
@@ -98,6 +99,16 @@
 			return _channel.playNicks0.indexOf(_channel.nick);
 		}
 
+		public function set defaultMove(value:Object):void {
+			_defaultMove = value;
+		}
+
+		public function get defaultMove():Object {
+			var ret:Object = _defaultMove;
+			_defaultMove = null;
+			return ret;
+		}
+
 		public function get gameResult():Array {
 			return _gameResult;
 		}
@@ -127,6 +138,7 @@
 
 		public function enqueueMove(data:Object):void {
 			_enabled = false;
+			_game.enabled = false;
 			_channel.playMove(data);
 		}
 
@@ -169,6 +181,20 @@
 
 		public function get introSprite():Sprite {
 			return _introSprite;
+		}
+
+		/**
+		 * @return
+		 * true if the default move was enqueued.
+		 */
+		public function enqueueDefaultMove():Boolean {
+			if (baseConfig.moveSec > 0) {
+				var m:Object = defaultMove;
+				if (m != null) {
+					enqueueMove(m);
+				}
+			}
+			return false;
 		}
 
 		// --------------------------------------------------------------------------

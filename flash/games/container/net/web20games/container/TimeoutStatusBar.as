@@ -7,8 +7,11 @@
 	import com.adobe.webapis.gettext.GetText;
 	
 	public class TimeoutStatusBar extends Timer {
+		public static const ABOUT_MOVE_TIMEOUT:String = "ABOUT_MOVE_TIMEOUT";
 		public static const TIMEOUT:String = "TIMEOUT";
-		
+
+		private static const ABOUT_MOVE_TIMEOUT_SEC:int = 2;
+
 		private var _textField:TextField;
 
 		private var _text:String;
@@ -50,6 +53,10 @@
 			_moveSecLeft--;
 			_totalSecLeft--;
 			update();
+
+			if (_moveSecLeft == ABOUT_MOVE_TIMEOUT_SEC) {
+				dispatchEvent(new Event(ABOUT_MOVE_TIMEOUT));
+			}
 		}
 		
 		private function update():void {
@@ -66,8 +73,7 @@
 		
 		private function onTimerComplete(event:TimerEvent):void {
 			_textField.text = _text + " " + _("TIMEOUT");
-			var e:Event = new Event(TIMEOUT);
-			dispatchEvent(e);
+			dispatchEvent(new Event(TIMEOUT));
 		}
 		
 		// Convert seconds to m:ss

@@ -67,6 +67,8 @@
 			var o:SimpleButton = _pieces[type];
 			o.x = C_X + R*Math.cos(_angle)/2;
 			o.y = C_Y + R*Math.sin(_angle)/2;
+
+			_game.container.defaultMove = type;
 		}
 
 		public function get type():int {
