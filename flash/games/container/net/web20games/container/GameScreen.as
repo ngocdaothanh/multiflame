@@ -9,7 +9,7 @@
 	import gs.TweenFilterLite;	
 
 	import net.web20games.container.events.*;
-	import net.web20games.game.Game;
+	import net.web20games.game.Constants;
 
 	public class GameScreen extends Sprite {
 		public static const TAB_HEIGHT:int = 30 + 1;
@@ -53,6 +53,9 @@
 			_channel.addEventListener(NewEvent.JOIN, onNewJoin);
 			_channel.addEventListener(NewEvent.UNJOIN, onNewUnjoin);
 			_channel.addEventListener(NewEvent.TIMEOUT, onNewTimeout);
+			_channel.addEventListener(PlayEvent.MOVE, onPlayAction);
+			_channel.addEventListener(PlayEvent.RESIGN, onPlayAction);
+			_channel.addEventListener(PlayEvent.TIMEOUT, onPlayAction);
 			_channel.addEventListener(PlayEvent.ACTION_RESULT, onPlayActionResult);
 
 			_loginTab = new LoginTab();
@@ -343,11 +346,15 @@
 
 		// --------------------------------------------------------------------------
 
+		public function onPlayAction(event:PlayEvent):void {
+			_timeoutSB.setStatus("");
+		}
+
 		public function onPlayActionResult(event:PlayEvent):void {
 			var text:String;
 			if (event.actionResult >= 0) {
 				text = _channel.playNicks0[event.actionResult];
-			} else if (event.actionResult == Game.A_ANY) {
+			} else if (event.actionResult == Constants.ANY) {
 				text = "";
 			} else {
 				text = _("Game over");

@@ -1,9 +1,15 @@
 ﻿package {
-	import net.web20games.game.Game;
+	import flash.display.Sprite;
 
-	public class Game extends net.web20games.game.Game {
+	import net.web20games.game.IGame;
+	import net.web20games.game.IContainer;
+	import net.web20games.game.Constants;
+
+	public class Game extends Sprite implements IGame {
 		private var _players:Array;
 		private var _demoPieces:Array;
+
+		private var _container:IContainer;
 
 		public function Game():void {
 			_demoPieces = [new Rock(), new Paper(), new Scissors()];
@@ -19,9 +25,15 @@
 			}
 		}
 
-		public override function get definition():Object {
+		public function get container():IContainer {
+			return _container;
+		}
+
+		// ---------------------------------------------------------------------------
+
+		public function get definition():Object {
 			return {
-				klass: CLASS_BATCH,
+				klass: Constants.BATCH,
 				nPlayersMin: 2,
 				nPlayersMax: 4,
 				moveSecMin: 10,
@@ -31,11 +43,16 @@
 			};
 		}
 
-		protected override function onContainerSet():Object {
+		public function setContainer(container:IContainer):Object {
+			_container = container;
 			return {};
 		}
 
-		protected override function onNewGame(playedBack:Boolean):int {
+		public function set enabled(value:Boolean):void {
+			
+		}
+
+		public function onNewGame(snapshot:Object):int {
 			var i:int;
 
 			if (_demoPieces != null) {
@@ -51,16 +68,16 @@
 				}
 			}
 
-			_players = new Array(nicks0.length);
-			for (i = 0; i < nicks0.length; i++) {
+			_players = new Array(_container.nicks0.length);
+			for (i = 0; i < _container.nicks0.length; i++) {
 				_players[i] = new Player(this, i);
 				addChild(_players[i]);
 			}
 
-			return A_ANY;
+			return Constants.ANY;
 		}
 
-		protected override function onMove(timestamp:Number, moves:Array, playedBack:Boolean):int {
+		public function onMove(timestamp:Number, moves:Array):void {
 			try {
 				for (var i:int = 0; i < moves.length; i += 2) {
 					var index:int = moves[i] as int;
@@ -76,19 +93,23 @@
 				}
 			} catch (e:Error) {
 				_players[index].markLost();
-				updateGameResult(index, P_LOST);
+				_container.gameResult[index] = Constants.LOST;
 			}
 
-			if (checkOnePlayer() == A_ANY) {
-				return checkResult();
+			if (checkOnePlayer() == Constants.ANY) {
+				_container.setActionResult(checkResult());
+			} else {
+				_container.setActionResult(Constants.OVER);
 			}
-			return A_OVER;
 		}
 
-		protected override function onResign(timestamp:Number, index:int, playedBack:Boolean):int {
+		public function onResign(timestamp:Number, index:int):void {
 			_players[index].markLost();
-			updateGameResult(index, P_LOST);
-			return checkOnePlayer();
+			_container.gameResult[index] = Constants.LOST;
+			_container.setActionResult(checkOnePlayer());
+		}
+
+		public function onTimeout(timestamp:Number, timedOut:Boolean, index:int):void {
 		}
 
 		// ---------------------------------------------------------------------------
@@ -109,7 +130,7 @@
 						_players[i].enable();
 					}
 				}
-				return A_ANY;
+				return Constants.ANY;
 			}
 
 			// Divide to a1 and a2
@@ -142,20 +163,20 @@
 				iLosts = 1;
 			}
 			for (i = 0; i < a[iLosts].length; i++) {
-				updateGameResult(_players.indexOf(a[iLosts][i]), P_LOST);
+				_container.gameResult[_players.indexOf(a[iLosts][i])] = Constants.LOST;
 				a[iLosts][i].markLost();
 			}
 
 			// Enable wons
 			var iWons:int = 1 - iLosts;
 			if (a[iWons].length == 1) {
-				updateGameResult(_players.indexOf(a[iWons][0]), P_WON);
-				return A_OVER;
+				_container.gameResult[_players.indexOf(a[iWons][0])] = Constants.WON;
+				return Constants.OVER;
 			}
 			for (i = 0; i < a[iWons].length; i++) {
 				a[iWons][i].enable();
 			}
-			return A_ANY;
+			return Constants.ANY;
 		}
 
 		// Check if there's only one player left.
@@ -168,10 +189,10 @@
 				}
 			}
 			if (notLosts.length == 1) {
-				updateGameResult(notLosts[0], P_WON);
-				return A_OVER;
+				_container.gameResult[notLosts[0]] = Constants.WON;
+				return Constants.OVER;
 			}
-			return A_ANY;
+			return Constants.ANY;
 		}
 	}
 }

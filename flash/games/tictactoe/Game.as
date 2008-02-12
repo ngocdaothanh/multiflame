@@ -3,14 +3,15 @@
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 
-	import net.web20games.game.Game;
+	import net.web20games.game.IGame;
 	import net.web20games.game.IContainer;
+	import net.web20games.game.Constants;
 
-	public class Game extends net.web20games.game.Game {
+	public class Game extends Sprite implements net.web20games.game.IGame {
 		private var _pieces:Array;
+		private var _container:IContainer;
 
 		public function Game():void {
-			enabled = false;
 			_nick0.selectable = false;
 			_nick1.selectable = false;
 			_nick0.htmlText = "";
@@ -18,9 +19,15 @@
 			_board.addEventListener(MouseEvent.CLICK, onClick);
 		}
 
-		public override function get definition():Object {
+		public function get container():IContainer {
+			return _container;
+		}
+
+		// ---------------------------------------------------------------------------
+
+		public function get definition():Object {
 			return {
-				klass: CLASS_TURN_BASED,
+				klass: Constants.TURN_BASED,
 				nPlayersMin: 2,
 				nPlayersMax: 2,
 				moveSecMin: 10,
@@ -30,11 +37,12 @@
 			};
 		}
 
-		protected override function onContainerSet():Object {
+		public function setContainer(container:IContainer):Object {
+			_container = container;
 			return {introSprite: new IntroSprite(this)};
 		}
 
-		protected override function onNewGame(playedBack:Boolean):int {
+		public function onNewGame(snapshot:Object):int {
 			var i:int;
 
 			if (_pieces != null) {
@@ -47,13 +55,13 @@
 			_pieces = new Array(9);
 
 			// Display nicks
-			_nick0.htmlText = nicks0[0];
-			_nick1.htmlText = nicks0[1];
+			_nick0.htmlText = _container.nicks0[0];
+			_nick1.htmlText = _container.nicks0[1];
 
 			return 0;
 		}
 
-		protected override function onMove(timestamp:Number, moves:Array, playedBack:Boolean):int {
+		public function onMove(timestamp:Number, moves:Array):void {
 			var index:int;
 			var iPiece:int;
 			var ret:int;
@@ -68,27 +76,42 @@
 				}
 
 				// Make the move
-				addPiece((index == 0)? new O() : new X(), iPiece, playedBack);
+				addPiece((index == 0)? new O() : new X(), iPiece, false);
 
 				ret = computeResult(index);
 			} catch (e:Error) {
-				updateGameResult(index, P_LOST);
-				updateGameResult(1 - index, P_WON);
-				ret = A_OVER;
+				_container.gameResult[index] = Constants.LOST;
+				_container.gameResult[1 - index] = Constants.WON;
+				ret = Constants.OVER;
 			}
-			return ret;
+			_container.setActionResult(ret);
 		}
 
-		protected override function onResign(timestamp:Number, index:int, playedBack:Boolean):int {
-			updateGameResult(index, P_LOST);
-			updateGameResult(1 - index, P_WON);
-			return A_OVER;
+		public function onResign(timestamp:Number, index:int):void {
+			_container.gameResult[index] = Constants.LOST;
+			_container.gameResult[1 - index] = Constants.WON;
+			_container.setActionResult(Constants.OVER);
 		}
 
-		protected override function onTimeout(timestamp:Number, timedOut:Boolean, index:int, playedBack:Boolean):int {
-			updateGameResult(index, P_LOST);
-			updateGameResult(1 - index, P_WON);
-			return A_OVER;
+		public function onTimeout(timestamp:Number, timedOut:Boolean, index:int):void {
+			_container.gameResult[index] = Constants.LOST;
+			_container.gameResult[1 - index] = Constants.WON;
+			_container.setActionResult(Constants.OVER);
+		}
+
+		// --------------------------------------------------------------------------
+
+		private function onClick(event:MouseEvent):void {
+			if (_container == null || !_container.enabled) {
+				return;
+			}
+
+			var i:int = xy2i(event.localX, event.localY);
+			if (i >= 0) {
+				if (_pieces[i] == null) {
+					_container.enqueueMove(i);
+				}
+			}
 		}
 
 		// --------------------------------------------------------------------------
@@ -98,46 +121,46 @@
 			if ((_pieces[0] is O && _pieces[1] is O && _pieces[2] is O) ||
 				(_pieces[3] is O && _pieces[4] is O && _pieces[5] is O) ||
 				(_pieces[6] is O && _pieces[7] is O && _pieces[8] is O)) {
-				updateGameResult(0, P_WON);
-				updateGameResult(1, P_LOST);
-				return A_OVER;
+				_container.gameResult[0] = Constants.WON;
+				_container.gameResult[1] = Constants.LOST;
+				return Constants.OVER;
 			}
 			if ((_pieces[0] is X && _pieces[1] is X && _pieces[2] is X) ||
 				(_pieces[3] is X && _pieces[4] is X && _pieces[5] is X) ||
 				(_pieces[6] is X && _pieces[7] is X && _pieces[8] is X)) {
-				updateGameResult(0, P_LOST);
-				updateGameResult(1, P_WON);
-				return A_OVER;
+				_container.gameResult[0] = Constants.LOST;
+				_container.gameResult[1] = Constants.WON;
+				return Constants.OVER;
 			}
 
 			// Vertical
 			if ((_pieces[0] is O && _pieces[3] is O && _pieces[6] is O) ||
 				(_pieces[1] is O && _pieces[4] is O && _pieces[7] is O) ||
 				(_pieces[2] is O && _pieces[5] is O && _pieces[8] is O)) {
-				updateGameResult(0, P_WON);
-				updateGameResult(1, P_LOST);
-				return A_OVER;
+				_container.gameResult[0] = Constants.WON;
+				_container.gameResult[1] = Constants.LOST;
+				return Constants.OVER;
 			}
 			if ((_pieces[0] is X && _pieces[3] is X && _pieces[6] is X) ||
 				(_pieces[1] is X && _pieces[4] is X && _pieces[7] is X) ||
 				(_pieces[2] is X && _pieces[5] is X && _pieces[8] is X)) {
-				updateGameResult(0, P_LOST);
-				updateGameResult(1, P_WON);
-				return A_OVER;
+				_container.gameResult[0] = Constants.LOST;
+				_container.gameResult[1] = Constants.WON;
+				return Constants.OVER;
 			}
 
 			// Crossed
 			if ((_pieces[0] is O && _pieces[4] is O && _pieces[8] is O) ||
 				(_pieces[2] is O && _pieces[4] is O && _pieces[6] is O)) {
-				updateGameResult(0, P_WON);
-				updateGameResult(1, P_LOST);
-				return A_OVER;
+				_container.gameResult[0] = Constants.WON;
+				_container.gameResult[1] = Constants.LOST;
+				return Constants.OVER;
 			}
 			if ((_pieces[0] is X && _pieces[4] is X && _pieces[8] is X) ||
 				(_pieces[2] is X && _pieces[4] is X && _pieces[6] is X)) {
-				updateGameResult(0, P_LOST);
-				updateGameResult(1, P_WON);
-				return A_OVER;
+				_container.gameResult[0] = Constants.LOST;
+				_container.gameResult[1] = Constants.WON;
+				return Constants.OVER;
 			}
 
 			// Drew
@@ -148,28 +171,12 @@
 				}
 			}
 			if (count == 9) {
-				updateGameResult(0, P_DREW);
-				updateGameResult(1, P_DREW);
-				return A_OVER;
+				_container.gameResult[0] = Constants.DREW;
+				_container.gameResult[1] = Constants.DREW;
+				return Constants.OVER;
 			}
 
 			return (1 - index);
-		}
-
-		// --------------------------------------------------------------------------
-		
-		private function onClick(event:MouseEvent):void {
-			if (!enabled) {
-				return;
-			}
-
-			var i:int = xy2i(event.localX, event.localY);
-			if (i >= 0) {
-				if (_pieces[i] == null) {
-					enabled = false;
-					move(i);
-				}
-			}
 		}
 
 		private function xy2i(x:int, y:int):int {
@@ -190,9 +197,9 @@
 			_pieces[i] = piece;
 
 			if (!playedBack) {
-				TweenLite.to(piece, 0.5, {scaleX: 1.5, scaleY: 1.5});
-				TweenLite.to(piece, 0.5, {delay: 0.5, scaleX: 0.5, scaleY: 0.5, overwrite: false});
-				TweenLite.to(piece, 0.5, {delay: 1, scaleX: 1, scaleY: 1, overwrite: false});
+				_container.TweenLite.to(piece, 0.5, {scaleX: 1.5, scaleY: 1.5});
+				_container.TweenLite.to(piece, 0.5, {delay: 0.5, scaleX: 0.5, scaleY: 0.5, overwrite: false});
+				_container.TweenLite.to(piece, 0.5, {delay: 1, scaleX: 1, scaleY: 1, overwrite: false});
 			}
 		}
 	}

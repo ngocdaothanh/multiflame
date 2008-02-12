@@ -4,36 +4,34 @@ class Server
   # Because this is a FIFO (queue), CMD_xxx has 2 meanings: command invocation
   # and notification.
 
-  CMD_CAPTCHA         = 0
-  CMD_GAME_INFO       = 1
+  CMD_CAPTCHA      = 0
+  CMD_GAME_INFO    = 1
 
   # There are 2 types of notification: result to the caller and broadcast to
   # the other players. The arguments are different for the 2 types.
-  CMD_LOGIN           = 2
+  CMD_LOGIN        = 2
 
   # While out in the lobby
   #CMD_LOGIN
-  CMD_WILL_CLOSE      = 3
-  CMD_LOGOUT          = 4  # Fifo -> container
-  CMD_ROOM_ENTER      = 5
-  CMD_ROOM_LEAVE      = 6
-  CMD_CHAT            = 7
+  CMD_WILL_CLOSE   = 3
+  CMD_LOGOUT       = 4  # Fifo -> container
+  CMD_ROOM_ENTER   = 5
+  CMD_ROOM_LEAVE   = 6
+  CMD_CHAT         = 7
 
   # While in a room
   #CMD_WILL_CLOSE
   #CMD_ROOM_ENTER
   #CMD_ROOM_LEAVE
   #CMD_CHAT
-  CMD_NEW_INIT        = 8
-  CMD_NEW_JOIN        = 9
-  CMD_NEW_UNJOIN      = 10
-  CMD_NEW_TIMEOUT     = 11
-  CMD_PLAY_MOVE       = 12
-  CMD_PLAY_RESIGN     = 13
-  CMD_PLAY_TIMEOUT    = 14
-  CMD_GAME_OVER       = 15
-  CMD_JUDGE           = 16  # Command: Fifo -> container, result: container -> Fifo
-  CMD_RESULT          = 17  # Fifo -> container
+  CMD_NEW_INIT     = 8
+  CMD_NEW_JOIN     = 9
+  CMD_NEW_UNJOIN   = 10
+  CMD_NEW_TIMEOUT  = 11
+  CMD_PLAY_MOVE    = 12
+  CMD_PLAY_RESIGN  = 13
+  CMD_PLAY_TIMEOUT = 14
+  CMD_GAME_OVER    = 15
 
   GAME_INFO_OK               = 0
   GAME_INFO_CONNECTION_ERROR = 1
@@ -56,6 +54,9 @@ class Server
   end
 
   def on_call(client, cmd, value)
+p '----'
+p cmd
+p value
     if cmd == CMD_CAPTCHA
       if client.property[:channel].nil?
         captcha(client)

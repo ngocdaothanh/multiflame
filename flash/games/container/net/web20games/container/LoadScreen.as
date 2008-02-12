@@ -5,6 +5,7 @@
 	import flash.net.*;
 
 	import com.adobe.webapis.gettext.GetText;
+
 	import net.web20games.utils.*;
 	import net.web20games.container.events.*;
 
@@ -83,7 +84,7 @@
 		private function onGameLoadInit(event:Event):void {
 			_channel.addEventListener(GameInfoEvent.REMOTE, onGameInfoRemote);
 			_container = RoomTab.instance;
-			_container.gameDocument = event.target.content as Sprite;
+			_container.game = event.target.content as Sprite;
 
 			_statusLbl.htmlText = _("Loading game information...");
 			_channel.getGameInfo();

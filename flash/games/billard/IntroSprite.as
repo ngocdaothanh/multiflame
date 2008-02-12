@@ -21,7 +21,7 @@
 			text.width = 480;
 			text.height = 480;
 			text.wordWrap = true;
-			text.htmlText = _("Please see <a href='http://en.wikipedia.org/wiki/Tictactoe'>http://en.wikipedia.org/wiki/Tictactoe</a>");
+			text.htmlText = _("");
 			addChild(text);
 		}
 

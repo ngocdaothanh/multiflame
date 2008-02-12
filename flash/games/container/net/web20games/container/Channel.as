@@ -34,8 +34,6 @@
 		public static const CMD_PLAY_RESIGN:int  = 13;
 		public static const CMD_PLAY_TIMEOUT:int = 14;
 		public static const CMD_GAME_OVER:int    = 15;
-		public static const CMD_JUDGE:int        = 16;
-		public static const CMD_RESULT:int       = 17;
 
 		// States
 		public static const NOT_GOT_GAME_INFO:int = -3;
@@ -71,8 +69,7 @@
 		public var toyConfig:XML;
 		public var toy:*;
 
-		// Initialized onLoginMe
-		public var nick:String;  // Appended with GUEST_SUFFIX if this is a guest player
+		public var nick:String;
 		public var nicks:Array;
 		public var baseConfig:Object;
 		public var extendedConfig:Object;
@@ -128,8 +125,6 @@
 			_transporter.addEventListener("" + CMD_PLAY_RESIGN, onPlayResign);
 			_transporter.addEventListener("" + CMD_PLAY_TIMEOUT, onPlayTimeout);
 			_transporter.addEventListener("" + CMD_GAME_OVER, onGameOver);
-			_transporter.addEventListener("" + CMD_JUDGE, onJudge);
-			_transporter.addEventListener("" + CMD_RESULT, onResult);
 
 			var e:GameInfoEvent = new GameInfoEvent(GameInfoEvent.LOCAL);
 			e.id        = id;
@@ -283,7 +278,7 @@
 			}
 		}
 
-		// [state, nicks, baseConfig, extendedConfig, playNicks0, moves]
+		// [state, nicks, baseConfig, extendedConfig, playNicks0, snapshot]
 		private function onRoomEnterMe(event:TransporterEvent):void {
 			var snapshot:Array = event.arg as Array;
 
@@ -506,28 +501,6 @@
 		}
 
 		// --------------------------------------------------------------------------
-
-		// This is the only method where event is not used because the server wants
-		// the judge result immediately.
-		private function onJudge(event:TransporterEvent):void {
-			var a:Array = Client.bytesToObject(event.arg as Array, true) as Array;
-			var baseConfig:Object = {
-				nPlayers: a[0][0],
-				moveSec:  a[0][1],
-				totalMin: a[0][2]
-			};
-			var extendedConfig:Object = a[1];
-			var playActions:Array     = a[2];
-			var indexReporter:int     = a[3]
-			var result = RoomTab.instance.onJudge(baseConfig, extendedConfig,
-				playActions, indexReporter);
-			_transporter.call(CMD_RESULT, result);
-		}
-
-		private function onResult(event:TransporterEvent):void {
-			var e:ResultEvent = new ResultEvent(event.arg as Array);
-			dispatchEvent(e);
-		}
 
 		private function onWillClose(event:TransporterEvent):void {
 			dispatchEvent(new CloseEvent(CloseEvent.WILL_CLOSE));

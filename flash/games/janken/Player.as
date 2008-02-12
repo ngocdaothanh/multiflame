@@ -34,8 +34,8 @@
 			_index = index;
 			_lost = false;
 
-			_angle = (2*Math.PI/game.nicks0.length)*index;
-			var me:Boolean = index == game.indexMe;
+			_angle = (2*Math.PI/game.container.nicks0.length)*index;
+			var me:Boolean = index == game.container.indexMe;
 			
 			_pieces = [_rock, _paper, _scissors];
 			if (me) {
@@ -50,7 +50,7 @@
 			select(_type);
 
 			_nick = new TextField();
-			_nick.text = game.nicks0[index];
+			_nick.text = game.container.nicks0[index];
 			_nick.width = 10*_nick.text.length;
 			_nick.height = 18;
 			_nick.x = C_X + R*Math.cos(_angle)/2;
@@ -85,25 +85,25 @@
 			_lost = true;
 			_ok.enabled = false;
 			for (var i:int = 0; i < _pieces.length; i++) {
-				_game.TweenFilterLite.to(_pieces[i], 0.5, {type: "Color", colorize: 0xCCCCCC, amount: 1});
+				_game.container.TweenFilterLite.to(_pieces[i], 0.5, {type: "Color", colorize: 0xCCCCCC, amount: 1});
 			}
 		}
 
 		public function highlight():void {
-			_game.TweenFilterLite.to(_pieces[_type], 0.5, {type: "Color", colorize: 0xFF0000, amount: 1});
-			_game.TweenFilterLite.to(_pieces[_type], 0.5, {delay: 0.5, type: "Color", overwrite: false});
+			_game.container.TweenFilterLite.to(_pieces[_type], 0.5, {type: "Color", colorize: 0xFF0000, amount: 1});
+			_game.container.TweenFilterLite.to(_pieces[_type], 0.5, {delay: 0.5, type: "Color", overwrite: false});
 		}
 
 		// ---------------------------------------------------------------------------
 
 		private function onClick(event:MouseEvent):void {
-			if (!_game.enabled || !_ok.enabled) {
+			if (!_game.container.enabled || !_ok.enabled) {
 				return;
 			}
 
 			if (event.target is Button) {
 				_ok.enabled = false;
-				_game.move(_type);
+				_game.container.enqueueMove(_type);
 			} else {
 				select(_pieces.indexOf(event.target));
 			}

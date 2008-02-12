@@ -45,7 +45,7 @@
 		
 		// --------------------------------------------------------------------------
 		
-		public function set container(value:IContainer):void {
+		public function setContainer(value:IContainer):void {
 			_container = value;
 			var definition:Object = _container.definition;
 

@@ -3,7 +3,7 @@
 	 * Config dialog must be a Sprite or its subclass.
 	 */
 	public interface IConfigDlg {
-		function set container(value:IContainer):void;
+		function setContainer(container:IContainer):void;
 
 		/**
 		 * If the player logs in at the the middle of NEW state, onInit and
@@ -22,6 +22,6 @@
 		 * When a game is over, the config dialog is redisplayed. This method should
 		 * display reresult of the last game.
 		 */
-		function onResult(playNicks0:Array, result:Array, summary:String = null):void;
+		function onResult(playNicks0:Array, result:Array, extra:String = null):void;
 	}
 }

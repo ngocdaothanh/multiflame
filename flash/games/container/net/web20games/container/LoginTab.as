@@ -44,7 +44,7 @@
 				return;
 			}
 
-			var game:Sprite = RoomTab.instance.gameDocument;
+			var game:Sprite = RoomTab.instance.game;
 			if (!contains(game)) {
 				addChild(game);
 				setChildIndex(game, 0);

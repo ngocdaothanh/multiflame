@@ -48,11 +48,11 @@
 			}
 		}
 
-		private function onSecurityError(event:SecurityErrorEvent):void {
+		private function onSecurityError(event:CallEvent):void {
 			dispatchEvent(new TransporterEvent(TransporterEvent.CONNECTION_ERROR, null));
 		}
 
-		private function onIOError(event:IOErrorEvent):void {
+		private function onIOError(event:CallEvent):void {
 			dispatchEvent(new TransporterEvent(TransporterEvent.CONNECTION_ERROR, null));
 		}
 

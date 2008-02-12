@@ -25,7 +25,7 @@ class Room
 
     # PLAY
     @playing_players = []  # Set to @playing_players0 when the game starts
-    @play_actions = PlayActions.new
+    @play_created_at = nil
     if @batch_game
       @batch_move = BatchMove.new
       @last_batch_move_sent = nil
@@ -43,8 +43,7 @@ class Room
       Server::CMD_PLAY_MOVE    => method('play_move'),
       Server::CMD_PLAY_RESIGN  => method('play_resign'),
       Server::CMD_PLAY_TIMEOUT => method('play_timeout'),
-      Server::CMD_GAME_OVER    => method('game_over'),
-      Server::CMD_RESULT       => method('result')
+      Server::CMD_GAME_OVER    => method('game_over')
     }
 
     player.property[:room] = self
@@ -156,7 +155,7 @@ private
     if @playing_players0.size == @base_config[:n_players]
       @state = PLAY
       @playing_players = @playing_players0.dup
-      @play_actions.new_game
+      @play_created_at = Time.now
       if @batch_game
         @batch_move.new_game(@playing_players0.size)
         @last_batch_move_sent = Time.now
@@ -226,8 +225,7 @@ private
     end
 
     index = @playing_players0.index(player)
-    a = @play_actions.resign(index)
-
+    a = [Time.now - @play_created_at, index]
     @players.each do |p|
       p.call(Server::CMD_PLAY_RESIGN, a)
     end
@@ -253,32 +251,13 @@ private
 
   def game_over(player, value)
     return if @state != PLAY
-    unless @playing_players.include?(player)
-      player.close_connection
-      return
-    end
 
-    @state = GAME_OVER
-    @players.each do |p|
-      p.call(Server::CMD_GAME_OVER, nil)
-    end
-    judge(player)
-  end
-
-  # TODO:
-  # * Validate value, the code should be in each player
-  # * Judge mutiagently
-  def result(player, value)
-    return if @state != GAME_OVER
+    # TODO: Phase2: record result
+    #@state = GAME_OVER
 
     @state = NEWABLE
-    @playing_players0.clear
-    @playing_players.clear
-    @play_actions.clear
-    @batch_move.clear if @batch_game
-
     @players.each do |p|
-      p.call(Server::CMD_RESULT, value)
+      p.call(Server::CMD_GAME_OVER, nil)
     end
   end
 
@@ -297,7 +276,7 @@ private
       a_base_config,
       @extended_config,
       @playing_players0.map { |p| p.property[:nick] },
-      @play_actions.to_a
+      nil  # <--- TO____DO
     ]
   end
 
@@ -306,7 +285,7 @@ private
     ret = Utils.instance.check(value)
     return false if ret.nil?
 
-    a = @play_actions.move_immediate(index, ret)
+    a = [Time.now - @play_created_at, index, ret]
     @players.each do |p|
       p.call(Server::CMD_PLAY_MOVE, a)
     end
@@ -314,7 +293,7 @@ private
   end
 
   def play_move_immediate(index, value)
-    a = @play_actions.move_immediate(index, value)
+    a = [Time.now - @play_created_at, index, value]
     @players.each do |p|
       p.call(Server::CMD_PLAY_MOVE, a)
     end
@@ -330,7 +309,7 @@ private
   end
 
   def play_timeout_immediate(index)
-    a = @play_actions.timeout(index)
+    a = [Time.now - @play_created_at, index]
     @players.each do |p|
       p.call(Server::CMD_PLAY_TIMEOUT, a)
     end
@@ -342,7 +321,7 @@ private
     # Check if it is game timeout
     now = Time.now
     if @base_config[:total_min] > 0 and
-        now - @play_actions.play_created_at >= @base_config[:total_min]*60
+        now - @play_created_at >= @base_config[:total_min]*60
       game_over(player, nil)
       return
     end
@@ -365,28 +344,11 @@ private
   end
 
   def broadcast_batch
-    a = @play_actions.move_batch(@batch_move)
+    a = [Time.now - @play_created_at].concat(@batch_move.to_a)
     @batch_move.clear
     @players.each do |p|
       p.call(Server::CMD_PLAY_MOVE, a)
     end
     @last_batch_move_sent = Time.now
-  end
-
-  # TODO: enhance
-  def judge(reporter)
-    judgers = @players.dup
-
-    a_base_config = [
-      @base_config[:n_players],
-      @base_config[:move_sec],
-      @base_config[:total_min]
-    ]
-    info = [a_base_config, @extended_config, @play_actions.to_a, @playing_players0.index(reporter)]
-    bytes = Revent::ASRServer.compress(info)
-
-    judgers.each do |j|
-      j.call(Server::CMD_JUDGE, bytes)
-    end
   end
 end

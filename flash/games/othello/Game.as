@@ -77,11 +77,11 @@
 			};
 		}
 
-		protected override function onContainerSet():Object {
+		public override function onContainerSet():Object {
 			return {introSprite: new IntroSprite(this)};
 		}
 
-		protected override function onNewGame(playedBack:Boolean):int {
+		public override function onNewGame(playedBack:Boolean):int {
 			var i:int;
 
 			// Display nicks
@@ -108,7 +108,7 @@
 			return 0;
 		}
 
-		protected override function onMove(timestamp:Number, moves:Array, playedBack:Boolean):int {
+		public override function onMove(timestamp:Number, moves:Array, playedBack:Boolean):void {
 			var index:int;
 			var iPiece:int;
 			var ret:int;
@@ -156,19 +156,19 @@
 				ret = A_OVER;
 			}
 
-			return ret;
+			actionResult(ret);
 		}
 
-		protected override function onResign(timestamp:Number, index:int, playedBack:Boolean):int {
+		public override function onResign(timestamp:Number, index:int, playedBack:Boolean):void {
 			updateGameResult(index, P_LOST);
 			updateGameResult(1 - index, P_WON);
-			return A_OVER;
+			actionResult(A_OVER);
 		}
 
-		protected override function onTimeout(timestamp:Number, timedOut:Boolean, index:int, playedBack:Boolean):int {
+		public override function onTimeout(timestamp:Number, timedOut:Boolean, index:int, playedBack:Boolean):void {
 			updateGameResult(index, P_LOST);
 			updateGameResult(1 - index, P_WON);
-			return A_OVER;
+			actionResult(A_OVER);
 		}
 
 		// --------------------------------------------------------------------------
@@ -195,7 +195,7 @@
 			}
 
 			_pieces[iPiece].state = (indexMe == 0)? Piece.BLACK : Piece.WHITE;
-			move(iPiece);
+			enqueueMove(iPiece);
 		}
 
 		// --------------------------------------------------------------------------

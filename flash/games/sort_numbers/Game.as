@@ -36,12 +36,12 @@
 			}
 		}
 
-		protected override function onContainerSet():Object {
+		public override function onContainerSet():Object {
 			var introSprite:IntroSprite = new IntroSprite(this);
 			return {introSprite: introSprite};
 		}
 
-		protected override function onNewGame(playedBack:Boolean):int {
+		public override function onNewGame(playedBack:Boolean):int {
 			if (_boards != null) {
 				for (var i:int; i < _boards.length; i++) {
 					if (_boards[i] != null) {
@@ -54,12 +54,12 @@
 
 			shuffled = false;
 			if (!playedBack && indexMe == 0) {
-				move(['shuffle', Board.WIDTH*Board.HEIGHT - 1]);
+				enqueueMove(['shuffle', Board.WIDTH*Board.HEIGHT - 1]);
 			}
 			return A_ANY;
 		}
 
-		protected override function onMove(timestamp:Number, moves:Array, playedBack:Boolean):int {
+		public override function onMove(timestamp:Number, moves:Array, playedBack:Boolean):void {
 			try {
 				var index:int = moves[0];
 				var data:Object = moves[1];
@@ -72,23 +72,23 @@
 						addChild(_boards[i]);
 					}
 					shuffled = true;
-					return A_ANY;
+					return actionResult(A_ANY);
 				}
 	
 				var iPiece:int = data as int;
 				_boards[index].move(iPiece);
 				if (_boards[index].numCorrects == Board.WIDTH*Board.HEIGHT - 1) {
 					recomputeResult();
-					return A_OVER;
+					return actionResult(A_OVER);
 				}
 			} catch (e:Error) {
 				recomputeResult();
-				return A_OVER;
+				return actionResult(A_OVER);
 			}
-			return A_ANY;
+			actionResult(A_ANY);
 		}
 
-		protected override function onResign(timestamp:Number, index:int, playedBack:Boolean):int {
+		public override function onResign(timestamp:Number, index:int, playedBack:Boolean):void {
 			updateGameResult(index, P_LOST);
 			if (!playedBack) {
 				TweenFilterLite.to(_boards[index], 0.5, {type: "Color", colorize: 0xF2DB0D, amount: 1});
@@ -104,28 +104,30 @@
 
 			if (nPlayingPlayers == 1) {
 				recomputeResult();
-				return A_OVER;
+				actionResult(A_OVER);
+			} else {
+				actionResult(A_ANY);
 			}
-			return A_ANY;
 		}
 
-		protected override function onTimeout(timestamp:Number, timedOut:Boolean, index:int, playedBack:Boolean):int {
+		public override function onTimeout(timestamp:Number, timedOut:Boolean, index:int, playedBack:Boolean):void {
 			if (!timedOut) {
 				updateGameResult(index, P_LOST);
-				return A_ANY;
+				actionResult(A_ANY);
+			} else {
+				recomputeResult();
+				actionResult(A_OVER);
 			}
-			recomputeResult();
-			return A_OVER;
 		}
 
-		private function recomputeResult():void {
+		private function recomputeResult():String {
 			var i:int;
 			var index_point:Array = new Array(nicks0.length);
 			for (i = 0; i < nicks0.length; i++) {
 				index_point[i] = {index: i, point: _boards[i].numCorrects};
 			}
 
-			summary = _("Correct numbers: ");
+			var summary:String = _("Correct numbers: ");
 
 			// Sort, top = P_WON, bottom = P_LOST, middles = P_DREW
 			index_point = index_point.sortOn("point");
@@ -143,8 +145,9 @@
 				summary += nicks0[index_point[i].index] + " = " +
 					index_point[i].point + " ";
 			}
-			summary += nicks0[index_point[0].index] + " = " +
-				index_point[0].point;
+			summary += nicks0[index_point[0].index] + " = " + index_point[0].point;
+
+			return summary;
 		}
 	}
 }
