@@ -27,7 +27,7 @@
 				_nick.width = 200;
 				_nick.height = 20;
 				_nick.y = -20;			
-				_nick.text = game.nicks0[index];
+				_nick.text = game.container.nicks0[index];
 				addChild(_nick);
 			}
 			
@@ -43,7 +43,7 @@
 			_pieces[i] = null;
 
 			if (!demo) {
-				var nPlayers:int = game.baseConfig.nPlayers;
+				var nPlayers:int = game.container.baseConfig.nPlayers;
 				if (index == 0) {
 					x = 33;
 					y = 33;
@@ -77,10 +77,10 @@
 			for (var i:int = 0; i < WIDTH*HEIGHT; i++) {
 				if (_pieces[i] != null) {
 					if (_pieces[i].number == i) {
-						_game.TweenFilterLite.to(_pieces[i], 0.5, {type: "Color", colorize: 0x00FF00, amount: 1});
+						_game.container.TweenFilterLite.to(_pieces[i], 0.5, {type: "Color", colorize: 0x00FF00, amount: 1});
 						ret++;
 					} else {
-						_game.TweenFilterLite.to(_pieces[i], 0.5, {type: "Color"});
+						_game.container.TweenFilterLite.to(_pieces[i], 0.5, {type: "Color"});
 					}
 				}
 			}
@@ -90,7 +90,7 @@
 		// ---------------------------------------------------------------------------
 
 		private function movePiece(event:MouseEvent):void {
-			if (!_game.enabled || _game.indexMe != _index) {
+			if (!_game.container.enabled || _game.container.indexMe != _index) {
 				return;
 			}
 
@@ -107,7 +107,7 @@
 			}
 
 			move(iPiece);
-			_game.enqueueMove(iPiece);
+			_game.container.enqueueMove(iPiece);
 		}
 
 		// ---------------------------------------------------------------------------

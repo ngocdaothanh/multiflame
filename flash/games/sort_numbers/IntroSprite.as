@@ -8,7 +8,7 @@
 		}
 
 		private function _(id:String):String {
-			return _game._(id);
+			return _game.container._(id);
 		}
 	}
 }

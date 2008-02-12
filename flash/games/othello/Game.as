@@ -4,18 +4,19 @@
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 
-	import net.web20games.game.Game;
+	import net.web20games.game.IGame;
 	import net.web20games.game.IContainer;
+	import net.web20games.game.Constants;
 
-	public class Game extends net.web20games.game.Game {
+	public class Game extends Sprite implements IGame {
 		private var _nick0:TextField;
 		private var _nick1:TextField;
 		private var _pieces:Array;
 		private var _hint:Array;
 
-		public function Game():void {
-			enabled = false;
+		private var _container:IContainer;
 
+		public function Game():void {
 			var format:TextFormat = new TextFormat();
 			format.font = "_sans";
 			format.size = 12;
@@ -65,9 +66,15 @@
 			_pieces[36].state = Piece.WHITE;
 		}
 
-		public override function get definition():Object {
+		public function get container():IContainer {
+			return _container;
+		}
+
+		// ---------------------------------------------------------------------------
+
+		public function get definition():Object {
 			return {
-				klass: CLASS_TURN_BASED,
+				klass: Constants.TURN_BASED,
 				nPlayersMin: 2,
 				nPlayersMax: 2,
 				moveSecMin: 10,
@@ -77,16 +84,20 @@
 			};
 		}
 
-		public override function onContainerSet():Object {
+		public function set enabled(value:Boolean):void {
+		}
+
+		public function setContainer(container:IContainer):Object {
+			_container = container;
 			return {introSprite: new IntroSprite(this)};
 		}
 
-		public override function onNewGame(playedBack:Boolean):int {
+		public function onNewGame(snapshot:Object):int {
 			var i:int;
 
 			// Display nicks
-			_nick0.htmlText = nicks0[0];
-			_nick1.htmlText = nicks0[1];
+			_nick0.htmlText = _container.nicks0[0];
+			_nick1.htmlText = _container.nicks0[1];
 
 			// Clear
 			for (i = 0; i < 8*8; i++) {
@@ -108,7 +119,7 @@
 			return 0;
 		}
 
-		public override function onMove(timestamp:Number, moves:Array, playedBack:Boolean):void {
+		public function onMove(timestamp:Number, moves:Array):void {
 			var index:int;
 			var iPiece:int;
 			var ret:int;
@@ -132,7 +143,7 @@
 				doMove(index, iPiece);
 
 				// Hint and check result
-				ret = 1 - lastActionResult;
+				ret = 1 - _container.lastActionResult;
 				_hint = hint((ret == 0)? Piece.BLACK : Piece.WHITE);
 				if (_hint.length > 0) {
 					for (i = 0; i < _hint.length; i++) {
@@ -147,34 +158,34 @@
 						}
 					} else {
 						computeResult();
-						ret = A_OVER;
+						ret = Constants.OVER;
 					}
 				}
 			} catch (e:Error) {
-				updateGameResult(index, P_LOST);
-				updateGameResult(1 - index, P_WON);
-				ret = A_OVER;
+				_container.gameResult[index] = Constants.LOST;
+				_container.gameResult[1 - index] = Constants.WON;
+				ret = Constants.OVER;
 			}
 
-			actionResult(ret);
+			_container.setActionResult(ret);
 		}
 
-		public override function onResign(timestamp:Number, index:int, playedBack:Boolean):void {
-			updateGameResult(index, P_LOST);
-			updateGameResult(1 - index, P_WON);
-			actionResult(A_OVER);
+		public function onResign(timestamp:Number, index:int):void {
+			_container.gameResult[index] = Constants.LOST;
+			_container.gameResult[1 - index] = Constants.WON;
+			_container.setActionResult(Constants.OVER);
 		}
 
-		public override function onTimeout(timestamp:Number, timedOut:Boolean, index:int, playedBack:Boolean):void {
-			updateGameResult(index, P_LOST);
-			updateGameResult(1 - index, P_WON);
-			actionResult(A_OVER);
+		public function onTimeout(timestamp:Number, timedOut:Boolean, index:int):void {
+			_container.gameResult[index] = Constants.LOST;
+			_container.gameResult[1 - index] = Constants.WON;
+			_container.setActionResult(Constants.OVER);
 		}
 
 		// --------------------------------------------------------------------------
 		
 		private function onClick(event:MouseEvent):void {
-			if (!enabled) {
+			if (_container == null || !_container.enabled) {
 				return;
 			}
 
@@ -194,8 +205,8 @@
 				return;
 			}
 
-			_pieces[iPiece].state = (indexMe == 0)? Piece.BLACK : Piece.WHITE;
-			enqueueMove(iPiece);
+			_pieces[iPiece].state = (_container.indexMe == 0)? Piece.BLACK : Piece.WHITE;
+			_container.enqueueMove(iPiece);
 		}
 
 		// --------------------------------------------------------------------------
@@ -354,14 +365,14 @@
 				}
 			}
 			if (blacks > whites) {
-				updateGameResult(0, P_WON);
-				updateGameResult(1, P_LOST);
+				_container.gameResult[0] = Constants.WON;
+				_container.gameResult[1] = Constants.LOST;
 			} else if (blacks < whites) {
-				updateGameResult(0, P_LOST);
-				updateGameResult(1, P_WON);
+				_container.gameResult[0] = Constants.LOST;
+				_container.gameResult[1] = Constants.WON;
 			} else {
-				updateGameResult(0, P_DREW);
-				updateGameResult(1, P_DREW);
+				_container.gameResult[0] = Constants.DREW;
+				_container.gameResult[1] = Constants.DREW;
 			}
 		}
 	}

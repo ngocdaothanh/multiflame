@@ -1,10 +1,15 @@
 ﻿package {
-	import net.web20games.game.Game;
-	import net.web20games.game.IContainer;
+	import flash.display.Sprite;
 
-	public class Game extends net.web20games.game.Game {
+	import net.web20games.game.IGame;
+	import net.web20games.game.IContainer;
+	import net.web20games.game.Constants;
+
+	public class Game extends Sprite implements IGame {
 		private var _boards:Array;
 		private var shuffled:Boolean;
+
+		private var _container:IContainer;
 
 		public function Game():void {
 			_boards = new Array(2);
@@ -24,9 +29,15 @@
 			addChild(b2);
 		}
 
-		public override function get definition():Object {
+		public function get container():IContainer {
+			return _container;
+		}
+
+		// ---------------------------------------------------------------------------
+
+		public function get definition():Object {
 			return {
-				klass: CLASS_REALTIME,
+				klass: Constants.REALTIME,
 				nPlayersMin: 2,
 				nPlayersMax: 4,
 				moveSecMin: 0,
@@ -36,12 +47,15 @@
 			}
 		}
 
-		public override function onContainerSet():Object {
-			var introSprite:IntroSprite = new IntroSprite(this);
-			return {introSprite: introSprite};
+		public function set enabled(value:Boolean):void {
 		}
 
-		public override function onNewGame(playedBack:Boolean):int {
+		public function setContainer(container:IContainer):Object {
+			_container = container;
+			return {introSprite: new IntroSprite(this)};
+		}
+
+		public function onNewGame(snapshot:Object):int {
 			if (_boards != null) {
 				for (var i:int; i < _boards.length; i++) {
 					if (_boards[i] != null) {
@@ -50,16 +64,16 @@
 					}
 				}
 			}
-			_boards = new Array(baseConfig.nPlayers);
+			_boards = new Array(_container.baseConfig.nPlayers);
 
 			shuffled = false;
-			if (!playedBack && indexMe == 0) {
-				enqueueMove(['shuffle', Board.WIDTH*Board.HEIGHT - 1]);
+			if (snapshot == null && _container.indexMe == 0) {
+				_container.enqueueMove(['shuffle', Board.WIDTH*Board.HEIGHT - 1]);
 			}
-			return A_ANY;
+			return Constants.ANY;
 		}
 
-		public override function onMove(timestamp:Number, moves:Array, playedBack:Boolean):void {
+		public function onMove(timestamp:Number, moves:Array):void {
 			try {
 				var index:int = moves[0];
 				var data:Object = moves[1];
@@ -72,82 +86,76 @@
 						addChild(_boards[i]);
 					}
 					shuffled = true;
-					return actionResult(A_ANY);
+					return _container.setActionResult(Constants.ANY);
 				}
 	
 				var iPiece:int = data as int;
 				_boards[index].move(iPiece);
 				if (_boards[index].numCorrects == Board.WIDTH*Board.HEIGHT - 1) {
-					recomputeResult();
-					return actionResult(A_OVER);
+					return _container.setActionResult(Constants.OVER, recomputeResult());
 				}
 			} catch (e:Error) {
-				recomputeResult();
-				return actionResult(A_OVER);
+				return _container.setActionResult(Constants.OVER, recomputeResult());
 			}
-			actionResult(A_ANY);
+			_container.setActionResult(Constants.ANY);
 		}
 
-		public override function onResign(timestamp:Number, index:int, playedBack:Boolean):void {
-			updateGameResult(index, P_LOST);
-			if (!playedBack) {
-				TweenFilterLite.to(_boards[index], 0.5, {type: "Color", colorize: 0xF2DB0D, amount: 1});
-			}
+		public function onResign(timestamp:Number, index:int):void {
+			_container.gameResult[index] = Constants.LOST;
+			_container.TweenFilterLite.to(_boards[index], 0.5, {type: "Color", colorize: 0xF2DB0D, amount: 1});
 
 			// Check if there's only 1 player
-			var nPlayingPlayers = nicks0.length;
-			for (var i:int = 0; i < nicks0.length; i++) {
-				if (gameResult[i] != P_NONE) {
+			var nPlayingPlayers = _container.nicks0.length;
+			for (var i:int = 0; i < _container.nicks0.length; i++) {
+				if (_container.gameResult[i] != Constants.NONE) {
 					nPlayingPlayers--;
 				}
 			}
 
 			if (nPlayingPlayers == 1) {
-				recomputeResult();
-				actionResult(A_OVER);
+				_container.setActionResult(Constants.OVER, recomputeResult());
 			} else {
-				actionResult(A_ANY);
+				_container.setActionResult(Constants.ANY);
 			}
 		}
 
-		public override function onTimeout(timestamp:Number, timedOut:Boolean, index:int, playedBack:Boolean):void {
+		public function onTimeout(timestamp:Number, timedOut:Boolean, index:int):void {
 			if (!timedOut) {
-				updateGameResult(index, P_LOST);
-				actionResult(A_ANY);
+				_container.gameResult[index] = Constants.LOST;
+				_container.setActionResult(Constants.ANY);
 			} else {
-				recomputeResult();
-				actionResult(A_OVER);
+				_container.setActionResult(Constants.OVER, recomputeResult());
 			}
 		}
 
 		private function recomputeResult():String {
 			var i:int;
-			var index_point:Array = new Array(nicks0.length);
-			for (i = 0; i < nicks0.length; i++) {
+			var index_point:Array = new Array(_container.nicks0.length);
+			for (i = 0; i < _container.nicks0.length; i++) {
 				index_point[i] = {index: i, point: _boards[i].numCorrects};
 			}
 
-			var summary:String = _("Correct numbers: ");
+			var extra:String = _container._("Correct numbers: ");
 
-			// Sort, top = P_WON, bottom = P_LOST, middles = P_DREW
+			// Sort, top = Constants.WON, bottom = Constants.LOST, middles = Constants.DREW
 			index_point = index_point.sortOn("point");
-			if (index_point[0].point == index_point[nicks0.length - 1].point) {
-				updateGameResult(index_point[0].index, P_DREW);
-				updateGameResult(index_point[nicks0.length - 1].index, P_DREW);
+			if (index_point[0].point == index_point[_container.nicks0.length - 1].point) {
+				_container.gameResult[index_point[0].index] = Constants.DREW;
+				_container.gameResult[index_point[_container.nicks0.length - 1].index] = Constants.DREW;
 			} else {
-				updateGameResult(index_point[0].index, P_LOST);
-				updateGameResult(index_point[nicks0.length - 1].index, P_WON);
+				_container.gameResult[index_point[0].index] = Constants.LOST;
+				_container.gameResult[index_point[_container.nicks0.length - 1].index] = Constants.WON;
 			}
-			summary += nicks0[index_point[nicks0.length - 1].index] + " = " +
-				index_point[nicks0.length - 1].point + " ";
-			for (i = 1; i < nicks0.length - 1; i++) {
-				updateGameResult(index_point[i].index, P_DREW);
-				summary += nicks0[index_point[i].index] + " = " +
+			extra += _container.nicks0[index_point[_container.nicks0.length - 1].index] + " = " +
+				index_point[_container.nicks0.length - 1].point + " ";
+			for (i = 1; i < _container.nicks0.length - 1; i++) {
+				_container.gameResult[index_point[i].index] = Constants.DREW;
+				extra += _container.nicks0[index_point[i].index] + " = " +
 					index_point[i].point + " ";
 			}
-			summary += nicks0[index_point[0].index] + " = " + index_point[0].point;
+			extra += _container.nicks0[index_point[0].index] + " = " + index_point[0].point;
 
-			return summary;
+			return extra;
 		}
 	}
 }
