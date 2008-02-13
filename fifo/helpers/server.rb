@@ -54,9 +54,10 @@ class Server
   end
 
   def on_call(client, cmd, value)
-p '----'
-p cmd
-p value
+    $LOGGER.debug('on_call----')
+    $LOGGER.debug('cmd: ' + cmd.inspect)
+    $LOGGER.debug('value: ' + value.inspect)
+
     if cmd == CMD_CAPTCHA
       if client.property[:channel].nil?
         captcha(client)

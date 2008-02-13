@@ -2,40 +2,43 @@
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.text.TextField;
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.utils.Timer;
 
 	import org.cove.ape.*;
 
-	import net.web20games.game.Game;
+	import net.web20games.game.IGame;
+	import net.web20games.game.IContainer;
+	import net.web20games.game.Constants;
 
-	public class Game extends net.web20games.game.Game {
+	public class Game extends Sprite implements IGame {
 		private static const N_P:int = 4;   // Number of pieces (soccer players) of a player
 		private static const R_P:int = 10;  // Radius of a player
 		private static const R_B:int = 10;  // Radius of the ball
 
-		private static const MAX_SHOOT_SPEED:int = 150;
-		private static const MAX_STEP:int = 150;
+		private static const MAX_SHOOT_SPEED:int = 5;
+		private static const ZERO_SPEED:Number = 0.1;  // Below this speed is seen as zero
+		private static const MAX_STEP:int = 60;
 
 		// Teams and the ball
-		private var _p0:Array;
-		private var _p1:Array;
+		private var _teams:Array;
 		private var _b:CircleParticle;
 
-		// Focused piece
-		private var _p:CircleParticle;
-		private var _ip:int;  // Index, 0...N_P
+		// Index of the focused piece and velocities of pieces of this player,
+		// only used if this player has joined the game
+		private var _ip:int;    // 0...N_P
 
 		// Steps of APE
 		private var _steps:int;
 
-		// Velocities for each piece, only used if this player has joined the game
-		// [vx, vy, ...]
-		private var _vs:Array;
+		private var _container:IContainer;
 
 		// ---------------------------------------------------------------------------
 
 		public function Game():void {
-			enabled = false;
 			_nick0.selectable = false;
 			_nick1.selectable = false;
 			_nick0.htmlText = "";
@@ -62,34 +65,39 @@
 			group.addParticle(new RectangleParticle(500, 180, 2, 100, 0, true));
 
 			// Ball and pieces
-			_b = new CircleParticle(100, 100, R_B);
-			_b.setDisplay(new Ball());
+			_b = new CircleParticle(100, 100, R_B, false, 1, 0.3, 0.3);
+			_b.setDisplay(newBall());
 			group.addParticle(_b);
-			_p0 = new Array(N_P);
-			_p1 = new Array(N_P);
-			for (var i:int = 0; i < N_P; i++) {
-				_p0[i] = new CircleParticle(100, 100, R_P);
-				_p0[i].setDisplay(new P0());
-				_p0[i].sprite.addEventListener(MouseEvent.CLICK, onMClick);
-				group.addParticle(_p0[i]);
-
-				_p1[i] = new CircleParticle(100, 100, R_P);
-				_p1[i].setDisplay(new P1());
-				_p1[i].sprite.addEventListener(MouseEvent.CLICK, onMClick);
-				group.addParticle(_p1[i]);
+			_teams = new Array(2);
+			for (var i:int = 0; i < 2; i++) {
+				_teams[i] = new Array(N_P);
+				for (var j:int = 0; j < N_P; j++) {
+					_teams[i][j] = new CircleParticle(100, 100, R_P, false, 3, 0.3, 0.3);
+					_teams[i][j].setDisplay(newP(i));
+					group.addParticle(_teams[i][j]);
+				}
 			}
 			resetBallAndPieces();
+			_steps = MAX_STEP;
+			APEngine.paint();
 
-			addEventListener(Event.ENTER_FRAME, runAPE);
 			_field.addEventListener(MouseEvent.CLICK, onMClick);
 			_field.addEventListener(MouseEvent.MOUSE_MOVE, onMMove);
+
+			var t:Timer = new Timer(60);
+			t.addEventListener(TimerEvent.TIMER, runAPE);
+			t.start();
+		}
+
+		public function get container():IContainer {
+			return _container;
 		}
 
 		// ---------------------------------------------------------------------------
 
-		public override function get definition():Object {
+		public function get definition():Object {
 			return {
-				klass: CLASS_BATCH,
+				klass: Constants.BATCH,
 				nPlayersMin: 2,
 				nPlayersMax: 2,
 				moveSecMin: 15,
@@ -99,43 +107,69 @@
 			};
 		}
 
-		protected override function onContainerSet():Object {
+		public function set enabled(value:Boolean):void {
+		}
+
+		public function setContainer(container:IContainer):Object {
+			_container = container;
 			return {introSprite: new IntroSprite(this)};
 		}
 
-		protected override function onNewGame(playedBack:Boolean):int {
+		public function onNewGame(snapshot:Object):int {
 			// Display nicks
-			_nick0.htmlText = nicks0[0];
-			_nick1.htmlText = nicks0[1];
+			_nick0.htmlText = _container.nicks0[0];
+			_nick1.htmlText = _container.nicks0[1];
 
 			//
-			if (indexMe >= 0) {
-				if (_vs == null) {
-					_vs = new Array(N_P*2);
+			resetBallAndPieces();
+			_steps = MAX_STEP;
+			APEngine.paint();
+
+			if (_container.indexMe >= 0) {
+				if (_container.defaultMove == null) {
+					_container.defaultMove = new Array(N_P);
 				}
-				for (var i:int = 0; i < N_P*2; i++) {
-					_vs[i] = 0;
+				for (var i:int = 0; i < N_P; i++) {
+					_container.defaultMove[i] = [0, 0];
+				}
+				_ip = 0;
+			}
+
+			return Constants.ANY;
+		}
+
+		public function onMove(timestamp:Number, moves:Array):void {
+			_field.graphics.clear();
+			var indices:Array = [moves[0], moves[2]];
+			var vss:Array = [moves[1], moves[3]];
+			for (var i:int = 0; i < 2; i++) {
+				var index:int = indices[i];
+				for (var j:int = 0; j < N_P; j++) {
+					_teams[index][j].velocity =
+						limitShootSpeed(vss[i][j][0], vss[i][j][1]);
 				}
 			}
-			resetBallAndPieces();
+			_b.velocity = new Vector(0, 0);
 
-			return A_ANY;
+			for (i = 0; i < N_P; i++) {
+				_container.defaultMove[i] = [0, 0];
+			}
+			_ip = 0;
+
+			_steps = 0;
+			_container.setActionResult(Constants.ANY);
 		}
 
-		protected override function onMove(timestamp:Number, moves:Array, playedBack:Boolean):int {
-			return A_ANY;
+		public function onResign(timestamp:Number, index:int):void {
+			_container.gameResult[index] = Constants.LOST;
+			_container.gameResult[1 - index] = Constants.WON;
+			_container.setActionResult(Constants.OVER);
 		}
 
-		protected override function onResign(timestamp:Number, index:int, playedBack:Boolean):int {
-			updateGameResult(index, P_LOST);
-			updateGameResult(1 - index, P_WON);
-			return A_OVER;
-		}
-
-		protected override function onTimeout(timestamp:Number, timedOut:Boolean, index:int, playedBack:Boolean):int {
-			updateGameResult(index, P_LOST);
-			updateGameResult(1 - index, P_WON);
-			return A_OVER;
+		public function onTimeout(timestamp:Number, timedOut:Boolean, index:int):void {
+			_container.gameResult[index] = Constants.LOST;
+			_container.gameResult[1 - index] = Constants.WON;
+			_container.setActionResult(Constants.OVER);
 		}
 
 		// ---------------------------------------------------------------------------
@@ -145,103 +179,132 @@
 				_steps++;
 				APEngine.step();
 				APEngine.paint();
+
+				checkBall();
 			}
 		}
 
 		private function onMClick(event:MouseEvent):void {
-			if (indexMe < 0 || !enabled || _steps < MAX_STEP) {
+			if (_container == null || !_container.enabled ||
+					_steps < MAX_STEP || event.target != _field) {
 				return;
 			}
 
-			// Set velocity for the focused piece
-			if (event.target == _field && _p != null) {
-				updateVelocity();
-				_p = null;
-				return;
-			}
+			updateVelocity(event.localX, event.localY);
 
-			// Determine the focused piece
-			var i:int;
-			if (event.target is P0) {
-				if (indexMe != 0) {
-					return;
-				}
-				for (i = 0; i < N_P; i++) {
-					if (_p0[i].sprite.contains(event.target)) {
-						_p = _p0[i];
-						_ip = i;
-						break;
-					}
-				}
-			} else if (event.target is P1) {
-				if (indexMe != 1) {
-					return;
-				}
-				for (i = 0; i < N_P; i++) {
-					if (_p1[i].sprite.contains(event.target)) {
-						_p = _p1[i];
-						_ip = i;
-						break;
-					}
-				}
+			if (_ip == 3) {
+				_container.enqueueMove(_container.defaultMove);
+			} else {
+				_ip++;
 			}
 		}
 
 		private function onMMove(event:MouseEvent):void {
-			if (indexMe < 0 || !enabled || event.target != _field || _p == null) {
+			if (_container == null || !_container.enabled ||
+					_steps < MAX_STEP || event.target != _field) {
 				return;
 			}
 
 			_field.graphics.clear();
 			_field.graphics.lineStyle(1);
 			_field.graphics.beginFill(0xFF0000);
-			_field.graphics.moveTo(_p.px, _p.py);
+			for (var i:int = 0; i < _ip; i++) {
+				_field.graphics.moveTo(_teams[_container.indexMe][i].px,
+					_teams[_container.indexMe][i].py);
+				_field.graphics.lineTo(_teams[_container.indexMe][i].px + _container.defaultMove[i][0],
+					_teams[_container.indexMe][i].py + _container.defaultMove[i][1]);
+			}
+			_field.graphics.moveTo(_teams[_container.indexMe][_ip].px,
+				_teams[_container.indexMe][_ip].py);
 			_field.graphics.lineTo(event.localX, event.localY);
 			_field.graphics.endFill();
 		}
 
 		// ---------------------------------------------------------------------------
 
+		private function newBall():Sprite {
+			var d:BitmapData = new BallBitmapData(20, 20);
+			var b:Bitmap = new Bitmap(d);
+			b.x = -(d.width/2);
+			b.y = -(d.height/2);
+			var s:Sprite =  new Sprite();
+			s.addChild(b);
+			return s;
+		}
+
+		private function newP(index:int):Sprite {
+			var d:BitmapData = (index == 0)? new P0BitmapData(20, 20) : new P1BitmapData(20, 20);
+			var b:Bitmap = new Bitmap(d);
+			b.x = -(d.width/2);
+			b.y = -(d.height/2);
+			var s:Sprite =  new Sprite();
+			s.addChild(b);
+			return s;
+		}
+
 		// Reset players and ball positions.
 		private function resetBallAndPieces():void {
 			_b.px = 250;
 			_b.py = 180;
 
-			_p0[0].px = 90;  _p0[0].py = 140;
-			_p0[1].px = 90;  _p0[1].py = 220;
-			_p0[2].px = 165; _p0[2].py = 140;
-			_p0[3].px = 165; _p0[3].py = 220;
+			_teams[0][0].px = 90;  _teams[0][0].py = 140;
+			_teams[0][1].px = 90;  _teams[0][1].py = 220;
+			_teams[0][2].px = 165; _teams[0][2].py = 140;
+			_teams[0][3].px = 165; _teams[0][3].py = 220;
 
-			_p1[0].px = 335; _p1[0].py = 140;
-			_p1[1].px = 335; _p1[1].py = 220;
-			_p1[2].px = 410; _p1[2].py = 140;
-			_p1[3].px = 410; _p1[3].py = 220;
-
-			// Force APE to repaint
-			_steps = MAX_STEP - 1;
-			runAPE(null);
+			_teams[1][0].px = 335; _teams[1][0].py = 140;
+			_teams[1][1].px = 335; _teams[1][1].py = 220;
+			_teams[1][2].px = 410; _teams[1][2].py = 140;
+			_teams[1][3].px = 410; _teams[1][3].py = 220;
 		}
 
-		private function updateVelocity():void {
-			_field.graphics.clear();
-			var vx:int = event.localX - _p.px;
-			var vy:int = event.localY - _p.py;
-			_p.velocity = limitShootSpeed(vx, vy);
-
-			_vs[_ip*2] = _p.velocity.x;
-			_vs[_ip*2 + 1] = _p.velocity.y;
+		private function updateVelocity(mouseX:int, mouseY:int):void {
+			_container.defaultMove[_ip][0] = mouseX - _teams[_container.indexMe][_ip].px;
+			_container.defaultMove[_ip][1] = mouseY - _teams[_container.indexMe][_ip].py;
 		}
 
-		private function limitShootSpeed(vx:int, vy:int):Vector {
+		private function limitShootSpeed(vx:Number, vy:Number):Vector {
+			vx /= 40;
+			vy /= 40;
 			var r:Number;
 			var ms2:Number = MAX_SHOOT_SPEED*MAX_SHOOT_SPEED;
 			var s2:Number = vx*vx + vy*vy;
 			if (s2 > ms2) {
 				r = Math.sqrt(ms2/s2);
-				vx = vx*r;
-				vy = vy*r;
+				vx *= r;
+				vy *= r;
 			}
 			return new Vector(vx, vy);
+		}
+
+		private function checkBall():void {
+			var iWon:int = -1;
+			if (_b.px < R_B + 2) {
+				iWon = 1;
+			} else if (_b.px > 500 - R_B - 2) {
+				iWon = 0;
+			}
+			if (iWon >= 0) {
+				_steps = MAX_STEP;
+				_container.gameResult[iWon] = Constants.WON;
+				_container.gameResult[1 - iWon] = Constants.LOST;
+				_container.setActionResult(Constants.OVER);
+			}
+
+			// Everything stopped?
+			for (var i:int = 0; i < 2; i++) {
+				for (var j:int = 0; j < N_P; j++) {
+					var v:Vector = _teams[i][j].velocity;
+					if (v.magnitude() > ZERO_SPEED) {
+						return;
+					}
+				}
+			}
+			v = _b.velocity;
+			if (v.magnitude() > ZERO_SPEED) {
+				return;
+			}
+			_steps = MAX_STEP;
 		}
 	}
 }

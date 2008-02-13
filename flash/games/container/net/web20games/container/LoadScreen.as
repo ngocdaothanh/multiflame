@@ -11,12 +11,12 @@
 
 	/*
 	* Load assets:
-	* * Client mofile (skipped for English)
-	* * Game mofile (skipped for English)
-	* * Game SWF
-	* * Game information
-	* * Toy config
-	* * Toy SWF
+	* 1. Client mofile (skipped for English)
+	* 2. Game mofile (skipped for English)
+	* 3. Game SWF
+	* 4. Game information
+	* 5. Toy config
+	* 6. Toy SWF
 	*/
 	public class LoadScreen extends Sprite {
 		public static var clientGetText:GetText;

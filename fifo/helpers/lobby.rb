@@ -55,9 +55,10 @@ private
   end
 
   def logout(player, value)
+    iroom = value
     @players.delete(player)
     @players.each do |p|
-      p.call(Server::CMD_LOGOUT, player.property[:nick])
+      p.call(Server::CMD_LOGOUT, [iroom, player.property[:nick]])
     end
   end
 

@@ -63,10 +63,6 @@
 		 * is not null.
 		 */
 		function set defaultMove(value:Object):void;
-
-		/**
-		 * defaultMove is reset to null after returned.
-		 */
 		function get defaultMove():Object;
 
 		/**

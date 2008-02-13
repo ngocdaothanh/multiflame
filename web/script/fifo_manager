@@ -76,7 +76,7 @@ class FifoManager
       clients.each { |fifo| mf_ready_set(fifo) }
     end
 
-    EventMachine::add_timer(CONFIG[:captcha_salt_renew_interval]*60) do
+    EventMachine::add_periodic_timer(CONFIG[:captcha_salt_renew_interval]*60) do
       mf_captcha_salt_set
     end
 

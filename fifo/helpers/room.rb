@@ -250,14 +250,22 @@ private
   end
 
   def game_over(player, value)
-    return if @state != PLAY
+    if @state == GAME_OVER
+      # TODO: phase2: collect results and judge later
+      return
+    end
 
-    # TODO: Phase2: record result
-    #@state = GAME_OVER
+    if @state != PLAY
+      player.close_connection
+      return
+    end
 
-    @state = NEWABLE
-    @players.each do |p|
-      p.call(Server::CMD_GAME_OVER, nil)
+    @state = GAME_OVER
+    EventMachine::add_timer(CONFIG[:game_over_delay]) do
+      @state = NEWABLE
+      @players.each do |p|
+        p.call(Server::CMD_GAME_OVER, nil)
+      end
     end
   end
 

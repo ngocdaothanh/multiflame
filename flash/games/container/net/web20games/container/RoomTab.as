@@ -30,6 +30,7 @@
 		private var _actionTimestamp:Number;
 
 		private var _defaultMove:Object;
+		private var _moveSent:Boolean;
 		private var _gameResult:Array;
 		private var _lastActionResult:int;
 		private var _over:Boolean;
@@ -80,6 +81,9 @@
 		// ---------------------------------------------------------------------------
 
 		public function get enabled():Boolean {
+			if (_channel.state != Channel.PLAY) {
+				return false;
+			}
 			return _enabled;
 		}
 
@@ -96,6 +100,9 @@
 		}
 
 		public function get indexMe() {
+			if (_channel.state != Channel.PLAY) {
+				return -1;
+			}
 			return _channel.playNicks0.indexOf(_channel.nick);
 		}
 
@@ -104,9 +111,7 @@
 		}
 
 		public function get defaultMove():Object {
-			var ret:Object = _defaultMove;
-			_defaultMove = null;
-			return ret;
+			return _defaultMove;
 		}
 
 		public function get gameResult():Array {
@@ -122,7 +127,7 @@
 			_over = result == Constants.OVER;
 			_extra = extra;
 
-			_enabled = indexMe >= 0 &&
+			_enabled = _game.enabled = indexMe >= 0 &&
 				(result == Constants.ANY || (result >= 0 && indexMe == result));
 
 			var now:Number = (new Date()).time/1000;
@@ -137,8 +142,8 @@
 		}
 
 		public function enqueueMove(data:Object):void {
-			_enabled = false;
-			_game.enabled = false;
+			_enabled = _game.enabled = false;
+			_moveSent = true;  // Mark so that the default move will not be sent
 			_channel.playMove(data);
 		}
 
@@ -164,7 +169,7 @@
 
 		public function set game(value:Sprite) {
 			_game = value as IGame;
-			_enabled = false;
+			_enabled = _game.enabled = false;
 
 			var o:Object = _game.setContainer(this);
 			_configDlg = o.configDlg;
@@ -188,11 +193,9 @@
 		 * true if the default move was enqueued.
 		 */
 		public function enqueueDefaultMove():Boolean {
-			if (baseConfig.moveSec > 0) {
-				var m:Object = defaultMove;
-				if (m != null) {
-					enqueueMove(m);
-				}
+			if (baseConfig.moveSec > 0 && !_moveSent && _defaultMove != null) {
+				enqueueMove(_defaultMove);
+				return true;
 			}
 			return false;
 		}
@@ -229,7 +232,7 @@
 				addChild(_configDlg as Sprite);
 				break;
 			case Channel.PLAY:
-				_enabled = false;
+				_enabled = _game.enabled = false;
 				initGameResult();
 				var snapshot:Object = event.snapshot[5];
 				_lastActionResult = _game.onNewGame(snapshot);
@@ -243,7 +246,7 @@
 
 		private function onClosed(event:CloseEvent):void {
 			if (event.type == CloseEvent.CLOSED) {			
-				_enabled = false;
+				_enabled = _game.enabled = false;
 				var dlg:Sprite  = _configDlg as Sprite;
 				if (contains(dlg)) {
 					removeChild(dlg);
@@ -266,7 +269,8 @@
 
 				initGameResult();
 				_lastActionResult = _game.onNewGame(null);
-				_enabled = indexMe >= 0 && (_lastActionResult == Constants.ANY || indexMe == _lastActionResult);
+				_enabled = _game.enabled = indexMe >= 0 &&
+					(_lastActionResult == Constants.ANY || indexMe == _lastActionResult);
 				_over = false;				
 
 				TweenFilterLite.to(_game, 1.5, {type: "Color"});
@@ -299,6 +303,7 @@
 			}
 			_actionSystemTime = (new Date()).time/1000;
 			_actionTimestamp = event.timestamp;
+			_moveSent = false;
 			_game.onMove(event.timestamp, event.moves);
 		}
 
@@ -308,6 +313,7 @@
 			}
 			_actionSystemTime = (new Date()).time/1000;
 			_actionTimestamp = event.timestamp;
+			_moveSent = false;
 			_game.onResign(event.timestamp, event.index);
 		}
 
@@ -318,13 +324,14 @@
 			_actionSystemTime = (new Date()).time/1000;
 			_actionTimestamp = event.timestamp;
 			var timeOutResult = _timeoutCalculator.checkTimeout(event.timestamp, event.index);
+			_moveSent = false;
 			_game.onTimeout(event.timestamp, timeOutResult[0], timeOutResult[1]);
 		}
 
 		// --------------------------------------------------------------------------
 
 		private function onGameOver(event:GameOverEvent):void {
-			_enabled = false;
+			_enabled = _game.enabled = false;
 			TweenFilterLite.to(_game, 1.5, {type: "Color", colorize: 0x000000, amount: 0.5});
 			_configDlg.onResult(_channel.playNicks0, _gameResult, _extra);
 			addChild(_configDlg as Sprite);
