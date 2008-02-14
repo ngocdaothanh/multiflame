@@ -3,11 +3,11 @@
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 
-	import net.web20games.game.IGame;
-	import net.web20games.game.IContainer;
-	import net.web20games.game.Constants;
+	import multiflame.game.IGame;
+	import multiflame.game.IContainer;
+	import multiflame.game.Constants;
 
-	public class Game extends Sprite implements net.web20games.game.IGame {
+	public class Game extends Sprite implements IGame {
 		private var _pieces:Array;
 		private var _container:IContainer;
 
@@ -42,7 +42,10 @@
 			return {introSprite: new IntroSprite(this)};
 		}
 
-		public function onNewGame(snapshot:Object):int {
+		public function set enabled(value:Boolean):void {
+		}
+
+		public function onNewGame():int {
 			var i:int;
 
 			if (_pieces != null) {
@@ -58,7 +61,7 @@
 			_nick0.htmlText = _container.nicks0[0];
 			_nick1.htmlText = _container.nicks0[1];
 
-			return 0;
+			return restore();
 		}
 
 		public function onMove(timestamp:Number, moves:Array):void {
@@ -76,7 +79,10 @@
 				}
 
 				// Make the move
-				addPiece((index == 0)? new O() : new X(), iPiece, false);
+				addPiece(index, iPiece, false);
+				if (_container.indexMe >= 0) {
+					_container.gameSnapshot[iPiece] = index;
+				}
 
 				ret = computeResult(index);
 			} catch (e:Error) {
@@ -84,19 +90,19 @@
 				_container.gameResult[1 - index] = Constants.WON;
 				ret = Constants.OVER;
 			}
-			_container.setActionResult(ret);
+			_container.actionResult = ret;
 		}
 
 		public function onResign(timestamp:Number, index:int):void {
 			_container.gameResult[index] = Constants.LOST;
 			_container.gameResult[1 - index] = Constants.WON;
-			_container.setActionResult(Constants.OVER);
+			_container.actionResult = Constants.OVER;
 		}
 
 		public function onTimeout(timestamp:Number, timedOut:Boolean, index:int):void {
 			_container.gameResult[index] = Constants.LOST;
 			_container.gameResult[1 - index] = Constants.WON;
-			_container.setActionResult(Constants.OVER);
+			_container.actionResult = Constants.OVER;
 		}
 
 		// --------------------------------------------------------------------------
@@ -115,6 +121,29 @@
 		}
 
 		// --------------------------------------------------------------------------
+
+		private function restore():int {
+			var count0:int = 0;
+			var count1:int = 0;
+			if (_container.gameSnapshot != null) {
+				for (var i:int = 0; i < 9; i++) {
+					if (_container.gameSnapshot[i] == 0) {
+						count0++;
+						addPiece(0, i, true);
+					} else if (_container.gameSnapshot[i] == 1) {
+						count1++;
+						addPiece(1, i, true);
+					}
+				}
+			}
+
+			// Initialize the snapshot
+			if (_container.indexMe >= 0) {
+				_container.gameSnapshot = new Array(9);
+			}
+
+			return (count0 == count1)? 0 : 1;
+		}
 
 		private function computeResult(index:int):int {
 			// Horizontal
@@ -188,7 +217,8 @@
 			return (r*3 + c);
 		}
 
-		private function addPiece(piece:Sprite, i:int, playedBack:Boolean) {
+		private function addPiece(index:int, i:int, playedBack:Boolean) {
+			var piece:Sprite = (index == 0)? new O() : new X();
 			var r:int = i/3;
 			var c:int = i%3;
 			piece.y = r*100 + 50 + _board.x;

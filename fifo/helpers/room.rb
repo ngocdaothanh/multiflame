@@ -156,6 +156,7 @@ private
       @state = PLAY
       @playing_players = @playing_players0.dup
       @play_created_at = Time.now
+      @game_snapshot = nil
       if @batch_game
         @batch_move.new_game(@playing_players0.size)
         @last_batch_move_sent = Time.now
@@ -203,11 +204,13 @@ private
       return
     end
 
+    @game_snapshot = value[0]
+
     index = @playing_players0.index(player)
-    if !play_move_util(index, value)
+    if !play_move_util(index, value[1])
       @batch_game ?
-      play_move_batch(index, value) :
-      play_move_immediate(index, value)
+      play_move_batch(index, value[1]) :
+      play_move_immediate(index, value[1])
     end
   end
 
@@ -230,6 +233,8 @@ private
       p.call(Server::CMD_PLAY_RESIGN, a)
     end
 
+    @last_action = [Server::CMD_PLAY_RESIGN, index, nil]
+
     # Broadcast for batch game if the batch is full with the new size
     broadcast_batch if @batch_game and @batch_move.resign(index)
   end
@@ -242,6 +247,9 @@ private
     end
 
     index = @playing_players0.index(player)
+
+    @last_action = [Server::CMD_PLAY_TIMEOUT, index, nil]
+
     if @batch_game
       play_timeout_batch(index)
     else
@@ -284,7 +292,8 @@ private
       a_base_config,
       @extended_config,
       @playing_players0.map { |p| p.property[:nick] },
-      nil  # <--- TO____DO
+      @game_snapshot,
+      @last_action
     ]
   end
 
