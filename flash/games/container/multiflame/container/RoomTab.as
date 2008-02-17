@@ -16,25 +16,22 @@
 	import multiflame.container.events.*;
 
 	public class RoomTab extends Sprite implements IContainer {
-		private var _enabled:Boolean;
-
 		private var _channel:Channel;
 
 		private var _game:IGame;
-		private var _introSprite:Sprite;
-
+		private var _klass:int;
 		private var _configDlg:IConfigDlg;
+		private var _introSprite:Sprite;	
 
 		private var _timeoutCalculator:TimeoutCalculator;
 		private var _actionSystemTime:Number;
 		private var _actionTimestamp:Number;
 
-		private var _gameSnapshot:Object;
 		private var _defaultMove:Object;
 		private var _moveSent:Boolean;
 		private var _gameResult:Array;
 		private var _extraGameResult:String;
-		private var _actionResult:int;
+		private var _lastActionResult:int;
 		private var _over:Boolean;
 
 		// --------------------------------------------------------------------------
@@ -46,7 +43,7 @@
 
 			_channel.addEventListener(CloseEvent.CLOSED, onClosed);
 			_channel.addEventListener(RoomEnterLeaveEvent.ENTER_ME, onRoomEnterMe);
-			_channel.addEventListener(NewEvent.INIT, onNewInit);
+			_channel.addEventListener(NewEvent.CONFIG, onNewConfig);
 			_channel.addEventListener(NewEvent.JOIN, onNewJoin);
 			_channel.addEventListener(NewEvent.UNJOIN, onNewUnjoin);
 			_channel.addEventListener(NewEvent.TIMEOUT, onNewTimeout);
@@ -81,13 +78,6 @@
 
 		// ---------------------------------------------------------------------------
 
-		public function get enabled():Boolean {
-			if (_channel.state != Channel.PLAY) {
-				return false;
-			}
-			return _enabled;
-		}
-
 		public function get baseConfig():Object {
 			return _channel.baseConfig;
 		}
@@ -107,14 +97,6 @@
 			return _channel.playNicks0.indexOf(_channel.nick);
 		}
 
-		public function set gameSnapshot(value:Object):void {
-			_gameSnapshot = value;
-		}
-
-		public function get gameSnapshot():Object {
-			return _gameSnapshot;
-		}
-
 		public function set defaultMove(value:Object):void {
 			_defaultMove = value;
 		}
@@ -131,21 +113,34 @@
 			_extraGameResult = value;
 		}
 
-		public function get actionResult():int {
-			return _actionResult;
+		public function get lastActionResult():int {
+			return _lastActionResult;
 		}
 
-		public function set actionResult(value:int):void {
-			_actionResult = value;
-			_over = value == Constants.OVER;
+		public function onActionDone(result:int):void {
+			/*
+			_actionResult = _game.onNewGame(null);
+				_enabled = _game.enabled = indexMe >= 0 &&
+					(_actionResult == Constants.ANY || indexMe == _actionResult);
+				_over = false;				
 
-			_enabled = _game.enabled = indexMe >= 0 &&
-				(value == Constants.ANY || (value >= 0 && indexMe == value));
+				TweenFilterLite.to(_game, 1.5, {type: "Color"});
+
+				_timeoutCalculator = new TimeoutCalculator(_klass, _channel.baseConfig, _actionResult);
+				_channel.broadcastPlayActionResult(_actionResult,
+					_timeoutCalculator.moveSecLeft, _timeoutCalculator.totalSecLeft);
+			*/
+			
+			_lastActionResult = result;
+			_over = result == Constants.OVER;
+
+			_game.enabled = indexMe >= 0 &&
+				(result == Constants.ANY || (result >= 0 && indexMe == result));
 
 			var now:Number = (new Date()).time/1000;
 			var processingSec:Number = now - _actionSystemTime;
-			_timeoutCalculator.calc(_actionTimestamp, processingSec, value);
-			_channel.broadcastPlayActionResult(value,
+			_timeoutCalculator.calc(_actionTimestamp, processingSec, result);
+			_channel.broadcastPlayActionResult(result,
 				_timeoutCalculator.moveSecLeft, _timeoutCalculator.totalSecLeft);
 
 			if (_over && _channel.playNicks.indexOf(_channel.nick) >= 0) {
@@ -154,19 +149,19 @@
 		}
 
 		public function enqueueMove(data:Object):void {
-			_enabled = _game.enabled = false;
+			_game.enabled = false;
 			_moveSent = true;  // Mark so that the default move will not be sent
-			_channel.playMove([_gameSnapshot, data]);
+			_channel.playMove([_game.snapshot, data]);
 		}
 
 		// --------------------------------------------------------------------------
 
-		public function get definition():Object {
-			return _game.definition;
+		public function get baseConfigRange():Object {
+			return _game.baseConfigRange;
 		}
 
-		public function init(baseConfig:Object, extendedConfig:Object):void {
-			_channel.newInit(baseConfig, extendedConfig);
+		public function config(baseConfig:Object, extendedConfig:Object):void {
+			_channel.newConfig(baseConfig, extendedConfig);
 		}
 
 		public function join():void {
@@ -181,9 +176,10 @@
 
 		public function set game(value:Sprite) {
 			_game = value as IGame;
-			_enabled = _game.enabled = false;
+			_game.enabled = false;
 
 			var o:Object = _game.setContainer(this);
+			_klass = o.klass;
 			_configDlg = o.configDlg;
 			if (_configDlg == null) {
 				_configDlg = new ConfigDlg();
@@ -194,6 +190,10 @@
 
 		public function get game():Sprite {
 			return _game as Sprite;
+		}
+
+		public function get klass():int {
+			return _klass;
 		}
 
 		public function get introSprite():Sprite {
@@ -235,7 +235,7 @@
 				break;
 			case Channel.NEW:
 				// Playback
-				_configDlg.onInit(nicks0[0], nicks0[0] == _channel.nick,
+				_configDlg.onConfig(nicks0[0], nicks0[0] == _channel.nick,
 					_channel.baseConfig, _channel.extendedConfig);
 				for (var i:int = 1; i < nicks0.length; i++) {
 					_configDlg.onJoin(nicks0[i]);
@@ -244,25 +244,17 @@
 				addChild(_configDlg as Sprite);
 				break;
 			case Channel.PLAY:
-				_gameSnapshot = event.snapshot[5];
-				playActions = event.snapshot[6];
-
-				_enabled = _game.enabled = false;
+				var playActions:Array = event.snapshot[6];
+				_game.enabled = false;
 				initGameResult();
-				_actionResult = _game.onNewGame();
-				_timeoutCalculator = new TimeoutCalculator(_game.definition.klass, _channel.baseConfig, _actionResult);
-
-				
-				
-				_channel.broadcastPlayActionResult(_actionResult,
-					_timeoutCalculator.moveSecLeft, _timeoutCalculator.totalSecLeft);
+				_game.onNewGame(event.snapshot[5]);
 				break;
 			}
 		}
 
 		private function onClosed(event:CloseEvent):void {
 			if (event.type == CloseEvent.CLOSED) {			
-				_enabled = _game.enabled = false;
+				_game.enabled = false;
 				var dlg:Sprite  = _configDlg as Sprite;
 				if (contains(dlg)) {
 					removeChild(dlg);
@@ -272,8 +264,8 @@
 
 		// --------------------------------------------------------------------------
 
-		private function onNewInit(event:NewEvent):void {
-			_configDlg.onInit(event.nick, event.nick == _channel.nick,
+		private function onNewConfig(event:NewEvent):void {
+			_configDlg.onConfig(event.nick, event.nick == _channel.nick,
 				_channel.baseConfig, _channel.extendedConfig);
 		}
 
@@ -284,17 +276,12 @@
 				}
 
 				initGameResult();
-				_gameSnapshot = null;
-				_actionResult = _game.onNewGame();
-				_enabled = _game.enabled = indexMe >= 0 &&
-					(_actionResult == Constants.ANY || indexMe == _actionResult);
+				_game.onNewGame(null);
+				_game.enabled = indexMe >= 0 &&
+					(_lastActionResult == Constants.ANY || indexMe == _lastActionResult);
 				_over = false;				
 
 				TweenFilterLite.to(_game, 1.5, {type: "Color"});
-
-				_timeoutCalculator = new TimeoutCalculator(_game.definition.klass, _channel.baseConfig, _actionResult);
-				_channel.broadcastPlayActionResult(_actionResult,
-					_timeoutCalculator.moveSecLeft, _timeoutCalculator.totalSecLeft);
 			} else {
 				_configDlg.onJoin(event.nick);
 			}
@@ -315,7 +302,7 @@
 		// --------------------------------------------------------------------------
 
 		private function onPlayAction(event:PlayEvent):void {
-			if (_eventQueue.length thread
+			//if (_eventQueue.length thread
 		}
 
 		private function onPlayMove(event:PlayEvent):void {
@@ -352,9 +339,9 @@
 		// --------------------------------------------------------------------------
 
 		private function onGameOver(event:GameOverEvent):void {
-			_enabled = _game.enabled = false;
+			_game.enabled = false;
 			TweenFilterLite.to(_game, 1.5, {type: "Color", colorize: 0x000000, amount: 0.5});
-			_configDlg.onResult(_channel.playNicks0, _gameResult, _extraGameResult);
+			_configDlg.onGameResult(_channel.playNicks0, _gameResult, _extraGameResult);
 			addChild(_configDlg as Sprite);
 		}
 

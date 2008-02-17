@@ -7,15 +7,13 @@
 	public interface IGame {
 		/**
 		 * @return
-		 * Definition about this game:
 		 * {
-		 * 	klass                        Game class, see Constans.as
 		 * 	nPlayersMin, nPlayersMax,    Number of players, should be >= 2
 		 * 	moveSecMin, moveSecMax,      [sec], = 0 for unlimited, not used for realtime game
-		 * 	totalMinMin, totalMinMax,    [min], = 0 for unlimited
+		 * 	totalMinMin, totalMinMax     [min], = 0 for unlimited
 		 * }
 		 */
-		function get definition():Object;
+		function get baseConfigRange():Object;
 
 		/**
 		 * Utilities like translation, TweenLite and TweenFilterLite are not available
@@ -26,6 +24,7 @@
 		 *
 		 * @return
 		 * {
+		 * 	klass,         Game class, see Constants.as
 		 * 	configDlg,     An instance of IConfigDlg, null to use the default
 		 * 	introSprite    A sprite displaying game introduction (rule, trivia...), null for none
 		 * }
@@ -38,20 +37,23 @@
 		function set enabled(value:Boolean):void;
 
 		/**
+		 * @return
+		 * The game snapshot, from which the game can be restored on other machines.
+		 */
+		function get snapshot():Object;
+
+		/**
 		 * The game container calls to ask the game to prepare a new game. 
 		 *
 		 * The game should examine the container for baseConfig, extendedConfig,
-		 * gameSnapshot...  to act properly. If gameSnapshot is not null, it means
-		 * that the player logs when the game has started. In this case the game state
+		 * gameSnapshot, indexMe...  to act properly. If snapshot is not null, it means
+		 * that the player logs in when the game has started. In this case the game state
 		 * must be restored.
 		 *
-		 * This method is not called if the game is over.
-		 *
-		 * @return
-		 * A_ANY               Any player can make the next move.
-		 * Non-negative number Index of the player who should make the next move.
+		 * After processing, IContainer#onActionResult() must be called to notify that
+		 * the processing has finished.
 		 */
-		function onNewGame():int;
+		function onNewGame(snapshot:Object):void;
 
 		/**
 		 * Called by the game container to notify that a player (for immediate-mode
@@ -63,7 +65,8 @@
 		 *    cannot move successively. If validation fails, use updateGameResult() to
 		 *    update the result of the player who makes the move to P_LOST.
 		 * 2. Actually make the moves if the validation passed.
-		 * 3. Compute and call updateGameResult() if neccessary.
+		 * 3. Compute and update IContainer#gameResult if neccessary.
+		 * 4. Call IContainer#onActionResult() to notify that the processing has finished.
 		 *
 		 * @param timestamp
 		 * Seconds from the game start.
@@ -86,7 +89,8 @@
 		 *
 		 * This method should follow the following algorithm:
 		 * 1. Reject the player who has resigned.
-		 * 2. Compute and call updateGameResult() if neccessary.
+		 * 2. Compute and update IContainer#gameResult if neccessary.
+		 * 3. Call IContainer#onActionResult() to notify that the processing has finished.
 		 *
 		 * @param timestamp
 		 * Seconds from the game start.
@@ -100,13 +104,12 @@
 
 		/**
 		 * Called to notify that a player's time (one move or total) has passed.
-		 * Not called for batch game. For batch game, when a player timed out, the
-		 * server would broadcast his move as null.
+		 * Not called for batch game.
 		 *
 		 * This method should follow the following algorithm:
-		 * 1. If timedOut is false, fine the player who has requested this timeout
-		 *    action by updating his result to P_LOST.
-		 * 2. If timedOut is true, compute and update results.
+		 * 1. If timedOut is false, set IContainer#gameResult[index] = LOST.
+		 * 2. If timedOut is true, compute and update IContainer#gameResult if neccessary.
+		 * 3. Call IContainer#onActionResult() to notify that the processing has finished.
 		 *
 		 * @param timestamp
 		 * Seconds from the game start.

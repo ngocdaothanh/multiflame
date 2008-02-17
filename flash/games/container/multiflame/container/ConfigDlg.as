@@ -48,26 +48,26 @@
 		
 		public function setContainer(value:IContainer):void {
 			_container = value;
-			var definition:Object = _container.definition;
+			var range:Object = _container.baseConfigRange;
 
-			_nPlayersStepper.minimum = definition.nPlayersMin;
-			_nPlayersStepper.maximum = definition.nPlayersMax;
+			_nPlayersStepper.minimum = range.nPlayersMin;
+			_nPlayersStepper.maximum = range.nPlayersMax;
 			_nPlayersStepper.value = _nPlayersStepper.minimum;
 			_nPlayersAlwaysDisabled = _nPlayersStepper.minimum == _nPlayersStepper.maximum;
 			if (_nPlayersAlwaysDisabled) {
 				_nPlayersStepper.enabled = false;
 			}
 			
-			_moveSecStepper.minimum = definition.moveSecMin;
-			_moveSecStepper.maximum = definition.moveSecMax;
+			_moveSecStepper.minimum = range.moveSecMin;
+			_moveSecStepper.maximum = range.moveSecMax;
 			_moveSecStepper.value = _moveSecStepper.minimum;
 			_moveSecAlwaysDisabled = _moveSecStepper.minimum == _moveSecStepper.maximum;
 			if (_moveSecAlwaysDisabled) {
 				_moveSecStepper.enabled = false;
 			}
 			
-			_totalMinStepper.minimum = definition.totalMinMin;
-			_totalMinStepper.maximum = definition.totalMinMax;
+			_totalMinStepper.minimum = range.totalMinMin;
+			_totalMinStepper.maximum = range.totalMinMax;
 			_totalMinStepper.value = _totalMinStepper.minimum;
 			_totalMinAlwaysDisabled = _totalMinStepper.minimum == _totalMinStepper.maximum
 			if (_totalMinAlwaysDisabled) {
@@ -75,7 +75,7 @@
 			}
 		}
 
-		public function onInit(nick:String, me:Boolean, baseConfig:Object,
+		public function onConfig(nick:String, me:Boolean, baseConfig:Object,
 				extendedConfig:Object):void {
 			_nicks = new Array(nick);
 			_playerList.htmlText = "<p>" + nick + "</p>";
@@ -129,7 +129,7 @@
 			_joinCheckBox.enabled = false;
 		}
 
-		public function onResult(playNicks0:Array, result:Array, extra:String):void {
+		public function onGameResult(playNicks0:Array, result:Array, extra:String):void {
 			onTimeout();
 
 			var s:String = "";
@@ -176,7 +176,7 @@
 				moveSec:  _moveSecStepper.value,
 				totalMin: _totalMinStepper.value
 			};
-			_container.init(baseConfig, null);
+			_container.config(baseConfig, null);
 		}
 
 		// --------------------------------------------------------------------------

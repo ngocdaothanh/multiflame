@@ -27,7 +27,7 @@
 		public static const CMD_ROOM_ENTER:int   = 5;
 		public static const CMD_ROOM_LEAVE:int   = 6;
 		public static const CMD_CHAT:int         = 7;
-		public static const CMD_NEW_INIT:int     = 8;
+		public static const CMD_NEW_CONFIG:int   = 8;
 		public static const CMD_NEW_JOIN:int     = 9;
 		public static const CMD_NEW_UNJOIN:int   = 10;
 		public static const CMD_NEW_TIMEOUT:int  = 11;
@@ -118,7 +118,7 @@
 			_transporter.addEventListener("" + CMD_ROOM_ENTER, onRoomEnter);
 			_transporter.addEventListener("" + CMD_ROOM_LEAVE, onRoomLeave);
 			_transporter.addEventListener("" + CMD_CHAT, onChat);
-			_transporter.addEventListener("" + CMD_NEW_INIT, onNewInit);
+			_transporter.addEventListener("" + CMD_NEW_CONFIG, onNewConfig);
 			_transporter.addEventListener("" + CMD_NEW_JOIN, onNewJoin);
 			_transporter.addEventListener("" + CMD_NEW_UNJOIN, onNewUnjoin);
 			_transporter.addEventListener("" + CMD_NEW_TIMEOUT, onNewTimeout);
@@ -195,7 +195,7 @@
 				code,
 				encryptedCode,
 				nick,
-				RoomTab.instance.definition.klass
+				RoomTab.instance.klass
 			]);
 			this.nick = nick;
 		}
@@ -293,11 +293,11 @@
 					totalMin: snapshot[2][2]
 				};
 			} else {
-				var definition = RoomTab.instance.definition;
+				var range = RoomTab.instance.baseConfigRange;
 				snapshot[2] = {
-					nPlayers: definition.nPlayersMin,
-					moveSec:  definition.moveSecMin,
-					totalMin: definition.totalMinMin
+					nPlayers: range.nPlayersMin,
+					moveSec:  range.moveSecMin,
+					totalMin: range.totalMinMin
 				};
 			}
 			baseConfig     = snapshot[2];
@@ -376,12 +376,12 @@
 
 		// --------------------------------------------------------------------------
 
-		public function newInit(baseConfig:Object, extendedConfig:Object):void {
+		public function newConfig(baseConfig:Object, extendedConfig:Object):void {
 			var aBaseConfig:Array = [baseConfig.nPlayers, baseConfig.moveSec, baseConfig.totalMin];
-			_transporter.call(CMD_NEW_INIT, [aBaseConfig, extendedConfig]);
+			_transporter.call(CMD_NEW_CONFIG, [aBaseConfig, extendedConfig]);
 		}
 
-		private function onNewInit(event:TransporterEvent):void {
+		private function onNewConfig(event:TransporterEvent):void {
 			var a:Array = event.arg as Array;
 			var nick:String           = a[0];
 			var aBaseConfig:Array     = a[1];
@@ -396,7 +396,7 @@
 			this.extendedConfig = extendedConfig;
 			playNicks0 = new Array(nick);
 			
-			var e:NewEvent = new NewEvent(NewEvent.INIT);
+			var e:NewEvent = new NewEvent(NewEvent.CONFIG);
 			e.nick           = nick;
 			e.baseConfig     = baseConfig;
 			e.extendedConfig = extendedConfig;

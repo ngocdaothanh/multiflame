@@ -24,13 +24,6 @@
 		 */
 
 		/**
-		 * The enabled property is used to mark that player inputs are being enabled/disabled.
-		 * For example, on mouse events, your game must check if enabled is true before further
-		 * processing.
-		 */
-		function get enabled():Boolean;
-
-		/**
 		 * @return
 		 * {
 		 * 	nPlayers,
@@ -67,21 +60,6 @@
 		function get defaultMove():Object;
 
 		/**
-		 * The game must update gameSnapshot before setting actionResult. From this
-		 * snapshot the game must be able to recover the game state.
-		 */
-		function set gameSnapshot(value:Object):void;
-
-		/**
-		 * @return
-		 * When IGame#onNewGame() is called, the game must check this property. If
-		 * this player enters the game room when a game is taking place, this property
-		 * maybe non-null. From this snapshot the game must be able to recover the
-		 * game state.
-		 */
-		function get gameSnapshot():Object;
-
-		/**
 		 * @return
 		 * Array of results (NONE/LOST/DREW/WON) for each player.
 		 */
@@ -94,7 +72,7 @@
 
 		/**
 		 * "Action" means onMove()/onResign()/onTimeout(). The game calls this method
-		 * to notify that game action processing was finished. The processing may take
+		 * to notify that game action processing has finished. The processing may take
 		 * a lot of time (up to some seconds) when the game uses physics engine.
 		 *
 		 * @param value
@@ -102,13 +80,12 @@
 		 * ANY                 Any player can make the next move.
 		 * Non-negative number Index of the player who should make the next move.
 		 */
-		function set actionResult(value:int):void;
+		function onActionDone(result:int):void;
 
 		/**
-		 * Convenient for immediate-game, because
-		 * it is the index of the player who should make the next move.
+		 * For immediate game, it is the index of the player who should make the next move.
 		 */
-		function get actionResult():int;
+		function get lastActionResult():int;
 
 		/**
 		 * Enqueue a move to the server.
@@ -121,8 +98,8 @@
 		 * Only called by the config dialog.
 		 */
 
-		function get definition():Object;
-		function init(baseConfig:Object, extendedConfig:Object):void;
+		function get baseConfigRange():Object;
+		function config(baseConfig:Object, extendedConfig:Object):void;
 		function join():void;
 		function unjoin():void;
 	}

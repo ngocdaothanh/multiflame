@@ -3,7 +3,7 @@
 
 	public class NewEvent extends Event {
 		// Uses nick, baseConfig, extendedConfig
-		public static const INIT:String    = "NEW_INIT";
+		public static const CONFIG:String  = "NEW_CONFIG";
 
 		// Uses nick
 		public static const JOIN:String    = "NEW_JOIN";

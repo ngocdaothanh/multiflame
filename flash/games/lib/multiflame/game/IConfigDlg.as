@@ -15,7 +15,7 @@
 		 * @param me
 		 * true if this player is me.
 		 */
-		function onInit(nick:String, me:Boolean, baseConfig:Object, extendedConfig:Object):void;
+		function onConfig(nick:String, me:Boolean, baseConfig:Object, extendedConfig:Object):void;
 
 		function onJoin(nick:String):void;
 		function onUnjoin(nick:String):void;
@@ -25,6 +25,6 @@
 		 * When a game is over, the config dialog is redisplayed. This method should
 		 * display reresult of the last game.
 		 */
-		function onResult(nicks0:Array, result:Array, extra:String):void;
+		function onGameResult(nicks0:Array, result:Array, extra:String):void;
 	}
 }

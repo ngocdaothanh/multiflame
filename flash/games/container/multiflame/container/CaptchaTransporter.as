@@ -46,7 +46,7 @@
 		
 		private function onResult(event:CallEvent):void {
 			encryptedCode = event.value[0];
-			var ba:ByteArray = Client.bytesToByteArray(event.value[1]);
+			var ba:ByteArray = event.value[1];
 
 			var loader:Loader = new Loader();
 			loader.contentLoaderInfo.addEventListener(Event.INIT, onCaptchaLoaded);
