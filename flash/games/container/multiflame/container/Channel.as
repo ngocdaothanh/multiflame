@@ -245,7 +245,7 @@
 
 		// --------------------------------------------------------------------------
 
-		public function room_enter(iroom:int):void {
+		public function roomEnter(iroom:int):void {
 			_transporter.call(CMD_ROOM_ENTER, iroom);
 		}
 
@@ -492,8 +492,8 @@
 
 		// --------------------------------------------------------------------------
 	
-		public function gameOver():void {
-			_transporter.call(CMD_GAME_OVER, null);
+		public function gameOver(result:Array):void {
+			_transporter.call(CMD_GAME_OVER, result);
 		}
 
 		private function onGameOver(event:TransporterEvent):void {

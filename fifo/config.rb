@@ -12,7 +12,7 @@ CONFIG = {
   :manager_reconnect_interval => 60,  # [sec]
 
   :players_limit  => 5000,  # Initial value, can be changed by the Fifo manager
-  :max_cmd_length => 1024,  # Can't be too long, for security
 
-  :game_over_delay => 3  # [sec]
+  :max_lag         => 2,  # [sec]
+  :game_over_delay => 2   # [sec]
 }.freeze

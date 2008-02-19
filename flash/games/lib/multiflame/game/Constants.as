@@ -27,5 +27,21 @@
 		 */
 		public static const OVER:int = -1;
 		public static const ANY:int  = -2;
+
+		/**
+		 * To get a random number in (0..limit - 1), call
+		 * IContainer#enqueueMove(UTIL_RANDOM, limit).
+		 * onMove will be called later with the parameter:
+		 * [UTIL_RANDOM, limit, random number]
+		 */
+		public static const UTIL_RANDOM  = 'random';
+
+		/**
+		 * To get an array of random numbers in (0..limit - 1), call
+		 * IContainer#enqueueMove(UTIL_SHUFFLE, limit).
+		 * onMove will be called later with the parameter:
+		 * [UTIL_SHUFFLE, limit, [random numbers]]
+		 */
+		public static const UTIL_SHUFFLE = 'shuffle';
 	}
 }

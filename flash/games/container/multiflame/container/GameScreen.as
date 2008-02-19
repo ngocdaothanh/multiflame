@@ -367,7 +367,8 @@
 		// --------------------------------------------------------------------------
 
 		private function onAboutMoveTimeout(event:Event):void {
-			if (_channel.playNicks.indexOf(_channel.nick) >= 0 &&
+			if (_channel.state == Channel.PLAY &&
+					_channel.playNicks.indexOf(_channel.nick) >= 0 &&
 					RoomTab.instance.enqueueDefaultMove()) {
 				_timeoutSB.setStatus("");
 			}

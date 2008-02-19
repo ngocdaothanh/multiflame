@@ -1,6 +1,4 @@
 class Room
-  MAX_LAG = 5  # [s]
-
   # States
   NEWABLE   = 0
   NEW       = 1
@@ -25,6 +23,7 @@ class Room
 
     # PLAY
     @playing_players = []  # Set to @playing_players0 when the game starts
+    @judgers = []          # Set to @players when the game starts
     @play_created_at = nil
     if @batch_game
       @batch_move = BatchMove.new
@@ -36,7 +35,7 @@ class Room
       Server::CMD_ROOM_ENTER   => method('enter'),
       Server::CMD_ROOM_LEAVE   => method('leave'),
       Server::CMD_CHAT         => method('chat'),
-      Server::CMD_NEW_INIT     => method('new_init'),
+      Server::CMD_NEW_CONFIG   => method('new_config'),
       Server::CMD_NEW_JOIN     => method('new_join'),
       Server::CMD_NEW_UNJOIN   => method('new_unjoin'),
       Server::CMD_NEW_TIMEOUT  => method('new_timeout'),
@@ -95,6 +94,7 @@ private
   # out: nick
   def leave(player, value)
     @players.delete(player)
+    @judgers.delete(player)
 
     # Notify joining/playing players (CMD_NEW_UNJOIN or CMD_PLAY_RESIGN)
     if @playing_players.include?(player)
@@ -119,7 +119,7 @@ private
     end
   end
 
-  def new_init(player, value)
+  def new_config(player, value)
     return if @state != NEWABLE
 
     a_base_config = value[0]
@@ -140,7 +140,7 @@ private
     @playing_players0 = [player]
 
     @players.each do |p|
-      p.call(Server::CMD_NEW_INIT, [player.property[:nick], a_base_config, @extended_config])
+      p.call(Server::CMD_NEW_CONFIG, [player.property[:nick], a_base_config, @extended_config])
     end
   end
 
@@ -155,6 +155,7 @@ private
     if @playing_players0.size == @base_config[:n_players]
       @state = PLAY
       @playing_players = @playing_players0.dup
+      @judgers = players.dup  # Judgers are the ones who watch the game from the start
       @play_created_at = Time.now
       @game_snapshot = nil
       if @batch_game
@@ -259,7 +260,13 @@ private
 
   def game_over(player, value)
     if @state == GAME_OVER
+      unless @judgers.include?(player)
+        player.close_connection
+        return
+      end
+
       # TODO: phase2: collect results and judge later
+      #collect_results(player, value)
       return
     end
 
@@ -269,7 +276,11 @@ private
     end
 
     @state = GAME_OVER
+    # TODO: phase2: collect results and judge later
+    #collect_results(player, value)
     EventMachine::add_timer(CONFIG[:game_over_delay]) do
+      # TODO: phase2: collect results and judge later
+      #judge_results
       @state = NEWABLE
       @players.each do |p|
         p.call(Server::CMD_GAME_OVER, nil)
@@ -279,7 +290,7 @@ private
 
 private
 
-  # Returns [state, nicks, baseConfig, extendedConfig, playNicks0, moves]
+  # Returns [state, nicks, baseConfig, extendedConfig, playNicks0, gameSnapshot, actions]
   def snapshot
     a_base_config = [
       @base_config[:n_players],
@@ -292,8 +303,8 @@ private
       a_base_config,
       @extended_config,
       @playing_players0.map { |p| p.property[:nick] },
-      @game_snapshot,
-      @last_action
+      nil,
+      []
     ]
   end
 
@@ -325,13 +336,15 @@ private
     broadcast_batch if @batch_move.move(index, value)
   end
 
+  # Only broadcast for playing players.
   def play_timeout_immediate(index)
     a = [Time.now - @play_created_at, index]
-    @players.each do |p|
+    @playing_players.each do |p|
       p.call(Server::CMD_PLAY_TIMEOUT, a)
     end
   end
 
+  # Fill in nils for player who did not move and broadcast the batch move.
   def play_timeout_batch(index)
     player = @playing_players0[index]
 
@@ -346,11 +359,11 @@ private
     # Check if it is not move timeout
     dt = now - @last_batch_move_sent
     if dt < @base_config[:move_sec]
-      player.close_connection if MAX_LAG < dt
+      player.close_connection if CONFIG[:max_lag] < dt
       return
     end
 
-    # Fill in nulls for player who did not move and broadcast the batch
+    # Prevent too many successive default moves
     if @batch_move.timeout
       @playing_players.each do |p|
         p.close_connection

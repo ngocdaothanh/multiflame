@@ -1,37 +1,42 @@
 class Utils
   include Singleton
 
+  UTIL_RANDOM = 'random'
+  UTIL_SHUFFLE = 'shuffle'
+
   def check(arg)
     if arg.is_a?(Array)
-      return my_rand(arg) if arg[0] == 'rand'
-      return shuffle(arg) if arg[0] == 'shuffle'
+      if arg[0] == UTIL_RANDOM
+        limit = arg[1]
+        return [UTIL_RANDOM, limit, random(limit)]
+      elsif arg[0] == UTIL_SHUFFLE
+        limit = arg[1]
+        # Security check, limit cannot be too large
+        raise("@shuffle: Limit is too large: #{limit}") if limit > 1024
+        return [UTIL_SHUFFLE, limit, shuffle(limit)]
+      end
     end
-
     nil
   end
 
+private
+
   # in: limit
   # out: A random number from 0 to limit - 1
-  def my_rand(arg)
-    limit = arg[1]
-    ['rand', limit, rand(limit)]
+  def random(limit)
+    rand(limit)
   end
 
   # in: limit
   # out: An array of limit unique numbers, from 0 to limit - 1
-  def shuffle(arg)
-    limit = arg[1]
-
-    # Security check, limit cannot be too large
-    raise("@shuffle: Limit is too large: #{limit}") if limit > 1024
-
+  def shuffle(limit)
     a = Array.new(limit)
     limit.times { |i| a[i] = i }
 
-    a_rand = Array.new(limit)
+    ret = Array.new(limit)
     while a.size > 0
-      a_rand[limit - a.size] = a.delete_at(rand(a.size))
+      ret[limit - a.size] = a.delete_at(rand(a.size))
     end
-    ['shuffle', limit, a_rand]
+    ret
   end
 end

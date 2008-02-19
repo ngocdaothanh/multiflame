@@ -10,6 +10,8 @@
 		private var _channel:Channel;
 
 		public function LobbyTab():void {
+			_roomsLbl.selectable = false;
+
 			addEventListener(Event.ADDED, onAdded);
 			_newRoomBtn.addEventListener(MouseEvent.CLICK, onNewRoomClick);
 			_roomList.addEventListener(fl.events.ListEvent.ITEM_CLICK, onRoomClick);
@@ -27,14 +29,15 @@
 			}
 			_roomsLbl.text = _("Rooms:");
 			_newRoomBtn.label = _("New room");
+			_newRoomBtn.setFocus();
 		}
 
 		private function onNewRoomClick(event:MouseEvent):void {
-			_channel.room_enter(-1);
+			_channel.roomEnter(-1);
 		}
 
 		private function onRoomClick(event:ListEvent):void {
-			_channel.room_enter(event.index);
+			_channel.roomEnter(event.index);
 		}
 
 		// ---------------------------------------------------------------------------

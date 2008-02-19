@@ -23,12 +23,15 @@
 		private var _configDlg:IConfigDlg;
 		private var _introSprite:Sprite;	
 
+		// Timeout calculator is disabled if this player joins at the middle of a game
+		private var _firstAction:Boolean;
 		private var _timeoutCalculator:TimeoutCalculator;
 		private var _actionSystemTime:Number;
 		private var _actionTimestamp:Number;
 
+		private var _moveSent:Boolean;  // Mark so that the default move will not be sent
 		private var _defaultMove:Object;
-		private var _moveSent:Boolean;
+
 		private var _gameResult:Array;
 		private var _extraGameResult:String;
 		private var _lastActionResult:int;
@@ -47,9 +50,9 @@
 			_channel.addEventListener(NewEvent.JOIN, onNewJoin);
 			_channel.addEventListener(NewEvent.UNJOIN, onNewUnjoin);
 			_channel.addEventListener(NewEvent.TIMEOUT, onNewTimeout);
-			_channel.addEventListener(PlayEvent.MOVE, onPlayAction);
-			_channel.addEventListener(PlayEvent.RESIGN, onPlayAction);
-			_channel.addEventListener(PlayEvent.TIMEOUT, onPlayAction);
+			_channel.addEventListener(PlayEvent.MOVE, onPlayMove);
+			_channel.addEventListener(PlayEvent.RESIGN, onPlayResign);
+			_channel.addEventListener(PlayEvent.TIMEOUT, onPlayTimeout);
 			_channel.addEventListener(GameOverEvent.GAME_OVER, onGameOver);
 			
 			addEventListener(Event.ADDED, onAdded);
@@ -118,39 +121,35 @@
 		}
 
 		public function onActionDone(result:int):void {
-			/*
-			_actionResult = _game.onNewGame(null);
-				_enabled = _game.enabled = indexMe >= 0 &&
-					(_actionResult == Constants.ANY || indexMe == _actionResult);
-				_over = false;				
-
-				TweenFilterLite.to(_game, 1.5, {type: "Color"});
-
-				_timeoutCalculator = new TimeoutCalculator(_klass, _channel.baseConfig, _actionResult);
-				_channel.broadcastPlayActionResult(_actionResult,
-					_timeoutCalculator.moveSecLeft, _timeoutCalculator.totalSecLeft);
-			*/
-			
 			_lastActionResult = result;
 			_over = result == Constants.OVER;
+
+			if (_firstAction) {
+				_firstAction = false;
+				_timeoutCalculator = new TimeoutCalculator(_klass, _channel.baseConfig, result);
+			}
 
 			_game.enabled = indexMe >= 0 &&
 				(result == Constants.ANY || (result >= 0 && indexMe == result));
 
-			var now:Number = (new Date()).time/1000;
-			var processingSec:Number = now - _actionSystemTime;
-			_timeoutCalculator.calc(_actionTimestamp, processingSec, result);
-			_channel.broadcastPlayActionResult(result,
-				_timeoutCalculator.moveSecLeft, _timeoutCalculator.totalSecLeft);
+			if (_timeoutCalculator != null) {
+				var now:Number = (new Date()).time/1000;
+				var processingSec:Number = now - _actionSystemTime;
+				_timeoutCalculator.calc(_actionTimestamp, processingSec, result);
+				_channel.broadcastPlayActionResult(result,
+					_timeoutCalculator.moveSecLeft, _timeoutCalculator.totalSecLeft);
+			} else {
+				_channel.broadcastPlayActionResult(result, 0, 0);
+			}
 
 			if (_over && _channel.playNicks.indexOf(_channel.nick) >= 0) {
-				_channel.gameOver();
+				_channel.gameOver(_gameResult);
 			}
 		}
 
 		public function enqueueMove(data:Object):void {
 			_game.enabled = false;
-			_moveSent = true;  // Mark so that the default move will not be sent
+			_moveSent = true;
 			_channel.playMove([_game.snapshot, data]);
 		}
 
@@ -221,7 +220,6 @@
 
 			if (!contains(_game as Sprite)) {
 				addChild(_game as Sprite);
-				TweenFilterLite.to(_game, 1.5, {type: "Color"});
 			}
 		}
 
@@ -248,6 +246,8 @@
 				_game.enabled = false;
 				initGameResult();
 				_game.onNewGame(event.snapshot[5]);
+
+				TweenFilterLite.to(_game, 1.5, {type: "Color"});
 				break;
 			}
 		}
@@ -275,13 +275,12 @@
 					removeChild(_configDlg as Sprite);
 				}
 
-				initGameResult();
-				_game.onNewGame(null);
-				_game.enabled = indexMe >= 0 &&
-					(_lastActionResult == Constants.ANY || indexMe == _lastActionResult);
-				_over = false;				
-
 				TweenFilterLite.to(_game, 1.5, {type: "Color"});
+				initGameResult();
+				_over = false;
+				_firstAction = true;
+				_actionSystemTime = (new Date()).time/1000;
+				_game.onNewGame(null);
 			} else {
 				_configDlg.onJoin(event.nick);
 			}
@@ -301,16 +300,14 @@
 
 		// --------------------------------------------------------------------------
 
-		private function onPlayAction(event:PlayEvent):void {
-			//if (_eventQueue.length thread
-		}
-
 		private function onPlayMove(event:PlayEvent):void {
 			if (_over) {
 				return;
 			}
-			_actionSystemTime = (new Date()).time/1000;
-			_actionTimestamp = event.timestamp;
+			if (_timeoutCalculator != null) {
+				_actionSystemTime = (new Date()).time/1000;
+				_actionTimestamp = event.timestamp;
+			}
 			_moveSent = false;
 			_game.onMove(event.timestamp, event.moves);
 		}
@@ -325,6 +322,7 @@
 			_game.onResign(event.timestamp, event.index);
 		}
 
+		// Not called if this player joined at the middle of this game.
 		private function onPlayTimeout(event:PlayEvent):void {
 			if (_over) {
 				return;

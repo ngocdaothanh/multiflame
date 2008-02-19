@@ -9,9 +9,9 @@
 
 	import org.cove.ape.*;
 
-	import net.web20games.game.IGame;
-	import net.web20games.game.IContainer;
-	import net.web20games.game.Constants;
+	import multiflame.game.IGame;
+	import multiflame.game.IContainer;
+	import multiflame.game.Constants;
 
 	public class Game extends Sprite implements IGame {
 		// The first ball is the white one
@@ -43,6 +43,7 @@
 		private var _points1:int;
 
 		private var _container:IContainer;
+		private var _enabled:Boolean;
 
 		// ---------------------------------------------------------------------------
 
@@ -114,27 +115,31 @@
 
 		// ---------------------------------------------------------------------------
 
-		public function get definition():Object {
+		public function get baseConfigRange():Object {
 			return {
-				klass: Constants.TURN_BASED,
-				nPlayersMin: 2,
-				nPlayersMax: 2,
-				moveSecMin: 30,
-				moveSecMax: 60,
-				totalMinMin: 0,
-				totalMinMax: 0
+				nPlayersMin: 2,	nPlayersMax: 2,
+				moveSecMin: 30,	moveSecMax: 60,
+				totalMinMin: 0,	totalMinMax: 0
 			};
 		}
 
 		public function set enabled(value:Boolean):void {
+			_enabled = value;
 		}
 
 		public function setContainer(container:IContainer):Object {
 			_container = container;
-			return {introSprite: new IntroSprite(this)};
+			return {
+				klass: Constants.TURN_BASED,
+				introSprite: new IntroSprite(this)
+			};
 		}
 
-		public function onNewGame(snapshot:Object):int {
+		public function get snapshot():Object {
+			return null;
+		}
+
+		public function onNewGame(snapshot:Object):void {
 			// Display nicks
 			_nick0.htmlText = _container.nicks0[0];
 			_nick1.htmlText = _container.nicks0[1];
@@ -149,7 +154,7 @@
 			_steps = MAX_STEP;
 			APEngine.paint();
 
-			return 0;
+			_container.onActionDone(0);
 		}
 
 		public function onMove(timestamp:Number, moves:Array):void {
@@ -163,13 +168,13 @@
 		public function onResign(timestamp:Number, index:int):void {
 			_container.gameResult[index] = Constants.LOST;
 			_container.gameResult[1 - index] = Constants.WON;
-			_container.setActionResult(Constants.OVER);
+			_container.onActionDone(Constants.OVER);
 		}
 
 		public function onTimeout(timestamp:Number, timedOut:Boolean, index:int):void {
 			_container.gameResult[index] = Constants.LOST;
 			_container.gameResult[1 - index] = Constants.WON;
-			_container.setActionResult(Constants.OVER);
+			_container.onActionDone(Constants.OVER);
 		}
 
 		// --------------------------------------------------------------------------
@@ -193,7 +198,7 @@
 		}
 
 		private function onMClick(event:MouseEvent):void {
-			if (_container == null || !_container.enabled || _steps < MAX_STEP || event.target != _table) {
+			if (_container == null || !_enabled || _steps < MAX_STEP || event.target != _table) {
 				return;
 			}
 
@@ -205,7 +210,7 @@
 		}
 
 		private function onMMove(event:MouseEvent):void {
-			if (_container == null || !_container.enabled || _steps < MAX_STEP || event.target != _table) {
+			if (_container == null || !_enabled || _steps < MAX_STEP || event.target != _table) {
 				return;
 			}
 
@@ -353,12 +358,12 @@
 			if (_points0 > half) {
 				_container.gameResult[0] = Constants.WON;
 				_container.gameResult[1] = Constants.LOST;
-				_container.setActionResult(Constants.OVER);
+				_container.onActionDone(Constants.OVER);
 				return;
 			} else if (_points1 > half) {
 				_container.gameResult[1] = Constants.WON;
 				_container.gameResult[0] = Constants.LOST;
-				_container.setActionResult(Constants.OVER);
+				_container.onActionDone(Constants.OVER);
 				return;
 			} 
 
@@ -373,22 +378,22 @@
 					_container.gameResult[0] = Constants.DREW;
 					_container.gameResult[1] = Constants.DREW;
 				}
-				_container.setActionResult(Constants.OVER);
+				_container.onActionDone(Constants.OVER);
 				return;
 			}
 
 			if (_whiteOutside) {
 				_whiteOutside = false;
 				_nonWhiteOutside = false;
-				_container.setActionResult(1 - _container.lastActionResult);
+				_container.onActionDone(1 - _container.lastActionResult);
 				return;
 			}
 
 			if (_nonWhiteOutside) {
 				_nonWhiteOutside = false;
-				_container.setActionResult(_container.lastActionResult);
+				_container.onActionDone(_container.lastActionResult);
 			} else {
-				_container.setActionResult(1 - _container.lastActionResult);
+				_container.onActionDone(1 - _container.lastActionResult);
 			}
 		}
 	}
