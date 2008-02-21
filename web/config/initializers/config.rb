@@ -10,6 +10,13 @@ CONFIG = {
   :swf_width             => 500,
   :swf_height            => 560,
 
+  # Mailer through which flash clients can send mail
+  :flash_mailer_local_host  => '0.0.0.0',
+  :flash_mailer_local_port  => 21,
+  :flash_mailer_remote_host => 'localhost',
+  :flash_mailer_remote_port => 21,
+
+  # For security, only connections from localhost is allowed
   :fifo_manager_host              => 'localhost',
   :fifo_manager_port              => 1943,
   :fifo_manager_startup_delay     => 5,   # [sec], wait for the fifos to reconnect

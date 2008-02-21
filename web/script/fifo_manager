@@ -17,7 +17,7 @@ require "#{RAILS_ROOT}/app/models/stat"
 database_yaml = YAML.load_file("#{RAILS_ROOT}/config/database.yml")
 abort "Environment '#{ARGV[0]}' not found" unless database_config = database_yaml[ARGV[0]]
 
-$LOGGER = Logger.new(STDOUT, 'daily')
+$LOGGER = Logger.new("#{RAILS_ROOT}/log/fifo_manager.log", 'daily')
 
 ActiveRecord::Base.establish_connection(database_config)
 ActiveRecord::Base.logger = $LOGGER

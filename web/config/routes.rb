@@ -1,4 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
+  map.home    '', :controller => 'games'
+  map.privacy 'privacy', :controller => 'games', :action => 'privacy'
+
   # URLs for the SWF files, fixed in agreement with other parts of the system
   map.game_container_without_versions 'cwov/:id/:channel/:locale',
     :controller => 'swf', :action => 'game_container_without_versions'
@@ -9,7 +12,6 @@ ActionController::Routing::Routes.draw do |map|
   map.toy_with_config 'twc/:id/:config',
     :controller => 'swf', :action => 'toy_with_config'
 
-  map.home      '', :controller => 'games'
   map.play      'games/:id/:channel', :controller => 'games', :action => 'play'
   map.play_lang 'games/:id/:channel/:lang', :controller => 'games', :action => 'play'
 

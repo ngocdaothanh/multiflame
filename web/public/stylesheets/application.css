@@ -94,6 +94,7 @@ table.data td {
 
 #banner {
   float: left;
+  padding-bottom: 10px;
 }
 
 #player_menu {

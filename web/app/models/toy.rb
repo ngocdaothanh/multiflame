@@ -1,5 +1,6 @@
 class Toy < ActiveRecord::Base
   serialize :names
+  validates_presence_of :width, :height
 
   # Returns the modified time of the file, which is used as version number
   def updated_at
