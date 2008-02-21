@@ -9,7 +9,6 @@ class Room
   NEW_TIMEOUT = 30  # [s]
 
   def initialize(player, batch_game)
-    @mutex_self = Mutex.new
     @players = [player]
     @batch_game = batch_game
 
@@ -50,7 +49,7 @@ class Room
   end
 
   def process(player, cmd, value)
-    @mutex_self.synchronize do
+    self.synchronize do
       m = @methods[cmd]
       if m.nil?
         $LOGGER.debug("@lobby: Invalid command: #{cmd}")
@@ -66,7 +65,7 @@ class Room
   end
 
   def remote_ips
-    @mutex_self.synchronize do
+    self.synchronize do
       @players.map { |p| p.remote_ip }
     end
   end

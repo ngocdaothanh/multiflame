@@ -1,9 +1,8 @@
 class PendedChannel
   @@channels = {}
-  @@mutex_channels = Mutex.new
 
   def self.login(key, player, container_version, game_version, batch_game)
-    @@mutex_channels.synchronize do
+    @@channels.synchronize do
       channel = @@channels[key]
       if channel.nil?
         PendedChannel.new(key, player, container_version, game_version, batch_game)
@@ -15,7 +14,7 @@ class PendedChannel
   end
 
   def self.login_pended(key, host, port)
-    @@mutex_channels.synchronize do
+    @@channels.synchronize do
       channel = @@channels[key]
       return if channel.nil?
 

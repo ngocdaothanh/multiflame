@@ -21,7 +21,6 @@ class Channel
   NICK_FORMAT = /^([a-zA-Z0-9_-])+$/
 
   @@channels = {}
-  @@mutex_channels = Mutex.new
 
   # ----------------------------------------------------------------------------
 
@@ -47,7 +46,7 @@ class Channel
     player.property[:nick] = nick
     key = self.key(game_id, channel_name)
     channel = nil
-    @@mutex_channels.synchronize do
+    @@channels.synchronize do
       channel = @@channels[key]
     end
     if channel.nil?
@@ -87,14 +86,14 @@ class Channel
   # ----------------------------------------------------------------------------
 
   def self.keys
-    @@mutex_channels.synchronize do
+    @@channels.synchronize do
       return @@channels.keys
     end
   end
 
   # Returns {channel_key => remote_ips} of all channels.
   def self.remote_ips
-    @@mutex_channels.synchronize do
+    @@channels.synchronize do
       ret = {}
       @@channels.each do |k, c|
         ret[k] = c.remote_ips
@@ -106,9 +105,8 @@ class Channel
   # ----------------------------------------------------------------------------
 
   def initialize(key, players, container_version, game_version, batch_game)
-    @@mutex_channels.synchronize do
+    @@channels.synchronize do
       @@channels[key] = self
-      @mutex_self = Mutex.new
 
       @key = key  # Used to delete this channel
 
@@ -129,7 +127,7 @@ class Channel
   end
 
   def login(player, container_version, game_version, batch_game)
-    @mutex_self.synchronize do
+    self.synchronize do
       code = LOGIN_OK
       if @lobby.nicks.include?(player.property[:nick])
         code = LOGIN_DUPLICATE_NICK
@@ -180,7 +178,7 @@ class Channel
   end
 
   def remote_ips
-    @mutex_self.synchronize do
+    self.synchronize do
       ret = @lobby.remote_ips
       @rooms.each do |r|
         ret.concat(r.remote_ips)
@@ -192,7 +190,7 @@ class Channel
 private
 
   def logout(player)
-    @mutex_self.synchronize do
+    self.synchronize do
       if player.property[:room] != @lobby
         iroom = @rooms.index(player.property[:room])
 
@@ -208,7 +206,7 @@ private
 
       if @rooms.empty? and @lobby.nicks.empty?
         Proxy.instance.fm_channel_delete(@key)
-        @@mutex_channels.synchronize do
+        @@channels.synchronize do
           @@channels.delete(@key)
         end
       end
@@ -221,7 +219,7 @@ private
   # * For the player who entered the room:  room snapshot
   # * For the players who are in the lobby: [iroom, nick]
   def room_enter(player, value)
-    @mutex_self.synchronize do
+    self.synchronize do
       iroom = value
       if iroom < 0
         room = Room.new(player, @batch_game)
@@ -240,7 +238,7 @@ private
   # * For the players who are in the lobby: [iroom, nick]
   # * For the player who left:              room snapshot
   def room_leave(player, value)
-    @mutex_self.synchronize do
+    self.synchronize do
       if player.property[:room] == @lobby
         $LOGGER.debug('@channel: room_leave: No room to leave')
         player.close_connection

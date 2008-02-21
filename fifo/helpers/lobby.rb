@@ -6,7 +6,6 @@
 # channel.
 class Lobby
   def initialize(players)
-    @mutex_self = Mutex.new
     @players = players
     @methods = {
       Server::CMD_LOGIN      => method('login'),
@@ -19,7 +18,7 @@ class Lobby
   end
 
   def process(player, cmd, value)
-    @mutex_self.synchronize do
+    self.synchronize do
       m = @methods[cmd]
       if m.nil?
         $LOGGER.debug("@lobby: Invalid command: #{cmd}")
@@ -31,13 +30,13 @@ class Lobby
   end
 
   def nicks
-    @mutex_self.synchronize do
+    self.synchronize do
       return @players.map { |p| p.property[:nick] }
     end
   end
 
   def remote_ips
-    @mutex_self.synchronize do
+    self.synchronize do
       return @players.map { |p| p.remote_ip }
     end
   end
