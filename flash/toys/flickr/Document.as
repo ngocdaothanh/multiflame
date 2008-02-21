@@ -17,7 +17,7 @@
 		public function Document():void {
 			var b:Sprite = new Sprite();
 			b.graphics.beginFill(0x000000);
-			b.graphics.drawRect(0, 0, 500, 530);
+			b.graphics.drawRect(0, 0, 500, 470);
 			b.graphics.endFill();
 			addChild(b);
 
