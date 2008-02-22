@@ -15,7 +15,7 @@
 		private var _channel:Channel;
 		private var _captchaTransporter:CaptchaTransporter;
 		private var _captchaImg:DisplayObject;
-		private var _encryptedCode:String;
+		private var _encryptedCode:ByteArray;
 		
 		public function LoginTab():void {
 			_channel = Channel.instance;

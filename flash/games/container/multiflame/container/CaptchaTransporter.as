@@ -12,7 +12,7 @@
 		public static const CAPTCHA:String = "CAPTCHA";
 
 		private var _client:Client;
-		public var encryptedCode:String;
+		public var encryptedCode:ByteArray;
 		public var img:DisplayObject;
 
 		public function CaptchaTransporter():void {

@@ -186,7 +186,7 @@
 		
 		// --------------------------------------------------------------------------
 
-		public function login(code:String, encryptedCode:String, nick:String):void {
+		public function login(code:String, encryptedCode:ByteArray, nick:String):void {
 			_transporter.call(CMD_LOGIN, [
 				containerVersion,
 				id,

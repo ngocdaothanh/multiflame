@@ -106,9 +106,10 @@ class Server
   # in: none
   # out: encrypted code length, image size, encrypted code, image
   def captcha(client)
-    encrypted_code, img = Captcha.instance.new
-    byte_array = RubyAMF::IO::ByteArray.new(img)
-    client.result(CMD_CAPTCHA, [encrypted_code, byte_array], true)
+    encrypted_code_with_timestamp, img = $CAPTCHA.new
+    ba1 = RubyAMF::IO::ByteArray.new(encrypted_code_with_timestamp)
+    ba2 = RubyAMF::IO::ByteArray.new(img)
+    client.result(CMD_CAPTCHA, [ba1, ba2], true)
   end
 
   # in: [id, locale]

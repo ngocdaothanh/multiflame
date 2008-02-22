@@ -72,7 +72,7 @@ class Channel
     code = LOGIN_OK
     if nick.empty? or nick.length > NICK_MAX or nick !~ NICK_FORMAT
       code = LOGIN_DUPLICATE_NICK
-    elsif !Captcha.instance.correct?(captcha_code, encrypted_code)
+    elsif !$CAPTCHA.correct?(captcha_code, encrypted_code)
       code = LOGIN_WRONG_CAPTCHA
     elsif game_id >= 0
       code = Proxy.instance.check_login(container_version, game_id, game_version)
