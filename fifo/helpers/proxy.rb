@@ -14,14 +14,12 @@ class Proxy
   CMD_MF_READY_SET        = 0
   CMD_MF_CG_SET           = 1
   CMD_MF_REMOTE_IPS_GET   = 2
-  CMD_MF_CAPTCHA_SALT_SET = 3
 
   def initialize
     @on_calls = {
       CMD_MF_READY_SET        => method(:on_call_mf_ready_set),
       CMD_MF_CG_SET           => method(:on_call_mf_cg_set),
-      CMD_MF_REMOTE_IPS_GET   => method(:on_call_mf_remote_ips_get),
-      CMD_MF_CAPTCHA_SALT_SET => method(:on_call_mf_captcha_salt_set)
+      CMD_MF_REMOTE_IPS_GET   => method(:on_call_mf_remote_ips_get)
     }
     @on_results = {
       CMD_FM_CHANNEL_CREATE => method(:on_result_fm_channel_create)
@@ -120,10 +118,5 @@ class Proxy
   def on_call_mf_remote_ips_get(value)
     s = Marshal.dump(Channel.remote_ips)
     Zlib::Deflate.deflate(s)
-  end
-
-  def on_call_mf_captcha_salt_set(value)
-    Captcha.instance.salt = value
-    nil
   end
 end

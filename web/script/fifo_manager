@@ -45,20 +45,16 @@ class FifoManager
   CMD_MF_READY_SET        = 0
   CMD_MF_CG_SET           = 1
   CMD_MF_REMOTE_IPS_GET   = 2
-  CMD_MF_CAPTCHA_SALT_SET = 3
 
   # Fifo -> manager
   CMD_FM_CHANNEL_KEYS_SET = 10
   CMD_FM_CHANNEL_CREATE   = 11
   CMD_FM_CHANNEL_DELETE   = 12
 
-  SALT_LENGTH = 6
-
   def initialize(host, port)
     @mutex_channel_keys = Mutex.new
     @channel_keys = {}
 
-    new_captcha_salt
     @ready = false
 
     @on_calls = {
@@ -76,10 +72,6 @@ class FifoManager
       clients.each { |fifo| mf_ready_set(fifo) }
     end
 
-    EventMachine::add_periodic_timer(CONFIG[:captcha_salt_renew_interval]*60) do
-      mf_captcha_salt_set
-    end
-
     EventMachine::add_periodic_timer(CONFIG[:fifo_manager_snapshot_interval]*60) do
       on_call_wm_snapshot_create(nil, nil)
     end
@@ -89,7 +81,6 @@ class FifoManager
 
   def on_connect(client)
     mf_cg_set(client)
-    client.call(CMD_MF_CAPTCHA_SALT_SET, @captcha_salt)
     mf_ready_set(client) if @ready
   end
 
@@ -223,18 +214,6 @@ private
 
   def mf_cg_set(fifo)
     fifo.call(CMD_MF_CG_SET, @cg)
-  end
-
-  def mf_captcha_salt_set
-    new_captcha_salt
-    clients.each { |fifo| fifo.call(CMD_MF_CAPTCHA_SALT_SET, @captcha_salt) }
-  end
-
-  def new_captcha_salt
-    chars = ('A'..'Z').to_a
-    salt_array = []
-    1.upto(SALT_LENGTH) { salt_array << chars[rand(chars.length)] }
-    @captcha_salt = salt_array.join('')
   end
 
   def channel_key(game_id, channel_name)
