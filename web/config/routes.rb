@@ -16,7 +16,7 @@ ActionController::Routing::Routes.draw do |map|
   map.play_lang 'games/:id/:channel/:lang', :controller => 'games', :action => 'play'
 
   map.resources :games
-  map.resources :toys
+  map.resources :toys, :collection => {:captcha => :get, :mail => :post}
 
   map.connect 'admin', :controller => 'admin/stats'
   map.namespace :admin do |admin|

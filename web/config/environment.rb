@@ -58,7 +58,16 @@ Rails::Initializer.run do |config|
   #config.active_record.default_timezone = :utc
 end
 
-# Custom config not used by script/fifo_manager is put here.
+# Custom config not used by script/fifo_manager is put here. -------------------
+
 $KCODE = 'u'
 require 'jcode'
 require 'gettext/rails'
+
+ActionMailer::Base.smtp_settings = {
+  :address        => 'smtp.gmail.com',
+  :port           => 587,
+  :user_name      => 'web20games@gmail.com',
+  :password       => 'k@w@111f',
+  :authentication => :plain
+}

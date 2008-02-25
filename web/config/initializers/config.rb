@@ -5,6 +5,8 @@ CONFIG = {
   :locales               => ['en', 'ja', 'vi'],
   :app_title             => 'web20games.net',
   :copyright             => '&copy; 2008 web20games.net',
+  :admin_email           => 'admin@web20games.net',
+
   :new_threshold         => 3,  # Days, to determine if something is "NEW"
   :google_analytics_code => '',
   :swf_width             => 500,
