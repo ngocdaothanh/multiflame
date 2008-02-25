@@ -15,6 +15,7 @@
 		private var _vid:Video;
 		private var _bmd:BitmapData;
 		private var _emailDlg:EmailDlg;
+		private var _dogBark:Sound;
 
 		public function Document():void {
 			removeChild(_toggleBtn);
@@ -53,6 +54,7 @@
 
 		private function onEmailDlgOK(event:Event):void {
 			removeChild(_emailDlg);
+			_dogBark = new DogBark();
 
 			_toggleBtn.border = true;
 			_toggleBtn.selectable = false;
@@ -106,6 +108,7 @@
 				//trace(sum);
 				if (sum > THRESHOLD) {
 					_status.text = "Moved";
+					_dogBark.play();
 					_emailDlg.email("Antitheft camera", "Captured image", bmd);
 				} else {
 					_status.text = "";

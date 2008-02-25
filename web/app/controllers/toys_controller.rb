@@ -44,12 +44,10 @@ class ToysController < ApplicationController
     subject                       = o[:subject]
     body                          = o[:body]
     jpg                           = o[:jpg]
-p 'code', code
-p 'encrypted_code_with_timestamp', encrypted_code_with_timestamp
-    #if captcha_obj.correct?(code, encrypted_code_with_timestamp)
-      p email
+
+    if captcha_obj.correct?(code, encrypted_code_with_timestamp)
       JPGMailer.deliver_msg(email, subject, body, jpg)
-    #end
+    end
     render :nothing => true
   end
 
