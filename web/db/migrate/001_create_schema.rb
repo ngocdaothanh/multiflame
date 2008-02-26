@@ -1,13 +1,11 @@
 class CreateSchema < ActiveRecord::Migration
   def self.up
     create_table :games do |t|
-      t.text :names, :null => false  # Hash of locale => name, serialized using YML
+      t.text :names, :null => false  # Hash of {locale => name}, serialized using YML
     end
 
     create_table :toys do |t|
-      t.text    :names,  :null => false  # Hash of locale => name, serialized using YML
-      t.integer :width,  :null => false
-      t.integer :height, :null => false
+      t.text :names, :null => false  # Hash of {locale => name}, serialized using YML
     end
 
     create_table :stats do |t|

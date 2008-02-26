@@ -54,6 +54,7 @@ class ToysController < ApplicationController
 private
 
   def captcha_obj
-    @captcha_obj ||= Revent::Captcha.new('ss', 6, 24*60*60)
+    @captcha_obj ||= Revent::Captcha.new(CONFIG[:captcha_key],
+      CONFIG[:captcha_length], CONFIG[:captcha_valid_period])
   end
 end
