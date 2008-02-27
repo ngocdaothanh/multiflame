@@ -3,7 +3,7 @@
 
 	public class DataInURL {
 		/**
-		 * input -> unescape URL -> decode base64 -> output
+		 * input -> unescape URL -> encode base64 -> output
 		 */
 		public static function encode(str:String):String {
 			var v:URLVariables = new URLVariables();
@@ -18,7 +18,7 @@
 		}
 
 		/**
-		 * input -> decode base64 -> unescape URL -> output
+		 * input -> decode base64 -> escape URL -> output
 		 */
 		public static function decode(str:String):String {
 			var decoder:DataInURL = new DataInURL();

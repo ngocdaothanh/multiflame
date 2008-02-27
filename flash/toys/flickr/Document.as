@@ -3,96 +3,85 @@
 	import flash.net.*;
 	import flash.events.*;
 
-	public class Document extends Sprite {
-		public static const MODE_DEMO:int = 0;
-		public static const MODE_EDIT:int = 1;
-		public static const MODE_TOY:int  = 2;
+	import multiflame.toy.IContainer;
+	import multiflame.toy.IToy;
+	import multiflame.toy.Constants;
 
+	public class Document extends Sprite implements IToy {
+		private var _container:IContainer;
 		private var _mode:int;
 
+		private var _editor:Editor;
 		private var _gallery:Gallery;
 		private var _waiting:Ball = new Ball();
 		private var _previewClicked:Boolean;
 
-		public function Document():void {
-			var b:Sprite = new Sprite();
-			b.graphics.beginFill(0x000000);
-			b.graphics.drawRect(0, 0, 500, 470);
-			b.graphics.endFill();
-			addChild(b);
+		public function setContainer(container:IContainer, mode:int, config:Array):Array {
+			_container = container;
+			_mode = mode;
 
-			var flashVars:Object = this.root.loaderInfo.parameters;
-			if (flashVars != null) {
-				if (flashVars["mode"] == "demo") {
-					_mode = MODE_DEMO;
-				} else if (flashVars["mode"] == "edit") {
-					_mode = MODE_EDIT;
-				} else {
-					_mode = MODE_TOY;
-				}
-			} else {
-				_mode = MODE_TOY;
-			}
+			graphics.beginFill(0x000000);
+			graphics.drawRect(0, 0, 500, 500);
+			graphics.endFill();
 
-			var config:Config;
-			switch (_mode) {
-			case MODE_DEMO:
-				removeChild(_editor);
-				config = new Config();
-				config.demo();
+			switch (mode) {
+			case Constants.MODE_DEMO:
+				config = demoConfig();
 				doStart(config);
 				break;
-			case MODE_EDIT:
+			case Constants.MODE_CONFIG:
 				_waiting.x = 250;
 				_waiting.y = 265;
 				addEventListener(Event.ADDED, onAdded);
 				addEventListener(MouseEvent.MOUSE_MOVE, onMove);
+
+				_editor = new Editor(container);
+				addChild(_editor);
 				_editor.addEventListener(Editor.PREVIEW, onPreview);
 
-				config = new Config();
-				config.demo();
+				config = demoConfig();
 				_editor.config = config;
 				doStart(config);
 				break;
-			case MODE_TOY:
-				removeChild(_editor);
+			case Constants.MODE_REAL:
 				try {
-					var url:String = loaderInfo.loaderURL;
-					var a:Array = url.split('/');
-					start(a[a.length - 1]);
+					doStart(config);
 				} catch(e:Error) {
-					config = new Config();
-					config.demo();
-					doStart(config)
 				}
 				break;
 			}
+
+			return [500, 500];
 		}
 
-		public function start(config:String):void {
-			var c:Config = new Config();
-			c.parse(config);
-			doStart(c);
+		// ---------------------------------------------------------------------------
+
+		private function demoConfig():Array {
+			var config:Array = [];
+			config["userName"] = "web20games";
+			config["type"]     = "tags";
+			config["value"]    = "";
+			return config;
 		}
 
-		private function doStart(config:Config):void {
+		private function doStart(config:Array):void {
 			if (_gallery != null) {
 				removeChild(_gallery);
 			}
 
-			if (_mode == MODE_EDIT) {
+			if (_mode == Constants.MODE_CONFIG) {
 				if (!contains(_waiting)) {
 					addChild(_waiting);
 				}
 			}
 
-			_gallery = new Gallery(config.userName, 500, 500);
+			_gallery = new Gallery(config["userName"], 500, 500);
 			_gallery.addEventListener(Gallery.FIND_OK, onFindOK);
 			_gallery.addEventListener(Gallery.FIND_NG, onFindNG);
-			if (config.type == "tags") {
-				_gallery.findByTags(config.value);
-			} else if (config.type == "set") {
-				_gallery.findBySet(config.value);
+			if (config["type"] == "tags") {
+				_gallery.findByTags(config["value"]);
+			} else if (config["type"] == "set") {
+				_gallery.findBySet(config["value"]);
 			}
 			addChild(_gallery);
 		}
@@ -107,7 +96,9 @@
 		// --------------------------------------------------------------------------
 
 		private function onAdded(event:Event):void {
-			setChildIndex(_editor, numChildren - 1);
+			if (_editor != null) {
+				setChildIndex(_editor, numChildren - 1);
+			}
 		}
 		
 		private function onPreview(event:Event):void {

@@ -5,6 +5,7 @@
 	import flash.net.*;
 
 	import com.adobe.webapis.gettext.GetText;
+	import multiflame.utils.DataInURL;
 
 	import multiflame.toy.IContainer;
 	import multiflame.toy.IToy;
@@ -17,9 +18,10 @@
 
 		private var _id:int;
 		private var _locale:String;
-		private var _params:String;
+		private var _config:Array;
+		private var _dimensions:Array;
 
-		public function Document():void {
+		public function Document():void {			
 			determineMode();
 
 			if (_id > 0 && _locale != "en") {
@@ -41,24 +43,37 @@
 			}
 		}
 
+		public function embed(config:Array):String {
+			var url:String = "http://" + Constants.WEB_SITE + "/toys/" + _id + "/" + _locale;
+			var string:String = configToString(config);
+			if (string != null) {
+				url += "/" + string;
+			}
+			return '<object width="' + _dimensions[0] + '" height="' + _dimensions[1] +
+				'"><param name="movie" value="' + url + '"></param>' +
+				'<param name="wmode" value="transparent"></param>' +
+				'<embed src="' + url + '" type="application/x-shockwave-flash" wmode="transparent" ' +
+				'width="' + _dimensions[0] + '" height="' + _dimensions[1] + '"></embed></object>';
+		}
+
 		// ---------------------------------------------------------------------------
 
 		private function determineMode():void {
 			// When loaded from the web server, the URL is in the form:
-			// .../id/locale/params
+			// http://host/toys/id/locale or http://host/toys/id/locale/config			
 			var url:String = loaderInfo.loaderURL;
 			if (url.indexOf("file://") == 0) {
 				_id     = -1;
 				_locale = null;
-				_params = null;
+				_config = null;
 			} else {
 				var a:Array = url.split('/');
-				var len:int = a.length;
-				_id     = int(a[len - 3]);
-				_locale = a[len - 2];
-				_params = a[len - 1];
-				if (_params == "") {
-					_params = null;
+				_id     = int(a[4]);
+				_locale = a[5];
+				if (a.length == 6) {					
+					_config = null;
+				} else {
+					_config = stringToConfig(a[6]);
 				}
 			}
 
@@ -98,14 +113,14 @@
 			var toy:IToy = event.target.content as IToy;
 			var sprite:Sprite = event.target.content as Sprite;
 			addChild(sprite);
-			var d:Array = toy.setContainer(this, _mode, parse(_params));
+			_dimensions = toy.setContainer(this, _mode, _config);
 
 			if (_mode == Constants.MODE_CONFIG) {
 				stage.scaleMode = StageScaleMode.NO_SCALE;
-				sprite.x = (500 - d[0])/2;
-				sprite.y = (500 - d[1])/2;
+				sprite.x = (500 - _dimensions[0])/2;
+				sprite.y = (500 - _dimensions[1])/2;
 			} else {
-				if (d[0] < d[1]) {
+				if (_dimensions[0] < _dimensions[1]) {
 					sprite.height = 500;
 					sprite.scaleX = sprite.scaleY;
 				} else {
@@ -115,7 +130,28 @@
 			}
 		}
 
-		private function parse(params:String):Array {
+		private function stringToConfig(string:String):Array {
+			try {
+				var v:URLVariables = new URLVariables(DataInURL.decode(string));
+				var config:Array = [];
+				for (var key:String in v) {
+					config[key] = v[key];
+				}
+				return config;
+			} catch (e:Error) {
+			}
+			return null;
+		}
+
+		private function configToString(config:Array):String {
+			try {
+				var v:URLVariables = new URLVariables();
+				for (var key:String in config) {
+					v[key] = config[key];
+				}
+				return DataInURL.encode(v.toString());
+			} catch (e:Error) {
+			}
 			return null;
 		}
 	}

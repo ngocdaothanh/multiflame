@@ -12,7 +12,7 @@
 	
 	public class Document extends Sprite implements IToy {
 		public static const WIDTH:int  = 320;
-		public static const HEIGHT:int = 240;
+		public static const HEIGHT:int = 280;
 
 		private static const THRESHOLD:int = 320*240*2;
 
@@ -22,6 +22,12 @@
 		private var _bmd:BitmapData;
 		private var _emailDlg:EmailDlg;
 		private var _dogBark:Sound;
+
+		public function Document():void {
+			graphics.beginFill(0x333333);
+			graphics.drawRect(0, 0, WIDTH, HEIGHT);
+			graphics.endFill();
+		}
 
 		public function setContainer(container:IContainer, mode:int, params:Array):Array {
 			var ret:Array = [WIDTH, HEIGHT];

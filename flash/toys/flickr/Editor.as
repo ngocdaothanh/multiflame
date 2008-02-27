@@ -4,38 +4,46 @@
 	import flash.events.*;
 	import fl.controls.*;
 
+	import multiflame.toy.IContainer;
+
 	public class Editor extends Sprite {
 		public static const PREVIEW:String = "EDITOR_PREVIEW";
-		private static const SWF_WIDTH:int = 500;
-		private static const SWF_HEIGHT:int = 560;
 
-		public function Editor():void {
+		private var _container:IContainer;
+
+		public function Editor(container:IContainer):void {
+			_container = container;
+			_userNameLbl.text = _("User name");
+			_tagsRadio.label  = _("Tags");
+			_setRadio.label   = _("Set");
+			_embedLbl.text    = _("Embed");
+			_previewBtn.label = _("Preview");
 			_previewBtn.addEventListener(MouseEvent.CLICK, onPreview);
 		}
 		
-		public function set config(config:Config):void {
-			_userName.text      = config.userName;
-			_tagsRadio.selected = config.type == "tags";
+		public function set config(config:Array):void {
+			_userName.text      = config["userName"];
+			_tagsRadio.selected = config["type"] == "tags";
 			_setRadio.selected  = !_tagsRadio.selected;
-			_value.text         = config.value;
+			_value.text         = config["value"];
 		}
 
-		public function get config():Config {
-			var ret:Config = new Config();
-			ret.userName = _userName.text;
-			ret.type     = _tagsRadio.selected ? "tags" : "set";
-			ret.value    = _value.text;
+		public function get config():Array {
+			var ret:Array = [];
+			ret["userName"] = _userName.text;
+			ret["type"]     = _tagsRadio.selected ? "tags" : "set";
+			ret["value"]    = _value.text;
 			return ret;
 		}
 
+		// ---------------------------------------------------------------------------
+
+		private function _(id:String):String {
+			return _container._(id);
+		}
+
 		private function onPreview(event:MouseEvent):void {
-			var url = "http://web20games.net/twc/1/" + config.toEncodedString();
-			_embed.text = '<object width="' + SWF_WIDTH + '" height="' + SWF_HEIGHT +
-				'"><param name="movie" value="' + url + '"></param>' +
-				'<param name="wmode" value="transparent"></param>' +
-				'<embed src="' + url + '" type="application/x-shockwave-flash" wmode="transparent" ' +
-				'width="' + SWF_WIDTH + '" height="' + SWF_HEIGHT + '"></embed></object>'
-			
+			_embed.text = _container.embed(config);
 			var e:Event = new Event(PREVIEW);
 			dispatchEvent(e);
 		}
