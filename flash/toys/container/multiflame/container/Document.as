@@ -96,8 +96,23 @@
 		private function onToyLoadInit(event:Event):void {
 			removeChild(_statusLbl);
 			var toy:IToy = event.target.content as IToy;
-			addChild(toy as Sprite);
-			toy.setContainer(this, _mode, parse(_params));
+			var sprite:Sprite = event.target.content as Sprite;
+			addChild(sprite);
+			var d:Array = toy.setContainer(this, _mode, parse(_params));
+
+			if (_mode == Constants.MODE_CONFIG) {
+				stage.scaleMode = StageScaleMode.NO_SCALE;
+				sprite.x = (500 - d[0])/2;
+				sprite.y = (500 - d[1])/2;
+			} else {
+				if (d[0] < d[1]) {
+					sprite.height = 500;
+					sprite.scaleX = sprite.scaleY;
+				} else {
+					sprite.width = 500;
+					sprite.scaleY = sprite.scaleX;
+				}
+			}
 		}
 
 		private function parse(params:String):Array {

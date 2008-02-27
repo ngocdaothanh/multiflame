@@ -8,23 +8,21 @@
 	import com.adobe.images.JPGEncoder;
 
 	import multiflame.toy.IContainer;
+	import multiflame.toy.Constants;
 	
 	public class EmailDlg extends Sprite {
 		public static const OK:String = "OK";
 
 		private var _container:IContainer;
-		private var _emailURL:String;
 
 		private var _encryptedCode:ByteArray;
 		private var _captchaLoader:Loader;
 
-		public function EmailDlg(container:IContainer, captchaURL:String, emailURL:String):void {
+		public function EmailDlg(container:IContainer):void {
 			_container = container;
 			_codeLbl.text   = _("Code");
 			_emailLbl.text  = _("Email");
 			_statusLbl.text = _("Images will be sent to your email when there is movement.");
-
-			_emailURL = emailURL;
 
 			_codeInput.border = _emailInput.border = _ok.border = true;
 			_ok.selectable = false;
@@ -35,7 +33,7 @@
 			ld.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
 			ld.addEventListener(Event.COMPLETE, onCaptchaLoaded);
 			ld.dataFormat = URLLoaderDataFormat.BINARY;
-			ld.load(new URLRequest(captchaURL));
+			ld.load(new URLRequest(Constants.URL_CAPTCHA));
 		}
 
 		public function email(subject:String, body:String, img:BitmapData):void {
@@ -52,7 +50,7 @@
 			ba.writeObject(o);
 			ba.position = 0;
 
-			var req:URLRequest = new URLRequest(_emailURL);
+			var req:URLRequest = new URLRequest(Constants.URL_EMAIL);
 			req.contentType = "application/octet-stream";
 			req.method = URLRequestMethod.POST;
 			req.data = ba;

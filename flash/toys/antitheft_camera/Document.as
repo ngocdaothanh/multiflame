@@ -11,8 +11,8 @@
 	import multiflame.toy.Constants;
 	
 	public class Document extends Sprite implements IToy {
-		private static const CAPTCHA_URL:String = "/toys/captcha";
-		private static const EMAIL_URL:String = "/toys/email";
+		public static const WIDTH:int  = 320;
+		public static const HEIGHT:int = 240;
 
 		private static const THRESHOLD:int = 320*240*2;
 
@@ -23,7 +23,9 @@
 		private var _emailDlg:EmailDlg;
 		private var _dogBark:Sound;
 
-		public function setContainer(container:IContainer, mode:int, params:Array):void {
+		public function setContainer(container:IContainer, mode:int, params:Array):Array {
+			var ret:Array = [WIDTH, HEIGHT];
+
 			_container = container;
 
 			removeChild(_toggleBtn);
@@ -32,12 +34,12 @@
 			_status.selectable = false;
 			_status.text = _("Please connect a webcam.");
 			if (Camera.names.length == 0) {
-				return;
+				return ret;
 			}
 
 			var cam:Camera = Camera.getCamera();
 			if (cam == null) {
-				return;
+				return ret;
 			}
 
 			_vid = new Video();
@@ -48,6 +50,8 @@
 			addChild(_vid);
 
 			_bmd = new BitmapData(_vid.width, _vid.height);
+
+			return ret;
 		}
 
 		// ---------------------------------------------------------------------------
@@ -62,7 +66,7 @@
 
 		private function onCameraAccept(event:StatusEvent):void {
 			if (event.code == "Camera.Unmuted") {
-				_emailDlg = new EmailDlg(_container, CAPTCHA_URL, EMAIL_URL);
+				_emailDlg = new EmailDlg(_container);
 				_emailDlg.x = 50;
 				_emailDlg.y = 50;
 				_emailDlg.addEventListener(EmailDlg.OK, onEmailDlgOK);
