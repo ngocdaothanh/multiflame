@@ -1,0 +1,17 @@
+<% @flag_destination = edit_admin_toy_container_path %>
+<% @navigator = _('Edit toy container') %>
+
+<% unless flash[:notice].nil? %><div class="notice"><%= flash[:notice] %></div><% end %>
+<%= form_tag admin_toy_container_path, :multipart => true, :method => :put %>
+  <table>
+    <tr>
+      <th>&nbsp;</th>
+      <td><%= _('(blank = no change)') %></td>
+    </tr>
+    <tr>
+      <th>container.swf</th>
+      <td><%= file_field_tag 'container', :id => nil %></td>
+    </tr>
+  </table>
+  <%= submit_tag _('Save') %>
+</form>

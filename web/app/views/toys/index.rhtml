@@ -24,7 +24,7 @@
 <script>
 var ids = [<%= (@toys.map { |t| t.id }).join(', ') %>];
 for (var i = 0; i < ids.length; i++) {
-  var so = new SWFObject('/toys/' + ids[i] + '/toy.swf', 'embed_toy_flash' + ids[i], '100%', '250', '9', '');
+  var so = new SWFObject('/toys/' + ids[i] + '/<%= GetText.locale %>/dummy', 'embed_toy_flash' + ids[i], '100%', '250', '9', '');
   if (i == 0) {
     so.useExpressInstall('/javascripts/expressinstall.swf');
   }

@@ -8,14 +8,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-02-27 18:27+0900\n"
-"PO-Revision-Date: 2008-02-27 18:19+0900\n"
+"PO-Revision-Date: 2008-02-27 18:43+0900\n"
 "Last-Translator: Ngoc Dao <ngocdaothanh@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Document.as:30 Document.as:131
+#: Document.as:30
+#: Document.as:131
 msgid "Antitheft camera"
 msgstr "Camera chống trộm"
 
@@ -55,9 +56,8 @@ msgstr "Hãy nối webcam vào máy tính."
 msgid "Start"
 msgstr "Bắt đầu"
 
-#: Document.as:90 Document.as:103
+#: Document.as:90
+#: Document.as:103
 msgid "Stop"
 msgstr "Ngưng"
 
-#~ msgid "Antitheft camera - web20games.net"
-#~ msgstr "Camera chống trộm"

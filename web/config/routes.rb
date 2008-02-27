@@ -23,6 +23,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :stats
     admin.resource  :game_container, :controller => 'game_container'
     admin.resources :games
+    admin.resource  :toy_container, :controller => 'toy_container'
     admin.resources :toys
   end
 

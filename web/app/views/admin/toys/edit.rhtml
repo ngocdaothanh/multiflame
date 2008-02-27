@@ -5,6 +5,10 @@
 <%= form_tag admin_toy_path(@toy), :multipart => true, :method => :put %>
   <table>
     <tr>
+      <th>&nbsp;</th>
+      <td><%= _('(blank = no change)') %></td>
+    </tr>
+    <tr>
       <th>toy.swf</th>
       <td><%= file_field_tag 'toy', :id => nil %></td>
       <th><%= _('Toy name') %></th>
@@ -12,7 +16,7 @@
 <% CONFIG[:locales].each do |l| %>
     <tr>
       <th><%= l %>.mo</th>
-      <td><%= file_field_tag "mo_#{l}", :id => nil %></td>
+      <td><%= (l == 'en')? '&nbsp;' : file_field_tag("mo_#{l}", :id => nil) %></td>
       <td><%= text_field_tag "name_#{l}", @toy.name(l) %></td>
     </tr>
 <% end %>
