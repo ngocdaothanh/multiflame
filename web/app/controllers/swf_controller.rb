@@ -61,11 +61,9 @@ class SwfController < ApplicationController
     end
   end
 
-  def toy_with_config
+  def toy_container
     toy = Toy.find(params[:id])
-    # Security check: make sure that this is an integer
-    id = params[:id].to_i
-    send_file("#{RAILS_ROOT}/public/toys/#{id}/toy.swf",
+    send_file("#{RAILS_ROOT}/public/toys/container.swf",
       :filename    => 'toy.swf',
       :type        => 'application/x-shockwave-flash',
       :disposition => 'inline',

@@ -9,8 +9,8 @@ ActionController::Routing::Routes.draw do |map|
     :controller => 'swf', :action => 'game_container_with_versions'
   map.game_with_version 'gwv/:id/:version',
     :controller => 'swf', :action => 'game_with_version'
-  map.toy_with_config 'twc/:id/:config',
-    :controller => 'swf', :action => 'toy_with_config'
+  map.toy_container 'toys/:id/:locale/:config',
+    :controller => 'swf', :action => 'toy_container'
 
   map.play      'games/:id/:channel', :controller => 'games', :action => 'play'
   map.play_lang 'games/:id/:channel/:lang', :controller => 'games', :action => 'play'

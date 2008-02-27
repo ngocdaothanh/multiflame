@@ -1,5 +1,7 @@
 ﻿package multiflame.game {
 	public class Constants {
+		public static const WEB_SITE:String = "web20games.net";
+
 		/**
 		 * Game classes.
 		 */

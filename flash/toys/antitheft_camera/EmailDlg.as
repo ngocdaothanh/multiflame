@@ -7,15 +7,23 @@
 
 	import com.adobe.images.JPGEncoder;
 
+	import multiflame.toy.IContainer;
+	
 	public class EmailDlg extends Sprite {
 		public static const OK:String = "OK";
 
+		private var _container:IContainer;
 		private var _emailURL:String;
 
 		private var _encryptedCode:ByteArray;
 		private var _captchaLoader:Loader;
 
-		public function EmailDlg(captchaURL:String, emailURL:String):void {
+		public function EmailDlg(container:IContainer, captchaURL:String, emailURL:String):void {
+			_container = container;
+			_codeLbl.text   = _("Code");
+			_emailLbl.text  = _("Email");
+			_statusLbl.text = _("Images will be sent to your email when there is movement.");
+
 			_emailURL = emailURL;
 
 			_codeInput.border = _emailInput.border = _ok.border = true;
@@ -27,8 +35,7 @@
 			ld.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
 			ld.addEventListener(Event.COMPLETE, onCaptchaLoaded);
 			ld.dataFormat = URLLoaderDataFormat.BINARY;
-			//ld.load(new URLRequest(captchaURL));
-			ld.load(new URLRequest("http://localhost:3000" + captchaURL));
+			ld.load(new URLRequest(captchaURL));
 		}
 
 		public function email(subject:String, body:String, img:BitmapData):void {
@@ -45,8 +52,7 @@
 			ba.writeObject(o);
 			ba.position = 0;
 
-			//var request:URLRequest = new URLRequest(_emailURL);
-			var req:URLRequest = new URLRequest("http://localhost:3000" + _emailURL);
+			var req:URLRequest = new URLRequest(_emailURL);
 			req.contentType = "application/octet-stream";
 			req.method = URLRequestMethod.POST;
 			req.data = ba;
@@ -55,8 +61,12 @@
 
 		// ---------------------------------------------------------------------------
 
+		private function _(id:String):String {
+			return _container._(id);
+		}
+
 		private function onError(event:Event):void {
-			_descLbl.text = "Could not connect to server.";
+			_statusLbl.text = _("Could not connect to server.");
 		}
 
 		private function onCaptchaLoaded(event:Event):void {

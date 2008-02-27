@@ -1,0 +1,63 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-02-27 18:27+0900\n"
+"PO-Revision-Date: 2008-02-27 18:31+0900\n"
+"Last-Translator: Ngoc Dao <ngocdaothanh@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: Document.as:30
+#: Document.as:131
+msgid "Antitheft camera"
+msgstr "防犯カメラ"
+
+#: Document.as:131
+msgid "Captured image"
+msgstr "撮った画像"
+
+#: EmailDlg.as:23
+msgid "Code"
+msgstr "コード"
+
+#: EmailDlg.as:69
+msgid "Could not connect to server."
+msgstr "サーバーへ接続できませんでした。"
+
+#: EmailDlg.as:24
+msgid "Email"
+msgstr "メール"
+
+#: EmailDlg.as:25
+msgid "Images will be sent to your email when there is movement."
+msgstr "運動があったらメールへ画像を送ります。"
+
+#: Document.as:129
+msgid "Moved"
+msgstr "運動した"
+
+#: Document.as:46
+msgid "Please allow access to your webcam."
+msgstr "カメラへのアクセスを許可してください。"
+
+#: Document.as:33
+msgid "Please connect a webcam."
+msgstr "カメラを接続してください。"
+
+#: Document.as:87
+msgid "Start"
+msgstr "スタート"
+
+#: Document.as:90
+#: Document.as:103
+msgid "Stop"
+msgstr "ストップ"
+

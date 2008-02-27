@@ -1,7 +1,7 @@
 CONFIG = {
-  :captcha_key                 => 'captcha_key',
-  :captcha_length              => 3,
-  :captcha_valid_period_in_sec => 15,
+  :captcha_key          => 'captcha_key',
+  :captcha_length       => 3,
+  :captcha_valid_period => 15,  # [sec]
 
   # Address on the machine that this fifo runs
   :host => '0.0.0.0',

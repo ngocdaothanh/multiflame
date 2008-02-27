@@ -6,22 +6,31 @@
 	import flash.geom.Rectangle;
 	import flash.utils.*;
 
-	public class Document extends Sprite {
+	import multiflame.toy.IToy;
+	import multiflame.toy.IContainer;
+	import multiflame.toy.Constants;
+	
+	public class Document extends Sprite implements IToy {
 		private static const CAPTCHA_URL:String = "/toys/captcha";
 		private static const EMAIL_URL:String = "/toys/email";
 
 		private static const THRESHOLD:int = 320*240*2;
+
+		private var _container:IContainer;
 
 		private var _vid:Video;
 		private var _bmd:BitmapData;
 		private var _emailDlg:EmailDlg;
 		private var _dogBark:Sound;
 
-		public function Document():void {
+		public function setContainer(container:IContainer, mode:int, params:Array):void {
+			_container = container;
+
 			removeChild(_toggleBtn);
+			_copywrite.text = _("Antitheft camera") + " - " + Constants.WEB_SITE;
 
 			_status.selectable = false;
-			_status.text = "Please connect a webcam.";
+			_status.text = _("Please connect a webcam.");
 			if (Camera.names.length == 0) {
 				return;
 			}
@@ -34,16 +43,26 @@
 			_vid = new Video();
 			_vid.smoothing = true;
 			cam.addEventListener(StatusEvent.STATUS, onCameraAccept);
-			_status.text = "Please allow access to your webcam.";
+			_status.text = _("Please allow access to your webcam.");
 			_vid.attachCamera(cam);
 			addChild(_vid);
 
 			_bmd = new BitmapData(_vid.width, _vid.height);
-		}		
+		}
+
+		// ---------------------------------------------------------------------------
+
+		private function _(id:String):String {
+			if (_container == null) {
+				return id;
+			} else {
+				return _container._(id);
+			}
+		}
 
 		private function onCameraAccept(event:StatusEvent):void {
 			if (event.code == "Camera.Unmuted") {
-				_emailDlg = new EmailDlg(CAPTCHA_URL, EMAIL_URL);
+				_emailDlg = new EmailDlg(_container, CAPTCHA_URL, EMAIL_URL);
 				_emailDlg.x = 50;
 				_emailDlg.y = 50;
 				_emailDlg.addEventListener(EmailDlg.OK, onEmailDlgOK);
@@ -65,10 +84,10 @@
 
 		private function onToggleBtnClick(event:Event):void {
 			if (_toggleBtn.text == "Stop") {
-				_toggleBtn.text = "Start";
+				_toggleBtn.text = _("Start");
 				checkMovement();
 			} else {
-				_toggleBtn.text = "Stop";
+				_toggleBtn.text = _("Stop");
 			}
 			_status.text = "";
 		}
@@ -81,7 +100,7 @@
 				return;
 			}
 
-			if (_toggleBtn.text == "Stop") {
+			if (_toggleBtn.text == _("Stop")) {
 				var sum:int = 0;
 				var p1, p2:uint;
 				var r, g, b:int;
@@ -107,9 +126,9 @@
 	
 				//trace(sum);
 				if (sum > THRESHOLD) {
-					_status.text = "Moved";
+					_status.text = _("Moved");
 					_dogBark.play();
-					_emailDlg.email("Antitheft camera", "Captured image", bmd);
+					_emailDlg.email(_("Antitheft camera"), _("Captured image"), bmd);
 				} else {
 					_status.text = "";
 				}
