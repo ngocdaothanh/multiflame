@@ -12,3 +12,8 @@ i18n:
 * Install Ruby and RubyGetText: gem install gettext
 * Install poedit and add its bin directory to system path
 * In the game or toy directory, run ruby <path to gettext.rb> <updatepo|makemo>
+
+Publish:
+* Modify the constant FLASH in publish.rb if neccessary
+* Run publish.rb <path to a .fla> to publish one file, or
+  run publish.rb without arguments to publish all .fla files
