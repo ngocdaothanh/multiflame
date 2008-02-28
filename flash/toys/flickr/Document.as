@@ -20,9 +20,12 @@
 			_container = container;
 			_mode = mode;
 
-			graphics.beginFill(0x000000);
-			graphics.drawRect(0, 0, 500, 500);
-			graphics.endFill();
+			// Mouse move will not work without something under the mouse
+			var bg:Sprite = new Sprite();
+			bg.graphics.beginFill(0x000000);
+			bg.graphics.drawRect(0, 0, 500, 500);
+			bg.graphics.endFill();
+			addChild(bg);
 
 			switch (mode) {
 			case Constants.MODE_DEMO:

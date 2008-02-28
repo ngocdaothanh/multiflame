@@ -13,14 +13,10 @@
 
 		public function Editor(container:IContainer):void {
 			_container = container;
-			_userNameLbl.text = _("User name");
-			_tagsRadio.label  = _("Tags");
-			_setRadio.label   = _("Set");
-			_embedLbl.text    = _("Embed");
-			_previewBtn.label = _("Preview");
+			addEventListener(Event.ADDED, onAdded);
 			_previewBtn.addEventListener(MouseEvent.CLICK, onPreview);
 		}
-		
+
 		public function set config(config:Array):void {
 			_userName.text      = config["userName"];
 			_tagsRadio.selected = config["type"] == "tags";
@@ -37,6 +33,14 @@
 		}
 
 		// ---------------------------------------------------------------------------
+
+		private function onAdded(event:Event):void {
+			_userNameLbl.text = _("User name");
+			_tagsRadio.label  = _("Tags");
+			_setRadio.label   = _("Set");
+			_embedLbl.text    = _("Embed");
+			_previewBtn.label = _("Preview");
+		}
 
 		private function _(id:String):String {
 			return _container._(id);
