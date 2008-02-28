@@ -10,6 +10,7 @@
 
 	import multiflame.utils.*;
 	import multiflame.container.events.*;
+	import multiflame.game.Constants;
 
 	public class LoginTab extends MovieClip {
 		private var _channel:Channel;
@@ -109,7 +110,7 @@
 		private function onLoginMe(event:LoginoutEvent):void {
 			switch (event.code) {
 			case LoginoutEvent.CONNECTION_ERROR:
-				_statusLbl.htmlText = StringUtil.substitute(_("We are upgrading {0}."), Channel.WEB_HOST) + "<br />" +	_("Please refresh this page after a few minutes.");
+				_statusLbl.htmlText = StringUtil.substitute(_("We are upgrading {0}."), Constants.WEB_SITE) + "<br />" +	_("Please refresh this page after a few minutes.");
 				break;
 			case LoginoutEvent.WRONG_CAPTCHA:
 				_statusLbl.htmlText = _("Wrong code");

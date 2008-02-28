@@ -7,20 +7,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-27 18:27+0900\n"
-"PO-Revision-Date: 2008-02-27 18:31+0900\n"
+"POT-Creation-Date: 2008-02-28 17:01+0900\n"
+"PO-Revision-Date: 2008-02-28 17:01+0900\n"
 "Last-Translator: Ngoc Dao <ngocdaothanh@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Document.as:30
-#: Document.as:131
+#: Document.as:38
+#: Document.as:141
 msgid "Antitheft camera"
 msgstr "防犯カメラ"
 
-#: Document.as:131
+#: Document.as:141
 msgid "Captured image"
 msgstr "撮った画像"
 
@@ -37,27 +37,31 @@ msgid "Email"
 msgstr "メール"
 
 #: EmailDlg.as:25
+msgid "Embed"
+msgstr "埋め込み"
+
+#: EmailDlg.as:26
 msgid "Images will be sent to your email when there is movement."
 msgstr "運動があったらメールへ画像を送ります。"
 
-#: Document.as:129
+#: Document.as:139
 msgid "Moved"
 msgstr "運動した"
 
-#: Document.as:46
+#: Document.as:54
 msgid "Please allow access to your webcam."
 msgstr "カメラへのアクセスを許可してください。"
 
-#: Document.as:33
+#: Document.as:41
 msgid "Please connect a webcam."
 msgstr "カメラを接続してください。"
 
-#: Document.as:87
+#: Document.as:97
 msgid "Start"
 msgstr "スタート"
 
-#: Document.as:90
-#: Document.as:103
+#: Document.as:100
+#: Document.as:113
 msgid "Stop"
 msgstr "ストップ"
 

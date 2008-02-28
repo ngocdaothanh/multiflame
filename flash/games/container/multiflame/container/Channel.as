@@ -16,8 +16,6 @@
 	 * here to be broadcasted.
 	 */
 	public class Channel extends EventDispatcher {
-		public static const WEB_HOST:String = "web20games.net";
-
 		// Commands to send to the server
 		public static const CMD_CAPTCHA:int      = 0;
 		public static const CMD_GAME_INFO:int    = 1;

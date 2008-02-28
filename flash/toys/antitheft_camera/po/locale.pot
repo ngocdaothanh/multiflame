@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-27 18:27+0900\n"
+"POT-Creation-Date: 2008-02-28 17:01+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,11 +16,11 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Document.as:30 Document.as:131
+#: Document.as:38 Document.as:141
 msgid "Antitheft camera"
 msgstr ""
 
-#: Document.as:131
+#: Document.as:141
 msgid "Captured image"
 msgstr ""
 
@@ -37,25 +37,29 @@ msgid "Email"
 msgstr ""
 
 #: EmailDlg.as:25
+msgid "Embed"
+msgstr ""
+
+#: EmailDlg.as:26
 msgid "Images will be sent to your email when there is movement."
 msgstr ""
 
-#: Document.as:129
+#: Document.as:139
 msgid "Moved"
 msgstr ""
 
-#: Document.as:46
+#: Document.as:54
 msgid "Please allow access to your webcam."
 msgstr ""
 
-#: Document.as:33
+#: Document.as:41
 msgid "Please connect a webcam."
 msgstr ""
 
-#: Document.as:87
+#: Document.as:97
 msgid "Start"
 msgstr ""
 
-#: Document.as:90 Document.as:103
+#: Document.as:100 Document.as:113
 msgid "Stop"
 msgstr ""

@@ -5,6 +5,7 @@
 	import flash.net.URLVariables;
 
 	import multiflame.utils.*;
+	import multiflame.game.Constants;
 
 	public class EmbedTab extends Sprite {
 		private static const SWF_WIDTH:int = 500;
@@ -28,7 +29,7 @@
 				return;
 			}
 
-			var u:String = "http://" + Channel.WEB_HOST;
+			var u:String = "http://" + Constants.WEB_SITE;
 			var l:String = '<a href="' + u + '">' + u + '</a>';
 			_linkLbl.htmlText = "<b>" + StringUtil.substitute(_("More games at {0}"), l) + "</b>";
 
@@ -69,7 +70,7 @@
 			if (channel == "") {
 				return "";
 			}
-			return "http://" + Channel.WEB_HOST + "/games/" + _channel.id +
+			return "http://" + Constants.WEB_SITE + "/games/" + _channel.id +
 				"/" + encodeURL(channel) + "/" + _channel.locale;
 		}
 
@@ -78,7 +79,7 @@
 			if (channel == "") {
 				return "";
 			}
-			return "http://" + Channel.WEB_HOST + "/cwov/" + _channel.id +
+			return "http://" + Constants.WEB_SITE + "/cwov/" + _channel.id +
 				"/" + encodeURL(channel) + "/" + _channel.locale;
 		}
 

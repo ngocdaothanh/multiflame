@@ -22,9 +22,11 @@
 			_container = container;
 			_codeLbl.text   = _("Code");
 			_emailLbl.text  = _("Email");
+			_embedLbl.text  = _("Embed");
 			_statusLbl.text = _("Images will be sent to your email when there is movement.");
 
-			_codeInput.border = _emailInput.border = _ok.border = true;
+			_codeInput.border = _emailInput.border = _embedInput.border = _ok.border = true;
+			_embedInput.text = container.embed(null);
 			_ok.selectable = false;
 			_ok.addEventListener(MouseEvent.CLICK, onOKClick);
 
