@@ -43,7 +43,7 @@ class Channel
     return unless validate(player, container_version, game_id, game_version,
       captcha_code, encrypted_code, nick)
 
-    player.property[:nick] = nick
+    player.session[:nick] = nick
     key = self.key(game_id, channel_name)
     channel = nil
     @@channels.synchronize do
@@ -119,8 +119,8 @@ class Channel
 
       s = snapshot
       players.each do |p|
-        p.property[:channel] = self
-        p.property[:room] = @lobby
+        p.session[:channel] = self
+        p.session[:room] = @lobby
         p.result(Server::CMD_LOGIN, [LOGIN_OK, s])
       end
     end
@@ -129,11 +129,11 @@ class Channel
   def login(player, container_version, game_version, batch_game)
     self.synchronize do
       code = LOGIN_OK
-      if @lobby.nicks.include?(player.property[:nick])
+      if @lobby.nicks.include?(player.session[:nick])
         code = LOGIN_DUPLICATE_NICK
       else
         @rooms.each do |r|
-          if r.nicks.include?(player.property[:nick])
+          if r.nicks.include?(player.session[:nick])
             code = LOGIN_DUPLICATE_NICK
             break
           end
@@ -154,9 +154,9 @@ class Channel
         return
       end
 
-      player.property[:channel] = self
+      player.session[:channel] = self
       @lobby.process(player, Server::CMD_LOGIN, nil)
-      player.property[:room] = @lobby
+      player.session[:room] = @lobby
       player.result(Server::CMD_LOGIN, [LOGIN_OK, snapshot])
     end
   end
@@ -173,7 +173,7 @@ class Channel
     elsif cmd == Server::CMD_ROOM_LEAVE
       room_leave(player, value)
     else
-      player.property[:room].process(player, cmd, value)
+      player.session[:room].process(player, cmd, value)
     end
   end
 
@@ -191,11 +191,11 @@ private
 
   def logout(player)
     self.synchronize do
-      if player.property[:room] != @lobby
-        iroom = @rooms.index(player.property[:room])
+      if player.session[:room] != @lobby
+        iroom = @rooms.index(player.session[:room])
 
-        player.property[:room].process(player, Server::CMD_ROOM_LEAVE, nil)
-        if player.property[:room].nicks.empty?
+        player.session[:room].process(player, Server::CMD_ROOM_LEAVE, nil)
+        if player.session[:room].nicks.empty?
           @rooms.delete_at(iroom)
         end
 
@@ -239,22 +239,22 @@ private
   # * For the player who left:              room snapshot
   def room_leave(player, value)
     self.synchronize do
-      if player.property[:room] == @lobby
+      if player.session[:room] == @lobby
         $LOGGER.debug('@channel: room_leave: No room to leave')
         player.close_connection
         return
       end
 
-      iroom = @rooms.index(player.property[:room])
+      iroom = @rooms.index(player.session[:room])
 
-      player.property[:room].process(player, Server::CMD_ROOM_LEAVE, nil)
-      if player.property[:room].nicks.empty?
+      player.session[:room].process(player, Server::CMD_ROOM_LEAVE, nil)
+      if player.session[:room].nicks.empty?
         @rooms.delete_at(iroom)
       end
 
       @lobby.process(player, Server::CMD_ROOM_LEAVE, iroom)
 
-      player.property[:room] = @lobby
+      player.session[:room] = @lobby
       player.call(Server::CMD_ROOM_LEAVE, snapshot)
     end
   end

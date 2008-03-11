@@ -31,7 +31,7 @@ class Lobby
 
   def nicks
     self.synchronize do
-      return @players.map { |p| p.property[:nick] }
+      return @players.map { |p| p.session[:nick] }
     end
   end
 
@@ -45,7 +45,7 @@ private
 
   def login(player, value)
     @players.each do |p|
-      p.call(Server::CMD_LOGIN, player.property[:nick])
+      p.call(Server::CMD_LOGIN, player.session[:nick])
     end
     @players << player
   end
@@ -57,7 +57,7 @@ private
     iroom = value
     @players.delete(player)
     @players.each do |p|
-      p.call(Server::CMD_LOGOUT, [iroom, player.property[:nick]])
+      p.call(Server::CMD_LOGOUT, [iroom, player.session[:nick]])
     end
   end
 
@@ -67,14 +67,14 @@ private
     iroom = value
     @players.delete(player)
     @players.each do |p|
-      p.call(Server::CMD_ROOM_ENTER, [iroom, player.property[:nick]])
+      p.call(Server::CMD_ROOM_ENTER, [iroom, player.session[:nick]])
     end
   end
 
   def room_leave(player, value)
     iroom = value
     @players.each do |p|
-      p.call(Server::CMD_ROOM_LEAVE, [iroom, player.property[:nick]])
+      p.call(Server::CMD_ROOM_LEAVE, [iroom, player.session[:nick]])
     end
 
     @players << player

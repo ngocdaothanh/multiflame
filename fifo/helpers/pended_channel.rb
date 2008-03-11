@@ -34,7 +34,7 @@ class PendedChannel
   def initialize(key, player, container_version, game_version, batch_game)
     @@channels[key] = self
 
-    player.property[:channel] = self
+    player.session[:channel] = self
     @players = [player]
 
     @container_version = container_version
@@ -44,7 +44,7 @@ class PendedChannel
 
   def login(player, container_version, game_version, batch_game)
     code = Channel::LOGIN_OK
-    if nicks.include?(player.property[:nick])
+    if nicks.include?(player.session[:nick])
       code = Channel::LOGIN_DUPLICATE_NICK 
     elsif container_version != @container_version
       code = Channel::LOGIN_DIFFERENT_CONTAINER_VERSION 
@@ -53,7 +53,7 @@ class PendedChannel
     end
 
     if code == Channel::LOGIN_OK
-      player.property[:channel] = self
+      player.session[:channel] = self
       @players << player
     else
       player.call(Server::CMD_LOGIN, [code, nil], true)
@@ -61,7 +61,7 @@ class PendedChannel
   end
 
   def nicks
-    @players.map { |p| p.property[:nick] }
+    @players.map { |p| p.session[:nick] }
   end
 
   def process(player, cmd, arg)

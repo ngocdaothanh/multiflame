@@ -11,7 +11,7 @@ class Server
   # the other players. The arguments are different for the 2 types.
   CMD_LOGIN        = 2
 
-  # While out in the lobby
+  # While being out in the lobby
   #CMD_LOGIN
   CMD_WILL_CLOSE   = 3
   CMD_LOGOUT       = 4  # Fifo -> container
@@ -19,7 +19,7 @@ class Server
   CMD_ROOM_LEAVE   = 6
   CMD_CHAT         = 7
 
-  # While in a room
+  # While being in a room
   #CMD_WILL_CLOSE
   #CMD_ROOM_ENTER
   #CMD_ROOM_LEAVE
@@ -43,12 +43,12 @@ class Server
   end
 
   def on_connect(client)
-    client.property = {}
+    client.session = {}
   end
 
   def on_close(client)
-    return if client.property[:channel].nil?
-    client.property[:channel].process(client, CMD_LOGOUT, nil)
+    return if client.session[:channel].nil?
+    client.session[:channel].process(client, CMD_LOGOUT, nil)
   rescue
     $LOGGER.error($!)
   end
@@ -59,7 +59,7 @@ class Server
     $LOGGER.debug('value: ' + value.inspect)
 
     if cmd == CMD_CAPTCHA
-      if client.property[:channel].nil?
+      if client.session[:channel].nil?
         captcha(client)
       else
         $LOGGER.debug('@player: CMD_CAPTCHA but already logged in')
@@ -69,7 +69,7 @@ class Server
     end
 
     if cmd == CMD_GAME_INFO
-      if client.property[:channel].nil?
+      if client.session[:channel].nil?
         game_info(client, value)
       else
         $LOGGER.debug('@player: CMD_GAME_INFO but already logged in')
@@ -79,7 +79,7 @@ class Server
     end
 
     if cmd == CMD_LOGIN
-      if client.property[:channel].nil?
+      if client.session[:channel].nil?
         Channel.login(client, value)
       else
         $LOGGER.debug('@player: CMD_LOGIN but already logged in')
@@ -89,8 +89,8 @@ class Server
     end
 
     if cmd > CMD_LOGOUT
-      unless client.property[:channel].nil?
-        client.property[:channel].process(client, cmd, value)
+      unless client.session[:channel].nil?
+        client.session[:channel].process(client, cmd, value)
       else
         $LOGGER.debug("@player: command = #{cmd} but not logged in")
         client.close_connection

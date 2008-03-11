@@ -44,7 +44,7 @@ class Room
       Server::CMD_GAME_OVER    => method('game_over')
     }
 
-    player.property[:room] = self
+    player.session[:room] = self
     player.call(Server::CMD_ROOM_ENTER, snapshot)
   end
 
@@ -61,7 +61,7 @@ class Room
   end
 
   def nicks
-    return @players.map { |p| p.property[:nick] }
+    return @players.map { |p| p.session[:nick] }
   end
 
   def remote_ips
@@ -81,12 +81,12 @@ private
   #   for the others: nick
   def enter(player, value)
     @players.each do |p|
-      p.call(Server::CMD_ROOM_ENTER, player.property[:nick])
+      p.call(Server::CMD_ROOM_ENTER, player.session[:nick])
     end
 
     @players << player
 
-    player.property[:room] = self
+    player.session[:room] = self
     player.call(Server::CMD_ROOM_ENTER, snapshot)
   end
 
@@ -106,7 +106,7 @@ private
 
     # Notify all players
     @players.each do |p|
-      p.call(Server::CMD_ROOM_LEAVE, player.property[:nick])
+      p.call(Server::CMD_ROOM_LEAVE, player.session[:nick])
     end
   end
 
@@ -139,7 +139,7 @@ private
     @playing_players0 = [player]
 
     @players.each do |p|
-      p.call(Server::CMD_NEW_CONFIG, [player.property[:nick], a_base_config, @extended_config])
+      p.call(Server::CMD_NEW_CONFIG, [player.session[:nick], a_base_config, @extended_config])
     end
   end
 
@@ -154,7 +154,7 @@ private
     if @playing_players0.size == @base_config[:n_players]
       @state = PLAY
       @playing_players = @playing_players0.dup
-      @judgers = players.dup  # Judgers are the ones who watch the game from the start
+      @judgers = @players.dup  # Judgers are the ones who watch the game from the start
       @play_created_at = Time.now
       @game_snapshot = nil
       if @batch_game
@@ -164,7 +164,7 @@ private
     end
 
     @players.each do |p|
-      p.call(Server::CMD_NEW_JOIN, player.property[:nick])
+      p.call(Server::CMD_NEW_JOIN, player.session[:nick])
     end
   end
 
@@ -179,7 +179,7 @@ private
     @state = NEWABLE if @playing_players0.empty?
 
     @players.each do |p|
-      p.call(Server::CMD_NEW_UNJOIN, player.property[:nick])
+      p.call(Server::CMD_NEW_UNJOIN, player.session[:nick])
     end
   end
 
@@ -301,7 +301,7 @@ private
       nicks,
       a_base_config,
       @extended_config,
-      @playing_players0.map { |p| p.property[:nick] },
+      @playing_players0.map { |p| p.session[:nick] },
       nil,
       []
     ]

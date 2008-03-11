@@ -19,7 +19,7 @@ require 'helpers/stats'
 #$LOGGER = Logger.new('log/fifo.log', 'daily')
 $LOGGER = Logger.new(STDOUT, 'daily')
 
-$CAPTCHA = Revent::Captcha.new(CONFIG[:captcha_key], CONFIG[:captcha_length], CONFIG[:captcha_valid_period_in_sec])
+$CAPTCHA = Revent::Captcha.new(CONFIG[:captcha_key], CONFIG[:captcha_length], CONFIG[:captcha_valid_period])
 
 EventMachine::run do
   Server.new(CONFIG[:host], CONFIG[:port])
