@@ -1,5 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
   map.home    '', :controller => 'games'
+  map.privacy 'terms',   :controller => 'games', :action => 'terms'
   map.privacy 'privacy', :controller => 'games', :action => 'privacy'
 
   # URLs for the SWF files, fixed in agreement with other parts of the system
