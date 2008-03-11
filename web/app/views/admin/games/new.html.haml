@@ -1,0 +1,17 @@
+- @flag_destination = new_admin_game_path
+- @navigator = _('Upload new game')
+
+= error_messages_for(@game, [])
+= form_tag(admin_games_path, :multipart => true)
+%table
+  %tr
+    %th game.swf
+    %td= file_field_tag('game', :id => nil)
+    %th= _('Game name')
+  - CONFIG[:locales].each do |l|
+  %tr
+    %th== #{l}.mo
+    %td= (l == 'en')? '&nbsp;' : file_field_tag("mo_#{l}", :id => nil)
+    %td= text_field_tag("name_#{l}", (@game.nil?)? '' : @game.name(l), :id => nil)
+  - end
+= submit_tag(_('Upload'))

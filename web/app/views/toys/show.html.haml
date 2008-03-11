@@ -1,0 +1,12 @@
+- @navigator = h(@toy.name)
+
+%center
+  #toy_flash
+    - s = _('Please install %{getflashplayer}') % {:getflashplayer => link_to(_('Flash player 9 or above'), 'http://www.adobe.com/go/getflashplayer')}
+    %p{:class => 'notice'}= s
+
+%script{:type => 'text/javascript'}
+  == var so = new SWFObject('/toys/#{@toy.id}/#{GetText.locale}/dummy', 'embed_toy_flash', '#{CONFIG[:swf_width]}', '#{CONFIG[:swf_height]}', '9', '');
+  so.useExpressInstall('/javascripts/expressinstall.swf');
+  so.addVariable('mode', 'edit');
+  so.write('toy_flash');

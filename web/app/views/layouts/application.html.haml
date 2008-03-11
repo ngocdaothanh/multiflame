@@ -1,0 +1,36 @@
+!!!
+%html{:xmlns => 'http://www.w3.org/1999/xhtml', :lang => 'en', 'xml:lang' => 'en'}
+  %head
+    %meta{'http-equiv' => 'Content-type', :content => 'text/html; charset=utf-8'}
+    %title= CONFIG[:app_title]
+    = stylesheet_link_tag('application')
+    = javascript_include_tag('swfobject')
+  %body
+    #container
+      #header_main
+        #header
+          #banner= image_tag('logo.png')
+
+        %ul{:id => 'menu'}
+          %li= link_to(_('Games'), home_path, :class => ('games' == params[:controller])? 'selected' : '')
+          %li= link_to(_('Toys'),  toys_path, :class => ('toys'  == params[:controller])? 'selected' : '')
+
+        #main
+          - unless @navigator.nil?
+          #navigator= @navigator
+          - end
+          %div= yield
+
+      #flags= flags_to_locales
+
+      %div{:style => 'clear:both'}
+
+      #footer
+        = CONFIG[:copyright]
+        = link_to(_('Terms of service'), :controller => 'games', :action => 'terms')
+        = link_to(_('Privacy policy'),   :controller => 'games', :action => 'privacy')
+
+      = javascript_include_tag('http://www.google-analytics.com/urchin.js')
+      %script{:type => 'text/javascript'}
+        == _uacct='#{CONFIG[:google_analytics_code]}';
+        urchinTracker();

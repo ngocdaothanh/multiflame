@@ -1,0 +1,21 @@
+- @flag_destination = edit_admin_toy_path(@toy)
+- @navigator = _('Edit %s') % h(@toy.name)
+
+= error_messages_for(@toy, [])
+= form_tag(admin_toy_path(@toy), :multipart => true, :method => :put)
+%table
+  %tr
+    %th &nbsp;
+    %td= _('(blank = no change)')
+  %tr
+    %th toy.swf
+    %td= file_field_tag('toy', :id => nil)
+    %th= _('Toy name')
+  - CONFIG[:locales].each do |l|
+  %tr
+    %th== #{l}.mo
+    %td= (l == 'en')? '&nbsp;' : file_field_tag("mo_#{l}", :id => nil)
+    %td= text_field_tag("name_#{l}", @toy.name(l))
+  - end
+= submit_tag(_('Save'))
+</form>

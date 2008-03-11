@@ -1,0 +1,31 @@
+- unless flash[:notice].nil?
+%p{:class => 'notice'}= flash[:notice]
+- end
+
+%p
+  - s = _('Latest data (updated every %d minutes)') % CONFIG[:fifo_manager_snapshot_interval]
+  == #{s}:
+  - s = _('%s ago') % distance_of_time_in_words(@created_at.to_i, Time.now.to_i)
+  = s
+
+= form_tag(admin_stats_path)
+%input{:type => 'submit', :value => _('Update now')}
+</form>
+
+%br
+
+%table{:class => 'data'}
+  %tr
+    %th= _('Host')
+    %th= _('Port')
+    %th= _('Players limit')
+    %th= _('Number of channels')
+    %th= _('Number of players')
+  - @snapshot.each do |k, v|
+  %tr
+    %td= (v.size == 0)? k[:host] : link_to(k[:host], admin_stat_path("#{k[:host].delete('.')}#{k[:port]}"))
+    %td= k[:port]
+    %td= k[:players_limit]
+    %td= v.size
+    %td= @num_players
+  - end

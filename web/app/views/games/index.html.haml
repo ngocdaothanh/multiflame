@@ -1,0 +1,29 @@
+%p= _("Let's make your web site more interesting by embedding <b><u>multiplayer</u></b> games and play with your friends right at your web site!")
+
+%ol
+  %li= _('Select game')
+  %li= _('Embed into your web site')
+  %li= _('Play with your friends')
+
+- if @games.size == 1
+.left
+  = render_games(@games)
+- elsif @games.size > 1
+.left
+  = render_games(@games[0...@games.size/2])
+
+.right
+  = render_games(@games[@games.size/2...@games.size])
+- end
+
+%div{:style => 'clear:both'}
+
+%script{:type => 'text/javascript'}
+  == var ids = [#{(@games.map { |g| g.id }).join(', ')}];
+  for (var i = 0; i < ids.length; i++) {
+  var so = new SWFObject('/games/' + ids[i] + '/game.swf', 'embed_game_flash' + ids[i], '100%', '250', '9', '#FFFFFF');
+  if (i == 0) {
+  so.useExpressInstall('/javascripts/expressinstall.swf');
+  }
+  so.write('game_flash' + ids[i]);
+  }

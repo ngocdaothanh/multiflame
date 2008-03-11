@@ -1,0 +1,17 @@
+- unless flash[:notice].nil?
+%p{:class => 'notice'}= flash[:notice]
+- end
+
+%h2= _('Game container')
+
+%p= link_to(_('Update container'), edit_admin_game_container_path)
+
+%h2= _('Games')
+
+%p= link_to(_('Upload new game'), new_admin_game_path)
+
+- unless @games.blank?
+- @games.each do |g|
+%p= link_to(h(g.name), edit_admin_game_path(g))
+- end
+- end
