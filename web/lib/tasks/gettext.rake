@@ -9,6 +9,21 @@ module GetText
   end
 end
 
+require "#{RAILS_ROOT}/vendor/plugins/haml/lib/haml"
+module HamlParser
+  module_function
+
+  def target?(file)
+    File.extname(file) == '.haml'
+  end
+
+  def parse(file, ary = [])
+    haml = Haml::Engine.new(IO.readlines(file).join)
+    code = haml.precompiled.split(/$/)
+    RubyParser.parse_lines(file, code, ary)
+  end
+end
+
 namespace :gettext do
   desc 'Create mo-files for L10n'
   task :makemo do
