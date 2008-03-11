@@ -120,22 +120,22 @@ private
       # Take out the fifo the is handling this channel
       key = value
       fifos = @channel_keys.each do |f, keys|
-        return [key, f.property[:swf_host], f.property[:swf_port]] if keys.include?(key)
+        return [key, f.session[:swf_host], f.session[:swf_port]] if keys.include?(key)
       end
 
       # Take out the the emptiest fifo
       fifos = @channel_keys.keys
       max_fifo = fifos[0]
-      max = fifos[0].property[:players_avalable]
+      max = fifos[0].session[:players_avalable]
       (1...fifos.size).each do |i|
         f = fifos[i]
-        a = f.property[:players_avalable]
+        a = f.session[:players_avalable]
         if max < a
           max_fifo = f
           max = a
         end
       end
-      return [key, max_fifo.property[:swf_host], max_fifo.property[:swf_port]]
+      return [key, max_fifo.session[:swf_host], max_fifo.session[:swf_port]]
     end
   end
 
@@ -164,8 +164,8 @@ private
   # The fifos call this right after connecting to the manager.
   def on_call_fm_channel_keys_set(fifo, value)
     @mutex_channel_keys.synchronize do
-      fifo.property = value[:property]
-      fifo.property[:players_available] = fifo.property[:players_limit]
+      fifo.session = value[:property]
+      fifo.session[:players_available] = fifo.session[:players_limit]
       @channel_keys[fifo] = value[:channel_keys]
     end
     nil
@@ -180,16 +180,16 @@ private
       host = port = nil
       @channel_keys.each do |f, keys|
         if keys.include?(key)
-          host = f.property[:swf_host]
-          port = f.property[:swf_port]
+          host = f.session[:swf_host]
+          port = f.session[:swf_port]
           break
         end
       end
 
       if host.nil?
-        fifo.property[:players_available] -= 1
+        fifo.session[:players_available] -= 1
         @channel_keys[fifo] << key
-      elsif fifo.property[:swf_host] == host and fifo.property[:swf_port] == port
+      elsif fifo.session[:swf_host] == host and fifo.session[:swf_port] == port
         host = nil
         port = nil
       end
@@ -242,7 +242,7 @@ private
   def on_result_mf_remote_ips_get(fifo, value)
     value = Zlib::Inflate.inflate(value)
     value = Marshal.load(value)
-    k = {:host => fifo.property[:swf_host], :port => fifo.property[:swf_port], :players_limit => fifo.property[:players_limit]}
+    k = {:host => fifo.session[:swf_host], :port => fifo.session[:swf_port], :players_limit => fifo.session[:players_limit]}
     @remote_ips_got[k] = value
     return if @remote_ips_got.size < @num_fifos
 
