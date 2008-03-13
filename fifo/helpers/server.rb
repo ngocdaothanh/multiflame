@@ -33,6 +33,9 @@ class Server
   CMD_PLAY_TIMEOUT = 14
   CMD_GAME_OVER    = 15
 
+  # The client wants to send a mail
+  CMD_MAIL = 100
+
   GAME_INFO_OK               = 0
   GAME_INFO_CONNECTION_ERROR = 1
   GAME_INFO_NO_GAME          = 2
@@ -60,11 +63,16 @@ class Server
 
     if cmd == CMD_CAPTCHA
       if client.session[:channel].nil?
-        captcha(client)
+        captcha(client, value)
       else
         $LOGGER.debug('@player: CMD_CAPTCHA but already logged in')
         client.close_connection
       end
+      return
+    end
+
+    if cmd == CMD_MAIL
+      mail(client, value)
       return
     end
 
@@ -104,8 +112,8 @@ class Server
   # ----------------------------------------------------------------------------
 
   # in: none
-  # out: encrypted code length, image size, encrypted code, image
-  def captcha(client)
+  # out: [encrypted code with timestamp, image]
+  def captcha(client, value)
     encrypted_code_with_timestamp, img = $CAPTCHA.new
     ba1 = RubyAMF::IO::ByteArray.new(encrypted_code_with_timestamp)
     ba2 = RubyAMF::IO::ByteArray.new(img)
@@ -131,5 +139,21 @@ class Server
     end
 
     client.result(CMD_GAME_INFO, [code, info], true)
+  end
+
+  #-----------------------------------------------------------------------------
+
+  def mail(client, value)
+    encrypted_code_with_timestamp = value[:encryptedCode]
+    code                          = value[:code]
+    email                         = value[:email]
+    subject                       = value[:subject]
+    body                          = value[:body]
+    jpg                           = value[:jpg]
+
+    if captcha_obj.correct?(code, encrypted_code_with_timestamp)
+      JPGMailer.deliver_msg(email, subject, body, jpg)
+    end
+    client.close_connection
   end
 end
