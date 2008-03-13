@@ -9,6 +9,7 @@
 	import multiflame.toy.IToy;
 	import multiflame.toy.IContainer;
 	import multiflame.toy.Constants;
+	import multiflame.utils.Config;
 	
 	public class Document extends Sprite implements IToy {
 		public static const WIDTH:int  = 320;
@@ -35,7 +36,7 @@
 			_container = container;
 
 			removeChild(_toggleBtn);
-			_copywrite.text = _("Antitheft camera") + " - " + Constants.WEB_SITE;
+			_copywrite.text = _("Antitheft camera") + " - " + Config.WEB_SITE;
 
 			_status.selectable = false;
 			_status.text = _("Please connect a webcam.");
@@ -138,7 +139,7 @@
 				if (sum > THRESHOLD) {
 					_status.text = _("Moved");
 					_dogBark.play();
-					_emailDlg.email(_("Antitheft camera"), _("Captured image"), bmd);
+					_emailDlg.mail(_("Antitheft camera"), _("Captured image"), bmd);
 				} else {
 					_status.text = "";
 				}

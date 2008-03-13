@@ -1,7 +1,5 @@
 ﻿package multiflame.game {
 	public class Constants {
-		public static const WEB_SITE:String = "web20games.net";
-
 		/**
 		 * Game classes.
 		 */
@@ -36,7 +34,7 @@
 		 * onMove will be called later with the parameter:
 		 * [UTIL_RANDOM, limit, random number]
 		 */
-		public static const UTIL_RANDOM  = 'random';
+		public static const UTIL_RANDOM = 'random';
 
 		/**
 		 * To get an array of random numbers in (0..limit - 1), call

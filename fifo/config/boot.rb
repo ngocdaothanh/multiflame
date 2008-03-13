@@ -1,5 +1,4 @@
-ENV = {}
-ENV['FIFO_ENV'] = (ARGV[0] == 'production')? 'production' : 'development'
+ENV['ASONR'] = (ARGV[0] == 'production')? 'production' : 'development'
 FIFO_ROOT = RAILS_ROOT = "#{File.dirname(__FILE__)}/.."
 
 require 'rubygems'
@@ -11,7 +10,7 @@ require 'logger'
 require 'actionmailer'
 
 require "#{FIFO_ROOT}/config/environment"
-Dir.glob("#{FIFO_ROOT}/helpers/**/*.rb").each do |f|
+Dir.glob("#{FIFO_ROOT}/app/helpers/**/*.rb").each do |f|
   require f
 end
 
@@ -22,7 +21,7 @@ Dir.glob("#{FIFO_ROOT}/config/initializers/**/*.rb").each do |f|
   require f
 end
 
-if ENV['FIFO_ENV'] == 'production'
+if ENV['ASONR'] == 'production'
   LOGGER = Logger.new("#{FIFO_ROOT}/log/fifo.log", 'daily')
 else
   LOGGER = Logger.new(STDOUT)

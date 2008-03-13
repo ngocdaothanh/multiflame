@@ -1,6 +1,11 @@
 #!/usr/bin/env ruby
 
-abort "Usage: #{__FILE__} <environment>" unless ARGV[0]
+abort "Usage: #{__FILE__} <development|production>" unless ARGV[0]
+if ARGV.size == 1 and ARGV[0] == 'production'
+  $LOGGER = Logger.new("#{RAILS_ROOT}/log/fifo_manager.log", 'daily')
+else
+  $LOGGER = Logger.new(STDOUT)
+end
 
 require 'rubygems'
 require 'activerecord'
@@ -16,8 +21,6 @@ require "#{RAILS_ROOT}/app/models/stat"
 
 database_yaml = YAML.load_file("#{RAILS_ROOT}/config/database.yml")
 abort "Environment '#{ARGV[0]}' not found" unless database_config = database_yaml[ARGV[0]]
-
-$LOGGER = Logger.new("#{RAILS_ROOT}/log/fifo_manager.log", 'daily')
 
 ActiveRecord::Base.establish_connection(database_config)
 ActiveRecord::Base.logger = $LOGGER
