@@ -52,7 +52,7 @@ class Room
     self.synchronize do
       m = @methods[cmd]
       if m.nil?
-        $LOGGER.debug("@lobby: Invalid command: #{cmd}")
+        LOGGER.debug("@lobby: Invalid command: #{cmd}")
         player.close_connection
       else
         m.call(player, value)

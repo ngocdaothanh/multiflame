@@ -41,7 +41,7 @@ class Server
   GAME_INFO_NO_GAME          = 2
 
   def initialize(host, port)
-    self.logger = $LOGGER
+    self.logger = LOGGER
     start_server(host, port)
   end
 
@@ -53,19 +53,19 @@ class Server
     return if client.session[:channel].nil?
     client.session[:channel].process(client, CMD_LOGOUT, nil)
   rescue
-    $LOGGER.error($!)
+    LOGGER.error($!)
   end
 
   def on_call(client, cmd, value)
-    $LOGGER.debug('on_call----')
-    $LOGGER.debug('cmd: ' + cmd.inspect)
-    $LOGGER.debug('value: ' + value.inspect)
+    LOGGER.debug('on_call----')
+    LOGGER.debug('cmd: ' + cmd.inspect)
+    LOGGER.debug('value: ' + value.inspect)
 
     if cmd == CMD_CAPTCHA
       if client.session[:channel].nil?
         captcha(client, value)
       else
-        $LOGGER.debug('@player: CMD_CAPTCHA but already logged in')
+        LOGGER.debug('@player: CMD_CAPTCHA but already logged in')
         client.close_connection
       end
       return
@@ -80,7 +80,7 @@ class Server
       if client.session[:channel].nil?
         game_info(client, value)
       else
-        $LOGGER.debug('@player: CMD_GAME_INFO but already logged in')
+        LOGGER.debug('@player: CMD_GAME_INFO but already logged in')
         client.close_connection
       end
       return
@@ -90,7 +90,7 @@ class Server
       if client.session[:channel].nil?
         Channel.login(client, value)
       else
-        $LOGGER.debug('@player: CMD_LOGIN but already logged in')
+        LOGGER.debug('@player: CMD_LOGIN but already logged in')
         client.close_connection
       end
       return
@@ -100,11 +100,11 @@ class Server
       unless client.session[:channel].nil?
         client.session[:channel].process(client, cmd, value)
       else
-        $LOGGER.debug("@player: command = #{cmd} but not logged in")
+        LOGGER.debug("@player: command = #{cmd} but not logged in")
         client.close_connection
       end
     else
-      $LOGGER.debug("@player: Invalid command #{cmd}")
+      LOGGER.debug("@player: Invalid command #{cmd}")
       client.close_connection
     end
   end
@@ -114,7 +114,7 @@ class Server
   # in: none
   # out: [encrypted code with timestamp, image]
   def captcha(client, value)
-    encrypted_code_with_timestamp, img = $CAPTCHA.new
+    encrypted_code_with_timestamp, img = CAPTCHA.new
     ba1 = RubyAMF::IO::ByteArray.new(encrypted_code_with_timestamp)
     ba2 = RubyAMF::IO::ByteArray.new(img)
     client.result(CMD_CAPTCHA, [ba1, ba2], true)

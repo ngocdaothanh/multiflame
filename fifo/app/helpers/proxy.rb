@@ -49,7 +49,7 @@ class Proxy
 
   def on_error(cmd, value)
     backtrace = value.backtrace.join("\n")
-    $LOGGER.error("@proxy: cmd = #{cmd}, error = #{backtrace}")
+    LOGGER.error("@proxy: cmd = #{cmd}, error = #{backtrace}")
   end
 
   # ----------------------------------------------------------------------------
@@ -76,7 +76,7 @@ class Proxy
   # Fifo -> manager ------------------------------------------------------------
 
   def reconnect
-    $LOGGER.info("Reconnect to the manager at #{CONFIG[:manager_host]}:#{CONFIG[:manager_port]} in #{CONFIG[:manager_reconnect_interval]} seconds")
+    LOGGER.info("Reconnect to the manager at #{CONFIG[:manager_host]}:#{CONFIG[:manager_port]} in #{CONFIG[:manager_reconnect_interval]} seconds")
     EventMachine::add_timer(CONFIG[:manager_reconnect_interval]) do
       begin
         connect(CONFIG[:manager_host], CONFIG[:manager_port])

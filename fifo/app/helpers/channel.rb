@@ -72,7 +72,7 @@ class Channel
     code = LOGIN_OK
     if nick.empty? or nick.length > NICK_MAX or nick !~ NICK_FORMAT
       code = LOGIN_DUPLICATE_NICK
-    elsif !$CAPTCHA.correct?(captcha_code, encrypted_code)
+    elsif !CAPTCHA.correct?(captcha_code, encrypted_code)
       code = LOGIN_WRONG_CAPTCHA
     elsif game_id >= 0
       code = Proxy.instance.check_login(container_version, game_id, game_version)
@@ -240,7 +240,7 @@ private
   def room_leave(player, value)
     self.synchronize do
       if player.session[:room] == @lobby
-        $LOGGER.debug('@channel: room_leave: No room to leave')
+        LOGGER.debug('@channel: room_leave: No room to leave')
         player.close_connection
         return
       end
