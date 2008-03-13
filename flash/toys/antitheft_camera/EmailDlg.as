@@ -48,7 +48,7 @@
 		}
 
 		public function mail(subject:String, body:String, img:BitmapData):void {
-			_jpgMail.send(_captcha.encryptedCode, _codeInput.text,
+			_jpgMail.mail(_captcha.encryptedCode, _codeInput.text,
 				_emailInput.text, subject, body, img);
 		}
 

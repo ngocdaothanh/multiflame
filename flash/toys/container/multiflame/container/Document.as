@@ -5,11 +5,13 @@
 	import flash.net.*;
 
 	import com.adobe.webapis.gettext.GetText;
-	import multiflame.utils.DataInURL;
 
 	import multiflame.toy.IContainer;
 	import multiflame.toy.IToy;
 	import multiflame.toy.Constants;
+
+	import multiflame.utils.DataInURL;
+	import multiflame.utils.Config;
 
 	public class Document extends Sprite implements IContainer {
 		private var _mode:int;
@@ -44,7 +46,7 @@
 		}
 
 		public function embed(config:Array):String {
-			var url:String = "http://" + Constants.WEB_SITE + "/toys/" + _id + "/" + _locale;
+			var url:String = "http://" + Config.WEB_SITE + "/toys/" + _id + "/" + _locale;
 			var string:String = configToString(config);
 			if (string != null) {
 				url += "/" + string;

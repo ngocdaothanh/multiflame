@@ -14,15 +14,13 @@
 
 	public class LoginTab extends MovieClip {
 		private var _channel:Channel;
-		private var _captchaTransporter:CaptchaTransporter;
-		private var _captchaImg:DisplayObject;
-		private var _encryptedCode:ByteArray;
+		private var _captcha:Captcha;
 		
 		public function LoginTab():void {
 			_channel = Channel.instance;
 
-			_captchaTransporter = new CaptchaTransporter();
-			_captchaTransporter.addEventListener(CaptchaTransporter.CAPTCHA, onCaptcha);
+			_captcha = new Captcha(_channel.host, _channel.port);
+			_captcha.addEventListener(Event.COMPLETE, onCaptcha);
 
 			addEventListener(Event.ADDED, onAdded);
 		
@@ -59,8 +57,8 @@
 			_gameNameLbl.text = _channel.gameRemoteInfo["name"];
 			_statusLbl.htmlText = "";			
 
-			if (_captchaImg == null) {
-				_captchaTransporter.getCaptcha();
+			if (_captcha.img == null) {
+				_captcha.receive();
 			}
 		}
 
@@ -88,21 +86,20 @@
 				_nickInput.type     = TextFieldType.DYNAMIC;
 				_loginBtn.enabled   = false;
 
-				_channel.login(_codeInput.text, _encryptedCode, _nickInput.text);
+				_channel.login(_codeInput.text, _captcha.encryptedCode, _nickInput.text);
 			}
 		}
 
 		//---------------------------------------------------------------------------
 
 		private function onCaptcha(event:Event):void {
-			_encryptedCode = _captchaTransporter.encryptedCode;
-			if (_captchaImg != null) {
-				removeChild(_captchaImg);
+			if (_captcha.img != null) {
+				removeChild(img);
 			}
-			_captchaImg = _captchaTransporter.img;
-			_captchaImg.x = 309;
-			_captchaImg.y = 218;
-			addChild(_captchaImg);
+			var img:DisplayObject = _captcha.img;
+			img.x = 309;
+			img.y = 218;
+			addChild(img);
 		}
 
 		//---------------------------------------------------------------------------
@@ -110,11 +107,11 @@
 		private function onLoginMe(event:LoginoutEvent):void {
 			switch (event.code) {
 			case LoginoutEvent.CONNECTION_ERROR:
-				_statusLbl.htmlText = StringUtil.substitute(_("We are upgrading {0}."), Constants.WEB_SITE) + "<br />" +	_("Please refresh this page after a few minutes.");
+				_statusLbl.htmlText = StringUtil.substitute(_("We are upgrading {0}."), Config.WEB_SITE) + "<br />" +	_("Please refresh this page after a few minutes.");
 				break;
 			case LoginoutEvent.WRONG_CAPTCHA:
 				_statusLbl.htmlText = _("Wrong code");
-				_captchaTransporter.getCaptcha();
+				_captcha.receive();
 				_codeInput.htmlText = "";
 				break;
 			case LoginoutEvent.DIFFERENT_CONTAINER_VERSION:

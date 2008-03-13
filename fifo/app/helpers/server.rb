@@ -46,10 +46,12 @@ class Server
   end
 
   def on_connect(client)
+  p 1
     client.session = {}
   end
 
   def on_close(client)
+  p 22
     return if client.session[:channel].nil?
     client.session[:channel].process(client, CMD_LOGOUT, nil)
   rescue
@@ -151,7 +153,7 @@ class Server
     body                          = value[:body]
     jpg                           = value[:jpg]
 
-    if captcha_obj.correct?(code, encrypted_code_with_timestamp)
+    if CAPTCHA.correct?(code, encrypted_code_with_timestamp)
       JPGMailer.deliver_msg(recipient, subject, body, jpg)
     end
     client.close_connection

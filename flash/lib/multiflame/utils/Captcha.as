@@ -12,21 +12,18 @@
 	 * This class gets CAPTCHA from Asonr and dispatch Event.COMPLETE when done.
 	 */
 	public class Captcha extends EventDispatcher {
-		public static const CAPTCHA:String = "CAPTCHA";
-
 		public var encryptedCode:ByteArray;
 		public var img:DisplayObject;
 
 		private var _client:Client;
 		private var _host:String;
 		private var _port:int;
-		private var _cmdCaptcha:int;
 
-		public function Captcha(host:String, port:int, cmdCaptcha:int):void {
+		public function Captcha(host:String, port:int):void {
 			_client = new Client();
 			_host = host;
 			_port = port;
-			_cmdCaptcha = cmdCaptcha;
+
 			_client.addEventListener(CallEvent.SECURITY_ERROR, onSecurityError);
 			_client.addEventListener(CallEvent.CONNECT, onConnect);
 			_client.addEventListener(CallEvent.CLOSE, onClose);
@@ -43,9 +40,10 @@
 		private function onSecurityError(event:CallEvent):void {
 			trace("onSecurityError");
 		}
-		
+
 		private function onConnect(event:CallEvent):void {
-			_client.call(_cmdCaptcha, null);
+			trace("onConnect");
+			_client.call(Config.CMD_CAPTCHA, null);
 		}
 		
 		private function onClose(event:CallEvent):void {
@@ -57,6 +55,8 @@
 		}
 		
 		private function onResult(event:CallEvent):void {
+			trace("onResult");
+
 			encryptedCode = event.value[0];
 			var ba:ByteArray = event.value[1];
 

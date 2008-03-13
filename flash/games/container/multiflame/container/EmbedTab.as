@@ -29,7 +29,7 @@
 				return;
 			}
 
-			var u:String = "http://" + Constants.WEB_SITE;
+			var u:String = "http://" + Config.WEB_SITE;
 			var l:String = '<a href="' + u + '">' + u + '</a>';
 			_linkLbl.htmlText = "<b>" + StringUtil.substitute(_("More games at {0}"), l) + "</b>";
 
@@ -70,7 +70,7 @@
 			if (channel == "") {
 				return "";
 			}
-			return "http://" + Constants.WEB_SITE + "/games/" + _channel.id +
+			return "http://" + Config.WEB_SITE + "/games/" + _channel.id +
 				"/" + encodeURL(channel) + "/" + _channel.locale;
 		}
 
@@ -79,7 +79,7 @@
 			if (channel == "") {
 				return "";
 			}
-			return "http://" + Constants.WEB_SITE + "/cwov/" + _channel.id +
+			return "http://" + Config.WEB_SITE + "/cwov/" + _channel.id +
 				"/" + encodeURL(channel) + "/" + _channel.locale;
 		}
 

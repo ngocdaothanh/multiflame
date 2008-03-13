@@ -98,7 +98,7 @@
 		private function onGameInfoRemote(event:GameInfoEvent):void {
 			switch (event.code) {
 			case GameInfoEvent.CONNECTION_ERROR:
-				_statusLbl.htmlText = StringUtil.substitute(_("We are upgrading {0}."), Constants.WEB_SITE) +	"<br />" +	_("Please refresh this page after a few minutes.");
+				_statusLbl.htmlText = StringUtil.substitute(_("We are upgrading {0}."), Config.WEB_SITE) +	"<br />" +	_("Please refresh this page after a few minutes.");
 				break;
 			case GameInfoEvent.NO_GAME:
 				_statusLbl.htmlText = _("Could not find the game.") + "<br />" + _("Please refresh this web page or clean the browser's cache.");
