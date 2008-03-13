@@ -22,7 +22,7 @@
 		private var _done:Boolean;
 		private var _mailObj:Object;
 
-		public function JpgMail(host:String, port:int, cmdMail:int):void {
+		public function JpgMail(host:String, port:int):void {
 			_client = new Client();
 			_host = host;
 			_port = port;

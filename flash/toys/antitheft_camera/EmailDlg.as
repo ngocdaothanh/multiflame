@@ -34,17 +34,11 @@
 			_ok.selectable = false;
 			_ok.addEventListener(MouseEvent.CLICK, onOKClick);
 
-			_captcha = new Captcha(
-				Config.DEFAULT_FIFO_HOST,
-				Config.DEFAULT_FIFO_PORT,
-				Config.CMD_CAPTCHA);
+			_captcha = new Captcha(Config.DEFAULT_FIFO_HOST, Config.DEFAULT_FIFO_PORT);
 			_captcha.addEventListener(Event.COMPLETE, onCaptchaLoaded);
 			_captcha.receive();
 
-			_jpgMail = new JpgMail(
-				Config.DEFAULT_FIFO_HOST,
-				Config.DEFAULT_FIFO_PORT,
-				Config.CMD_MAIL);
+			_jpgMail = new JpgMail(Config.DEFAULT_FIFO_HOST, Config.DEFAULT_FIFO_PORT);
 		}
 
 		public function mail(subject:String, body:String, img:BitmapData):void {
