@@ -399,6 +399,7 @@
 				_leaveBtn.label = _("Leave");
 			} else {
 				_channel.roomLeave();
+				_timeoutSB.setStatus("");
 			}
 		}
 		

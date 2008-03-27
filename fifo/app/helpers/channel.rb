@@ -204,10 +204,10 @@ private
         @lobby.process(player, Server::CMD_LOGOUT, nil)
       end
 
-      if @rooms.empty? and @lobby.nicks.empty?
-        Proxy.instance.fm_channel_delete(@key)
-        @@channels.synchronize do
+      @@channels.synchronize do
+        if @rooms.empty? and @lobby.nicks.empty?
           @@channels.delete(@key)
+          Proxy.instance.fm_channel_delete(@key)
         end
       end
     end

@@ -1,10 +1,13 @@
 #!/usr/bin/env ruby
 
+require 'logger'
+
 abort "Usage: #{__FILE__} <development|production>" unless ARGV[0]
-if ARGV.size == 1 and ARGV[0] == 'production'
-  $LOGGER = Logger.new("#{RAILS_ROOT}/log/fifo_manager.log", 'daily')
+if ARGV[0] == 'production'
+  LOGGER = Logger.new("#{RAILS_ROOT}/log/fifo_manager.log", 'daily')
+  LOGGER.level = Logger::INFO
 else
-  $LOGGER = Logger.new(STDOUT)
+  LOGGER = Logger.new(STDOUT)
 end
 
 require 'rubygems'
@@ -23,7 +26,7 @@ database_yaml = YAML.load_file("#{RAILS_ROOT}/config/database.yml")
 abort "Environment '#{ARGV[0]}' not found" unless database_config = database_yaml[ARGV[0]]
 
 ActiveRecord::Base.establish_connection(database_config)
-ActiveRecord::Base.logger = $LOGGER
+ActiveRecord::Base.logger = LOGGER
 
 # ------------------------------------------------------------------------------
 
@@ -83,11 +86,13 @@ class FifoManager
   end
 
   def on_connect(client)
+    LOGGER.info("Client at #{client.remote_ip} connected")
     mf_cg_set(client)
     mf_ready_set(client) if @ready
   end
 
   def on_close(client)
+    LOGGER.info("Client at #{client.remote_ip} disconnected")
     @mutex_channel_keys.synchronize do
       @channel_keys.delete(client)
     end
@@ -106,7 +111,7 @@ class FifoManager
 
   def on_error(client, cmd, value)
     backtrace = value.backtrace.join("\n")
-    $LOGGER.error("cmd = #{cmd}, error = #{backtrace}")
+    LOGGER.error("cmd = #{cmd}, error = #{backtrace}")
   end
 
 private
@@ -259,5 +264,5 @@ end
 
 EventMachine::run do
   FifoManager.new(CONFIG[:fifo_manager_host], CONFIG[:fifo_manager_port])
-  $LOGGER.info("Fifo manager started on #{CONFIG[:fifo_manager_host]}:#{CONFIG[:fifo_manager_port]}")
+  LOGGER.info("Fifo manager started on #{CONFIG[:fifo_manager_host]}:#{CONFIG[:fifo_manager_port]}")
 end

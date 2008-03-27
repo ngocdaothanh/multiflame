@@ -46,22 +46,19 @@ class Server
   end
 
   def on_connect(client)
-  p 1
     client.session = {}
   end
 
   def on_close(client)
-  p 22
     return if client.session[:channel].nil?
     client.session[:channel].process(client, CMD_LOGOUT, nil)
   rescue
     LOGGER.error($!)
+    LOGGER.error($!.backtrace.join("\n"))
   end
 
   def on_call(client, cmd, value)
-    LOGGER.debug('on_call----')
-    LOGGER.debug('cmd: ' + cmd.inspect)
-    LOGGER.debug('value: ' + value.inspect)
+    LOGGER.debug("on_call, cmd: #{cmd.inspect}, value: #{value.inspect}")
 
     if cmd == CMD_CAPTCHA
       if client.session[:channel].nil?
@@ -102,13 +99,16 @@ class Server
       unless client.session[:channel].nil?
         client.session[:channel].process(client, cmd, value)
       else
-        LOGGER.debug("@player: command = #{cmd} but not logged in")
+        LOGGER.debug("@player: cmd = #{cmd} but not logged in")
         client.close_connection
       end
     else
-      LOGGER.debug("@player: Invalid command #{cmd}")
+      LOGGER.debug("@player: Invalid cmd #{cmd}")
       client.close_connection
     end
+  rescue
+    LOGGER.error($!)
+    LOGGER.error($!.backtrace.join("\n"))
   end
 
   # ----------------------------------------------------------------------------

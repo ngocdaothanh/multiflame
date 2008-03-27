@@ -23,6 +23,7 @@ end
 
 if ENV['ASONR'] == 'production'
   LOGGER = Logger.new("#{FIFO_ROOT}/log/fifo.log", 'daily')
+  LOGGER.level = Logger::INFO
 else
   LOGGER = Logger.new(STDOUT)
 end

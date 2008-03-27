@@ -29,6 +29,7 @@ class Proxy
   end
 
   def on_connect
+    LOGGER.info("Connected to the manager at #{CONFIG[:manager_host]}:#{CONFIG[:manager_port]}")
     fm_channel_keys_set
   end
 
@@ -100,7 +101,7 @@ class Proxy
   end
 
   def fm_channel_delete(key)
-    call(CMD_FM_CHANNEL_DELETE, key)
+    call(CMD_FM_CHANNEL_DELETE, key) if self.connected?
   end
 
   # Manager -> fifo ------------------------------------------------------------

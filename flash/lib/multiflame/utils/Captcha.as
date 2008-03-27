@@ -38,24 +38,24 @@
 		//----------------------------------------------------------------------------
 
 		private function onSecurityError(event:CallEvent):void {
-			trace("onSecurityError");
+			trace(event);
 		}
 
 		private function onConnect(event:CallEvent):void {
-			trace("onConnect");
+			trace(event);
 			_client.call(Config.CMD_CAPTCHA, null);
 		}
 		
 		private function onClose(event:CallEvent):void {
-			trace("onClose");
+			trace(event);
 		}
 		
 		private function onIOError(event:CallEvent):void {
-			trace("onIOError");
+			trace(event);
 		}
 		
 		private function onResult(event:CallEvent):void {
-			trace("onResult");
+			trace(event);
 
 			encryptedCode = event.value[0];
 			var ba:ByteArray = event.value[1];
@@ -72,7 +72,7 @@
 		}
 
 		private function onLoaderIOError(event:IOErrorEvent):void {
-			trace("onLoaderIOError");
+			trace(event);
 		}
 	}
 }

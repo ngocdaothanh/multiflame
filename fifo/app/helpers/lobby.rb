@@ -53,6 +53,10 @@ private
   def will_close(player, value)
   end
 
+  # The lobby needs to know the player who has just logged out to update player
+  # list of each room.
+  #
+  # value: room index, nil if this room is the lobby.
   def logout(player, value)
     iroom = value
     @players.delete(player)
@@ -61,6 +65,7 @@ private
     end
   end
 
+  # Called when a player enters a room (from the lobby).
   # in: iroom
   # out: [iroom, nick]
   def room_enter(player, value)
@@ -71,12 +76,12 @@ private
     end
   end
 
+  # Called when a player leaves a room (to enter the lobby).
   def room_leave(player, value)
     iroom = value
     @players.each do |p|
       p.call(Server::CMD_ROOM_LEAVE, [iroom, player.session[:nick]])
     end
-
     @players << player
   end
 

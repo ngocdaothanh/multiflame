@@ -19,9 +19,6 @@
 		public function LoginTab():void {
 			_channel = Channel.instance;
 
-			_captcha = new Captcha(_channel.host, _channel.port);
-			_captcha.addEventListener(Event.COMPLETE, onCaptcha);
-
 			addEventListener(Event.ADDED, onAdded);
 		
 			_codeInput.border = true;
@@ -57,7 +54,9 @@
 			_gameNameLbl.text = _channel.gameRemoteInfo["name"];
 			_statusLbl.htmlText = "";			
 
-			if (_captcha.img == null) {
+			if (_captcha == null) {
+				_captcha = new Captcha(_channel.host, _channel.port);
+				_captcha.addEventListener(Event.COMPLETE, onCaptcha);
 				_captcha.receive();
 			}
 		}
@@ -93,7 +92,7 @@
 		//---------------------------------------------------------------------------
 
 		private function onCaptcha(event:Event):void {
-			if (_captcha.img != null) {
+			if (_captcha.img != null && contains(_captcha.img)) {
 				removeChild(img);
 			}
 			var img:DisplayObject = _captcha.img;
