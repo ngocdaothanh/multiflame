@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: latest\n"
-"POT-Creation-Date: 2008-02-09 16:11+0900\n"
-"PO-Revision-Date: 2008-02-09 16:15+0900\n"
+"POT-Creation-Date: 2008-04-23 15:51+0900\n"
+"PO-Revision-Date: 2008-04-23 15:53+0900\n"
 "Last-Translator: Ngoc Dao <ngocdaothanh@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -16,22 +16,22 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 #: app/helpers/application_helper.rb:14
-#: app/helpers/application_helper.rb:31
-#: app/views/games/show.rhtml:4
-#: app/views/games/play.rhtml:5
-#: app/views/toys/show.rhtml:5
+#: app/helpers/application_helper.rb:29
+#: app/views/games/show.html.haml:5
+#: app/views/games/play.html.haml:6
+#: app/views/toys/show.html.haml:6
 msgid "Please install %{getflashplayer}"
 msgstr "Xin cài đặt %{getflashplayer}"
 
 #: app/helpers/application_helper.rb:14
-#: app/helpers/application_helper.rb:31
-#: app/views/games/show.rhtml:4
-#: app/views/games/play.rhtml:5
-#: app/views/toys/show.rhtml:5
+#: app/helpers/application_helper.rb:29
+#: app/views/games/show.html.haml:5
+#: app/views/games/play.html.haml:6
+#: app/views/toys/show.html.haml:6
 msgid "Flash player 9 or above"
 msgstr "Flash player 9 trở lên"
 
-#: app/helpers/application_helper.rb:75
+#: app/helpers/application_helper.rb:73
 msgid "Error"
 msgstr "Lỗi"
 
@@ -82,6 +82,7 @@ msgid "Stat|Created at"
 msgstr "Tạo lúc"
 
 #: app/controllers/admin/game_container_controller.rb:13
+#: app/controllers/admin/toy_container_controller.rb:12
 msgid "Container was updated"
 msgstr "Container đã được cập nhật"
 
@@ -111,175 +112,209 @@ msgstr "Lỗi khi tạo snapshot"
 msgid "All specified games have become invalid"
 msgstr "Tất cả game đã trở thành bất hợp lệ"
 
-#: app/views/layouts/application.rhtml:17
-#: app/views/layouts/admin.rhtml:18
-#: app/views/admin/games/index.rhtml:6
+#: app/views/layouts/application.html.haml:16
+#: app/views/layouts/admin.html.haml:17
+#: app/views/admin/games/index.html.haml:11
+#: app/views/admin/toys/index.rhtml:6
 msgid "Games"
 msgstr "Game"
 
-#: app/views/layouts/application.rhtml:18
-#: app/views/layouts/admin.rhtml:19
+#: app/views/layouts/application.html.haml:18
+#: app/views/layouts/admin.html.haml:19
 msgid "Toys"
 msgstr "Đồ chơi"
 
-#: app/views/layouts/admin.rhtml:6
+#: app/views/layouts/application.html.haml:31
+msgid "Terms of service"
+msgstr "Điều khoản dịch vụ"
+
+#: app/views/layouts/application.html.haml:33
+msgid "Privacy policy"
+msgstr "Chính sách bảo vệ thông tin cá nhân"
+
+#: app/views/layouts/admin.html.haml:6
 msgid "Administration"
 msgstr "Quản lí"
 
-#: app/views/layouts/admin.rhtml:17
+#: app/views/layouts/admin.html.haml:16
 msgid "Statistics"
 msgstr "Thống kê"
 
-#: app/views/admin/game_container/edit.rhtml:2
+#: app/views/admin/game_container/edit.html.haml:4
 msgid "Edit game container"
 msgstr "Sửa game container"
 
-#: app/views/admin/game_container/edit.rhtml:9
-#: app/views/admin/games/edit.rhtml:9
+#: app/views/admin/game_container/edit.html.haml:13
+#: app/views/admin/games/edit.html.haml:10
+#: app/views/admin/toys/edit.html.haml:10
+#: app/views/admin/toy_container/edit.html.haml:13
 msgid "(blank = no change)"
 msgstr "(để trống = không thay đổi)"
 
-#: app/views/admin/game_container/edit.rhtml:23
-#: app/views/admin/games/edit.rhtml:30
-#: app/views/admin/toys/edit.rhtml:20
+#: app/views/admin/game_container/edit.html.haml:23
+#: app/views/admin/games/edit.html.haml:21
+#: app/views/admin/toys/edit.html.haml:21
+#: app/views/admin/toy_container/edit.html.haml:17
 msgid "Save"
 msgstr "Lưu"
 
-#: app/views/admin/games/edit.rhtml:2
-#: app/views/admin/toys/edit.rhtml:2
+#: app/views/admin/games/edit.html.haml:4
+#: app/views/admin/toys/edit.html.haml:4
 msgid "Edit %s"
 msgstr "Sửa đổi %s"
 
-#: app/views/admin/games/edit.rhtml:14
-#: app/views/admin/games/new.rhtml:10
+#: app/views/admin/games/edit.html.haml:14
+#: app/views/admin/games/new.html.haml:11
 msgid "Game name"
 msgstr "Tên game"
 
-#: app/views/admin/games/index.rhtml:3
+#: app/views/admin/games/index.html.haml:7
 msgid "Game container"
 msgstr "Game container"
 
-#: app/views/admin/games/index.rhtml:4
+#: app/views/admin/games/index.html.haml:9
+#: app/views/admin/toys/index.rhtml:4
 msgid "Update container"
 msgstr "Cập nhật container"
 
-#: app/views/admin/games/index.rhtml:7
-#: app/views/admin/games/new.rhtml:2
+#: app/views/admin/games/index.html.haml:13
+#: app/views/admin/games/new.html.haml:4
 msgid "Upload new game"
 msgstr "Upload game mới"
 
-#: app/views/admin/games/new.rhtml:26
-#: app/views/admin/toys/new.rhtml:26
+#: app/views/admin/games/new.html.haml:18
+#: app/views/admin/toys/new.rhtml:20
 msgid "Upload"
 msgstr "Upload"
 
-#: app/views/admin/toys/edit.rhtml:10
-#: app/views/admin/toys/new.rhtml:10
-msgid "Toy name"
-msgstr "Tên đồ chơi"
-
 #: app/views/admin/toys/index.rhtml:3
+msgid "Toy container"
+msgstr "Toy container"
+
+#: app/views/admin/toys/index.rhtml:7
 #: app/views/admin/toys/new.rhtml:2
 msgid "Upload new toy"
 msgstr "Upload đồ chơi mới"
 
-#: app/views/admin/stats/index.rhtml:4
-#: app/views/admin/stats/show.rhtml:4
+#: app/views/admin/toys/new.rhtml:10
+#: app/views/admin/toys/edit.html.haml:14
+msgid "Toy name"
+msgstr "Tên đồ chơi"
+
+#: app/views/admin/stats/index.html.haml:7
+#: app/views/admin/stats/show.html.haml:5
 msgid "Latest data (updated every %d minutes)"
 msgstr "Dữ liệu mới nhất (cập nhật mỗi %d phút)"
 
-#: app/views/admin/stats/index.rhtml:5
-#: app/views/admin/stats/show.rhtml:5
+#: app/views/admin/stats/index.html.haml:9
+#: app/views/admin/stats/show.html.haml:7
 msgid "%s ago"
 msgstr "%s trước"
 
-#: app/views/admin/stats/index.rhtml:9
+#: app/views/admin/stats/index.html.haml:13
 msgid "Update now"
 msgstr "Cập nhật ngay bây giờ"
 
-#: app/views/admin/stats/index.rhtml:16
+#: app/views/admin/stats/index.html.haml:20
 msgid "Host"
 msgstr "Server"
 
-#: app/views/admin/stats/index.rhtml:17
+#: app/views/admin/stats/index.html.haml:21
 msgid "Port"
 msgstr "Cổng"
 
-#: app/views/admin/stats/index.rhtml:18
+#: app/views/admin/stats/index.html.haml:22
 msgid "Players limit"
 msgstr "Giới hạn người chơi"
 
-#: app/views/admin/stats/index.rhtml:19
+#: app/views/admin/stats/index.html.haml:23
 msgid "Number of channels"
 msgstr "Số kênh"
 
-#: app/views/admin/stats/index.rhtml:20
-#: app/views/admin/stats/show.rhtml:12
+#: app/views/admin/stats/index.html.haml:24
+#: app/views/admin/stats/show.html.haml:15
 msgid "Number of players"
 msgstr "Số người"
 
-#: app/views/admin/stats/show.rhtml:10
+#: app/views/admin/stats/show.html.haml:12
 msgid "Game"
 msgstr "Game"
 
-#: app/views/admin/stats/show.rhtml:11
+#: app/views/admin/stats/show.html.haml:13
 msgid "Channel"
 msgstr "Kênh"
 
-#: app/views/admin/stats/show.rhtml:17
+#: app/views/admin/stats/show.html.haml:18
 msgid "%s channels"
 msgstr "%s kênh"
 
-#: app/views/games/show.rhtml:14
-msgid "Public channels"
-msgstr "Kênh chung"
+#: app/views/admin/toy_container/edit.html.haml:4
+msgid "Edit toy container"
+msgstr "Sửa toy container"
 
-#: app/views/games/show.rhtml:16
-msgid "Newbie"
-msgstr "Mới bắt đầu"
-
-#: app/views/games/show.rhtml:16
-msgid "Easy"
-msgstr "Dễ"
-
-#: app/views/games/show.rhtml:16
-msgid "Normal"
-msgstr "Vừa phải"
-
-#: app/views/games/show.rhtml:16
-msgid "Hard"
-msgstr "Khó"
-
-#: app/views/games/show.rhtml:16
-msgid "World class"
-msgstr "Rất khó"
-
-#: app/views/games/index.rhtml:1
+#: app/views/games/index.html.haml:3
 msgid "Let's make your web site more interesting by embedding <b><u>multiplayer</u></b> games and play with your friends right at your web site!"
 msgstr "Hãy làm cho trang web của bạn hấp dẫn hơn bằng cách nhúng <b><u>game nhiều người</u></b> để chơi với bạn bè ngay tại trang web của mình nào!"
 
-#: app/views/games/index.rhtml:3
+#: app/views/games/index.html.haml:5
 msgid "Select game"
 msgstr "Chọn game"
 
-#: app/views/games/index.rhtml:4
-#: app/views/toys/index.rhtml:5
+#: app/views/games/index.html.haml:6
+#: app/views/toys/index.html.haml:8
 msgid "Embed into your web site"
 msgstr "Nhúng vào trang web của mình"
 
-#: app/views/games/index.rhtml:5
+#: app/views/games/index.html.haml:8
 msgid "Play with your friends"
 msgstr "Chơi với bạn bè"
 
-#: app/views/toys/index.rhtml:1
+#: app/views/games/show.html.haml:9
+msgid "Public channels"
+msgstr "Kênh chung"
+
+#: app/views/games/show.html.haml:11
+msgid "Newbie"
+msgstr "Mới bắt đầu"
+
+#: app/views/games/show.html.haml:11
+msgid "Easy"
+msgstr "Dễ"
+
+#: app/views/games/show.html.haml:11
+msgid "Normal"
+msgstr "Vừa phải"
+
+#: app/views/games/show.html.haml:11
+msgid "Hard"
+msgstr "Khó"
+
+#: app/views/games/show.html.haml:11
+msgid "World class"
+msgstr "Rất khó"
+
+#: app/views/toys/index.html.haml:3
 msgid "Let's make your web site more interesting by embedding toys!"
 msgstr "Hãy làm cho trang web của bạn hấp dẫn hơn bằng cách nhúng đồ chơi!"
 
-#: app/views/toys/index.rhtml:3
+#: app/views/toys/index.html.haml:5
 msgid "Select toy"
 msgstr "Chọn đồ chơi"
 
-#: app/views/toys/index.rhtml:4
+#: app/views/toys/index.html.haml:6
 msgid "Configure"
 msgstr "Cấu hình"
+
+#: app/views/errors/404.html.haml:3
+msgid "This page does not exist."
+msgstr "Trang này không tồn tại."
+
+#: app/views/errors/404.html.haml:4
+#: app/views/errors/500.html.haml:4
+msgid "Home"
+msgstr "Trang nhất"
+
+#: app/views/errors/500.html.haml:3
+msgid "There is error."
+msgstr "Có lỗi"
 

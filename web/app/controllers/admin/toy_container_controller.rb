@@ -1,8 +1,5 @@
 module Admin
-  class ToyContainerController < ApplicationController
-    layout 'admin'
-    before_filter :check_login_admin
-
+  class ToyContainerController < AdminController
     def edit
     end
 

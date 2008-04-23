@@ -15,7 +15,7 @@
   - @gc.each do |gc|
   %tr
     - s = _('%s channels') % gc[:name_nums].size
-    %th== #{h(gc[:game].name) (#{s})
+    %th== #{h(gc[:game].name)} (#{s})
     %td= link_to(gc[:name_nums][0][:name], play_path(:id => gc[:game].id, :channel => gc[:name_nums][0][:name]))
     %td= gc[:name_nums][0][:num]
 

@@ -1,8 +1,5 @@
 module Admin
-  class GameContainerController < ApplicationController
-    layout 'admin'
-    before_filter :check_login_admin
-
+  class GameContainerController < AdminController
     def edit
     end
 

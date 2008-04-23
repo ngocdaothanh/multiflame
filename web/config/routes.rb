@@ -1,5 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.home    '', :controller => 'games'
+  map.root    :controller => 'games'
   map.privacy 'terms',   :controller => 'games', :action => 'terms'
   map.privacy 'privacy', :controller => 'games', :action => 'privacy'
 
@@ -33,4 +33,8 @@ ActionController::Routing::Routes.draw do |map|
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'
+
+  unless ::ActionController::Base.consider_all_requests_local
+    map.connect '*path', :controller => 'application', :action => 'rescue_404'
+  end
 end

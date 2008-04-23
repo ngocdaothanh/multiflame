@@ -97,7 +97,7 @@
 			}
 			var img:DisplayObject = _captcha.img;
 			img.x = 309;
-			img.y = 218;
+			img.y = 248;
 			addChild(img);
 		}
 

@@ -16,9 +16,7 @@ module ApplicationHelper
     games.each do |g|
       ret << '<div>'
       ret << '<h2>' + link_to(g.name, game_path(g))
-      if (now - g.updated_at) <= CONFIG[:new_threshold]*24*60*60
-        ret << image_tag('new.gif')
-      end
+      ret << image_tag('new.gif') if (now - g.updated_at) <= CONFIG[:new_threshold]*24*60*60
       ret << '</h2>'
       ret << "<div id='game_flash#{g.id}' class='notice'>#{notice}</div>"
       ret << '</div>'

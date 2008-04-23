@@ -1,7 +1,5 @@
 module Admin
-  class ToysController < ApplicationController
-    layout 'admin'
-
+  class ToysController < AdminController
     def index
       @toys = Toy.find(:all, :order => 'id')
     end
@@ -12,7 +10,7 @@ module Admin
     def create
       @toy = Toy.new
       if @toy.upload_and_create(params)
-        flash[:notice] = _('%s was uploaded') % ERB::Util.html_escape(@toy.name)
+        flash[:notice] = _('%s has been uploaded') % ERB::Util.html_escape(@toy.name)
         redirect_to :action => 'index'
       else
         render :action => 'new'
@@ -26,7 +24,7 @@ module Admin
     def update
       @toy = Toy.find(params[:id])
       if @toy.upload_and_update(params)
-        flash[:notice] = _('%s was updated') % ERB::Util.html_escape(@toy.name)
+        flash[:notice] = _('%s has been updated') % ERB::Util.html_escape(@toy.name)
         redirect_to :action => 'index'
       else
         render :action => 'edit'

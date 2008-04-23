@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: latest\n"
-"POT-Creation-Date: 2008-02-09 16:11+0900\n"
+"POT-Creation-Date: 2008-04-23 15:51+0900\n"
 "PO-Revision-Date: 2007-12-29 03:04+0900\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,19 +16,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: app/helpers/application_helper.rb:14 app/helpers/application_helper.rb:31
-#: app/views/games/show.rhtml:4 app/views/games/play.rhtml:5
-#: app/views/toys/show.rhtml:5
+#: app/helpers/application_helper.rb:14 app/helpers/application_helper.rb:29
+#: app/views/games/show.html.haml:5 app/views/games/play.html.haml:6
+#: app/views/toys/show.html.haml:6
 msgid "Please install %{getflashplayer}"
 msgstr ""
 
-#: app/helpers/application_helper.rb:14 app/helpers/application_helper.rb:31
-#: app/views/games/show.rhtml:4 app/views/games/play.rhtml:5
-#: app/views/toys/show.rhtml:5
+#: app/helpers/application_helper.rb:14 app/helpers/application_helper.rb:29
+#: app/views/games/show.html.haml:5 app/views/games/play.html.haml:6
+#: app/views/toys/show.html.haml:6
 msgid "Flash player 9 or above"
 msgstr ""
 
-#: app/helpers/application_helper.rb:75
+#: app/helpers/application_helper.rb:73
 msgid "Error"
 msgstr ""
 
@@ -77,6 +77,7 @@ msgid "Stat|Created at"
 msgstr ""
 
 #: app/controllers/admin/game_container_controller.rb:13
+#: app/controllers/admin/toy_container_controller.rb:12
 msgid "Container was updated"
 msgstr ""
 
@@ -106,163 +107,203 @@ msgstr ""
 msgid "All specified games have become invalid"
 msgstr ""
 
-#: app/views/layouts/application.rhtml:17 app/views/layouts/admin.rhtml:18
-#: app/views/admin/games/index.rhtml:6
+#: app/views/layouts/application.html.haml:16
+#: app/views/layouts/admin.html.haml:17
+#: app/views/admin/games/index.html.haml:11 app/views/admin/toys/index.rhtml:6
 msgid "Games"
 msgstr ""
 
-#: app/views/layouts/application.rhtml:18 app/views/layouts/admin.rhtml:19
+#: app/views/layouts/application.html.haml:18
+#: app/views/layouts/admin.html.haml:19
 msgid "Toys"
 msgstr ""
 
-#: app/views/layouts/admin.rhtml:6
+#: app/views/layouts/application.html.haml:31
+msgid "Terms of service"
+msgstr ""
+
+#: app/views/layouts/application.html.haml:33
+msgid "Privacy policy"
+msgstr ""
+
+#: app/views/layouts/admin.html.haml:6
 msgid "Administration"
 msgstr ""
 
-#: app/views/layouts/admin.rhtml:17
+#: app/views/layouts/admin.html.haml:16
 msgid "Statistics"
 msgstr ""
 
-#: app/views/admin/game_container/edit.rhtml:2
+#: app/views/admin/game_container/edit.html.haml:4
 msgid "Edit game container"
 msgstr ""
 
-#: app/views/admin/game_container/edit.rhtml:9
-#: app/views/admin/games/edit.rhtml:9
+#: app/views/admin/game_container/edit.html.haml:13
+#: app/views/admin/games/edit.html.haml:10
+#: app/views/admin/toys/edit.html.haml:10
+#: app/views/admin/toy_container/edit.html.haml:13
 msgid "(blank = no change)"
 msgstr ""
 
-#: app/views/admin/game_container/edit.rhtml:23
-#: app/views/admin/games/edit.rhtml:30 app/views/admin/toys/edit.rhtml:20
+#: app/views/admin/game_container/edit.html.haml:23
+#: app/views/admin/games/edit.html.haml:21
+#: app/views/admin/toys/edit.html.haml:21
+#: app/views/admin/toy_container/edit.html.haml:17
 msgid "Save"
 msgstr ""
 
-#: app/views/admin/games/edit.rhtml:2 app/views/admin/toys/edit.rhtml:2
+#: app/views/admin/games/edit.html.haml:4
+#: app/views/admin/toys/edit.html.haml:4
 msgid "Edit %s"
 msgstr ""
 
-#: app/views/admin/games/edit.rhtml:14 app/views/admin/games/new.rhtml:10
+#: app/views/admin/games/edit.html.haml:14
+#: app/views/admin/games/new.html.haml:11
 msgid "Game name"
 msgstr ""
 
-#: app/views/admin/games/index.rhtml:3
+#: app/views/admin/games/index.html.haml:7
 msgid "Game container"
 msgstr ""
 
-#: app/views/admin/games/index.rhtml:4
+#: app/views/admin/games/index.html.haml:9 app/views/admin/toys/index.rhtml:4
 msgid "Update container"
 msgstr ""
 
-#: app/views/admin/games/index.rhtml:7 app/views/admin/games/new.rhtml:2
+#: app/views/admin/games/index.html.haml:13
+#: app/views/admin/games/new.html.haml:4
 msgid "Upload new game"
 msgstr ""
 
-#: app/views/admin/games/new.rhtml:26 app/views/admin/toys/new.rhtml:26
+#: app/views/admin/games/new.html.haml:18 app/views/admin/toys/new.rhtml:20
 msgid "Upload"
 msgstr ""
 
-#: app/views/admin/toys/edit.rhtml:10 app/views/admin/toys/new.rhtml:10
-msgid "Toy name"
+#: app/views/admin/toys/index.rhtml:3
+msgid "Toy container"
 msgstr ""
 
-#: app/views/admin/toys/index.rhtml:3 app/views/admin/toys/new.rhtml:2
+#: app/views/admin/toys/index.rhtml:7 app/views/admin/toys/new.rhtml:2
 msgid "Upload new toy"
 msgstr ""
 
-#: app/views/admin/stats/index.rhtml:4 app/views/admin/stats/show.rhtml:4
+#: app/views/admin/toys/new.rhtml:10 app/views/admin/toys/edit.html.haml:14
+msgid "Toy name"
+msgstr ""
+
+#: app/views/admin/stats/index.html.haml:7
+#: app/views/admin/stats/show.html.haml:5
 msgid "Latest data (updated every %d minutes)"
 msgstr ""
 
-#: app/views/admin/stats/index.rhtml:5 app/views/admin/stats/show.rhtml:5
+#: app/views/admin/stats/index.html.haml:9
+#: app/views/admin/stats/show.html.haml:7
 msgid "%s ago"
 msgstr ""
 
-#: app/views/admin/stats/index.rhtml:9
+#: app/views/admin/stats/index.html.haml:13
 msgid "Update now"
 msgstr ""
 
-#: app/views/admin/stats/index.rhtml:16
+#: app/views/admin/stats/index.html.haml:20
 msgid "Host"
 msgstr ""
 
-#: app/views/admin/stats/index.rhtml:17
+#: app/views/admin/stats/index.html.haml:21
 msgid "Port"
 msgstr ""
 
-#: app/views/admin/stats/index.rhtml:18
+#: app/views/admin/stats/index.html.haml:22
 msgid "Players limit"
 msgstr ""
 
-#: app/views/admin/stats/index.rhtml:19
+#: app/views/admin/stats/index.html.haml:23
 msgid "Number of channels"
 msgstr ""
 
-#: app/views/admin/stats/index.rhtml:20 app/views/admin/stats/show.rhtml:12
+#: app/views/admin/stats/index.html.haml:24
+#: app/views/admin/stats/show.html.haml:15
 msgid "Number of players"
 msgstr ""
 
-#: app/views/admin/stats/show.rhtml:10
+#: app/views/admin/stats/show.html.haml:12
 msgid "Game"
 msgstr ""
 
-#: app/views/admin/stats/show.rhtml:11
+#: app/views/admin/stats/show.html.haml:13
 msgid "Channel"
 msgstr ""
 
-#: app/views/admin/stats/show.rhtml:17
+#: app/views/admin/stats/show.html.haml:18
 msgid "%s channels"
 msgstr ""
 
-#: app/views/games/show.rhtml:14
-msgid "Public channels"
+#: app/views/admin/toy_container/edit.html.haml:4
+msgid "Edit toy container"
 msgstr ""
 
-#: app/views/games/show.rhtml:16
-msgid "Newbie"
-msgstr ""
-
-#: app/views/games/show.rhtml:16
-msgid "Easy"
-msgstr ""
-
-#: app/views/games/show.rhtml:16
-msgid "Normal"
-msgstr ""
-
-#: app/views/games/show.rhtml:16
-msgid "Hard"
-msgstr ""
-
-#: app/views/games/show.rhtml:16
-msgid "World class"
-msgstr ""
-
-#: app/views/games/index.rhtml:1
+#: app/views/games/index.html.haml:3
 msgid ""
 "Let's make your web site more interesting by embedding <b><u>multiplayer</"
 "u></b> games and play with your friends right at your web site!"
 msgstr ""
 
-#: app/views/games/index.rhtml:3
+#: app/views/games/index.html.haml:5
 msgid "Select game"
 msgstr ""
 
-#: app/views/games/index.rhtml:4 app/views/toys/index.rhtml:5
+#: app/views/games/index.html.haml:6 app/views/toys/index.html.haml:8
 msgid "Embed into your web site"
 msgstr ""
 
-#: app/views/games/index.rhtml:5
+#: app/views/games/index.html.haml:8
 msgid "Play with your friends"
 msgstr ""
 
-#: app/views/toys/index.rhtml:1
+#: app/views/games/show.html.haml:9
+msgid "Public channels"
+msgstr ""
+
+#: app/views/games/show.html.haml:11
+msgid "Newbie"
+msgstr ""
+
+#: app/views/games/show.html.haml:11
+msgid "Easy"
+msgstr ""
+
+#: app/views/games/show.html.haml:11
+msgid "Normal"
+msgstr ""
+
+#: app/views/games/show.html.haml:11
+msgid "Hard"
+msgstr ""
+
+#: app/views/games/show.html.haml:11
+msgid "World class"
+msgstr ""
+
+#: app/views/toys/index.html.haml:3
 msgid "Let's make your web site more interesting by embedding toys!"
 msgstr ""
 
-#: app/views/toys/index.rhtml:3
+#: app/views/toys/index.html.haml:5
 msgid "Select toy"
 msgstr ""
 
-#: app/views/toys/index.rhtml:4
+#: app/views/toys/index.html.haml:6
 msgid "Configure"
+msgstr ""
+
+#: app/views/errors/404.html.haml:3
+msgid "This page does not exist."
+msgstr ""
+
+#: app/views/errors/404.html.haml:4 app/views/errors/500.html.haml:4
+msgid "Home"
+msgstr ""
+
+#: app/views/errors/500.html.haml:3
+msgid "There is error."
 msgstr ""

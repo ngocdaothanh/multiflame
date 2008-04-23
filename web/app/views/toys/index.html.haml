@@ -7,7 +7,9 @@
 
 - if @toys.size == 1
 .left= render_toys(@game, @toys)
-- elsif @toys.size > 1
+- end
+
+- if @toys.size > 1
 .left= render_toys(@game, @toys[0...@toys.size/2])
 
 .right= render_toys(@game, @toys[@toys.size/2...@toys.size])

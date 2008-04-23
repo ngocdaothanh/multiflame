@@ -12,14 +12,14 @@
           #banner= image_tag('logo.png')
 
         %ul{:id => 'menu'}
-          %li= link_to(_('Games'), home_path, :class => ('games' == params[:controller])? 'selected' : '')
+          %li= link_to(_('Games'), root_path, :class => ('games' == params[:controller])? 'selected' : '')
           %li= link_to(_('Toys'),  toys_path, :class => ('toys'  == params[:controller])? 'selected' : '')
 
         #main
           - unless @navigator.nil?
           #navigator= @navigator
           - end
-          %div= yield
+          = yield
 
       #flags= flags_to_locales
 
@@ -30,7 +30,9 @@
         = link_to(_('Terms of service'), :controller => 'games', :action => 'terms')
         = link_to(_('Privacy policy'),   :controller => 'games', :action => 'privacy')
 
-      = javascript_include_tag('http://www.google-analytics.com/urchin.js')
       %script{:type => 'text/javascript'}
-        == _uacct='#{CONFIG[:google_analytics_code]}';
-        urchinTracker();
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        == var pageTracker = _gat._getTracker("#{CONFIG[:google_analytics_key]}");
+        pageTracker._initData();
+        pageTracker._trackPageview();

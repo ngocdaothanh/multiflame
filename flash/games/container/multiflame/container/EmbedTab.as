@@ -33,6 +33,8 @@
 			var l:String = '<a href="' + u + '">' + u + '</a>';
 			_linkLbl.htmlText = "<b>" + StringUtil.substitute(_("More games at {0}"), l) + "</b>";
 
+			_invitationLbl.htmlText = "<b>" + _("Embed this game to your web site and play with your friends!") + "</b>";
+
 			_thisChannelLbl.htmlText = "<b>" + _("This channel") + "</b>";
 			_thisChannelNameLbl.htmlText = _("Channel name");
 			_thisChannelName.text = _channel.channel;
@@ -41,7 +43,7 @@
 			_thisChannelEmbedLbl.htmlText = _("Embed");
 			_thisChannelEmbed.text = embed(_channel.channel);
 
-			_yourChannelLbl.htmlText = "<b>" + _("Your channel") + "</b>";
+			_yourChannelLbl.htmlText = "<b>" + _("Create new channel") + "</b>";
 			_yourChannelNameLbl.htmlText = _("Channel name");
 			_yourChannelName.text = _("(can be anything)");
 			_yourChannelURLLbl.htmlText = _("URL");

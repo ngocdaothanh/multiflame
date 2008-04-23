@@ -23,6 +23,7 @@ module HamlParser
     RubyParser.parse_lines(file, code, ary)
   end
 end
+GetText::RGetText.add_parser(HamlParser)
 
 namespace :gettext do
   desc 'Create mo-files for L10n'

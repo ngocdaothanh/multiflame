@@ -7,14 +7,10 @@ CONFIG = {
   :copyright   => '&copy; 2008 web20games.net',
   :admin_email => 'admin@web20games.net',
 
-  :new_threshold         => 3,  # Days, to determine if something is "NEW"
-  :google_analytics_code => '',
-  :swf_width             => 500,
-  :swf_height            => 560,
-
-  :captcha_key          => 'key',
-  :captcha_length       => 6,
-  :captcha_valid_period => 24*60*60,  # [sec]
+  :new_threshold        => 3,  # Days, to determine if something is "NEW"
+  :google_analytics_key => '',
+  :swf_width            => 500,
+  :swf_height           => 560,
 
   # For security, only connections from localhost is allowed
   :fifo_manager_host              => 'localhost',

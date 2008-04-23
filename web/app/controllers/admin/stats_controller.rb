@@ -1,8 +1,5 @@
 module Admin
-  class StatsController < ApplicationController
-    layout 'admin'
-    before_filter :check_login_admin
-
+  class StatsController < AdminController
     def index
       stat = Stat.find(:first, :order => 'created_at DESC')
       if stat.nil?

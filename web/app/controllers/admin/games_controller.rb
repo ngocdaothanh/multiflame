@@ -1,8 +1,5 @@
 module Admin
-  class GamesController < ApplicationController
-    layout 'admin'
-    before_filter :check_login_admin
-
+  class GamesController < AdminController
     def index
       @games = Game.find(:all, :order => 'id')
     end
