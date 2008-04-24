@@ -27,7 +27,7 @@
 
       #footer
         = CONF[:copyright]
-        - if false
+        - if CONF[:legal]
         = link_to(_('Terms of service'), :controller => 'games', :action => 'terms')
         = link_to(_('Privacy policy'),   :controller => 'games', :action => 'privacy')
         - end

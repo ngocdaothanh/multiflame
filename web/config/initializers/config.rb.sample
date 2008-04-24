@@ -5,6 +5,8 @@ CONF = {
   :locales     => ['en', 'ja', 'vi'],
   :app_title   => 'web20games.net',
   :copyright   => '&copy; 2008 web20games.net',
+  :legal       => false,  # Display Terms of Service and Privacy Policy
+
   :admin_email => 'admin@web20games.net',
 
   :new_threshold        => 3,  # Days, to determine if something is "NEW"
