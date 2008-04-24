@@ -6,7 +6,7 @@
     %p{:class => 'notice'}= s
 
 %script{:type => 'text/javascript'}
-  == var so = new SWFObject('#{game_container_without_versions_path(:id => @game.id, :channel => params[:channel], :locale => GetText.locale.to_s)}', 'game_flash', '#{CONFIG[:swf_width]}', '#{CONFIG[:swf_height]}', '9', '#FFFFFF');
+  == var so = new SWFObject('#{game_container_without_versions_path(:id => @game.id, :channel => params[:channel], :locale => GetText.locale.to_s)}', 'game_flash', '#{CONF[:swf_width]}', '#{CONF[:swf_height]}', '9', '#FFFFFF');
   so.useExpressInstall('/javascripts/expressinstall.swf');
   so.addParam('allowFullScreen', 'true');
   so.addVariable('allowFullScreen', 'true');

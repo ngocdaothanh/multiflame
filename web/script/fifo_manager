@@ -73,12 +73,12 @@ class FifoManager
     }
 
     cg_reload
-    EventMachine::add_timer(CONFIG[:fifo_manager_startup_delay]) do
+    EventMachine::add_timer(CONF[:fifo_manager_startup_delay]) do
       @ready = true
       clients.each { |fifo| mf_ready_set(fifo) }
     end
 
-    EventMachine::add_periodic_timer(CONFIG[:fifo_manager_snapshot_interval]*60) do
+    EventMachine::add_periodic_timer(CONF[:fifo_manager_snapshot_interval]*60) do
       on_call_wm_snapshot_create(nil, nil)
     end
 
@@ -161,7 +161,7 @@ private
     @cg = {:c => {:version => container.updated_at.to_i}, :g => {}}
     games.each do |g|
       @cg[:g][g.id] = {:version => g.updated_at.to_i, :names => {}}
-      CONFIG[:locales].each do |l|
+      CONF[:locales].each do |l|
         @cg[:g][g.id][:names][l] = g.name(l)
       end
     end
@@ -263,6 +263,6 @@ end
 # ------------------------------------------------------------------------------
 
 EventMachine::run do
-  FifoManager.new(CONFIG[:fifo_manager_host], CONFIG[:fifo_manager_port])
-  LOGGER.info("Fifo manager started on #{CONFIG[:fifo_manager_host]}:#{CONFIG[:fifo_manager_port]}")
+  FifoManager.new(CONF[:fifo_manager_host], CONF[:fifo_manager_port])
+  LOGGER.info("Fifo manager started on #{CONF[:fifo_manager_host]}:#{CONF[:fifo_manager_port]}")
 end

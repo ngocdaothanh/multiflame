@@ -13,7 +13,7 @@
   %tr
     %th container.swf
     %td= file_field_tag('container', :id => nil)
-  - locales = CONFIG[:locales].dup; locales.delete('en')
+  - locales = CONF[:locales].dup; locales.delete('en')
   - locales.each do |l|
   %tr
     %th== #{l}.mo

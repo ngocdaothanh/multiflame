@@ -2,7 +2,7 @@
 %html{:xmlns => 'http://www.w3.org/1999/xhtml', :lang => 'en', 'xml:lang' => 'en'}
   %head
     %meta{'http-equiv' => 'Content-type', :content => 'text/html; charset=utf-8'}
-    %title= CONFIG[:app_title]
+    %title= CONF[:app_title]
     = stylesheet_link_tag('application')
     = javascript_include_tag('swfobject')
   %body
@@ -26,13 +26,15 @@
       %div{:style => 'clear:both'}
 
       #footer
-        = CONFIG[:copyright]
+        = CONF[:copyright]
+        - if false
         = link_to(_('Terms of service'), :controller => 'games', :action => 'terms')
         = link_to(_('Privacy policy'),   :controller => 'games', :action => 'privacy')
+        - end
 
       %script{:type => 'text/javascript'}
         var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
         document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-        == var pageTracker = _gat._getTracker("#{CONFIG[:google_analytics_key]}");
+        == var pageTracker = _gat._getTracker("#{CONF[:google_analytics_key]}");
         pageTracker._initData();
         pageTracker._trackPageview();

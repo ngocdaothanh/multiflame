@@ -20,7 +20,7 @@ class FifoManager
     @arg = arg
     t = Thread.new do
       EventMachine::run do
-        connect(CONFIG[:fifo_manager_host], CONFIG[:fifo_manager_port])
+        connect(CONF[:fifo_manager_host], CONF[:fifo_manager_port])
       end
     end
     t.join

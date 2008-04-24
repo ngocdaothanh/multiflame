@@ -3,7 +3,7 @@ module ApplicationHelper
   def flags_to_locales
     ret = ''
     destination = @flag_destination || url_for
-    CONFIG[:locales].each do |l|
+    CONF[:locales].each do |l|
       ret << "<div>#{link_to image_tag("flags/#{l}.png", :alt => ''), "#{destination}?lang=#{l}"}</div>"
     end
     ret
@@ -16,7 +16,7 @@ module ApplicationHelper
     games.each do |g|
       ret << '<div>'
       ret << '<h2>' + link_to(g.name, game_path(g))
-      ret << image_tag('new.gif') if (now - g.updated_at) <= CONFIG[:new_threshold]*24*60*60
+      ret << image_tag('new.gif') if (now - g.updated_at) <= CONF[:new_threshold]*24*60*60
       ret << '</h2>'
       ret << "<div id='game_flash#{g.id}' class='notice'>#{notice}</div>"
       ret << '</div>'
@@ -31,7 +31,7 @@ module ApplicationHelper
     toys.each do |t|
       ret << '<div>'
       ret << '<h2>' + link_to(t.name, toy_path(t))
-      if (now - t.updated_at) <= CONFIG[:new_threshold]*24*60*60
+      if (now - t.updated_at) <= CONF[:new_threshold]*24*60*60
         ret << image_tag('new.gif')
       end
       ret << '</h2>'

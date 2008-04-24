@@ -11,7 +11,7 @@
     %th toy.swf
     %td= file_field_tag('toy', :id => nil)
     %th= _('Toy name')
-  - CONFIG[:locales].each do |l|
+  - CONF[:locales].each do |l|
   %tr
     %th== #{l}.mo
     %td= (l == 'en')? '&nbsp;' : file_field_tag("mo_#{l}", :id => nil)

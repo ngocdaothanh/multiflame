@@ -9,7 +9,7 @@ class GameContainer
   # Validates and updates client, returns false if there is error
   def upload_and_update(params)
     files = {'container' => 'container.swf'}
-    locales = CONFIG[:locales].dup;
+    locales = CONF[:locales].dup;
     locales.delete('en')
     locales.each do |l|
       files[l] = "#{l}.mo"
