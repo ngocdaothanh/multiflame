@@ -5,6 +5,7 @@
     %title= CONF[:app_title]
     = stylesheet_link_tag('application')
     = javascript_include_tag('swfobject')
+
   %body
     #container
       #header_main
@@ -32,9 +33,13 @@
         = link_to(_('Privacy policy'),   :controller => 'games', :action => 'privacy')
         - end
 
+      - unless CONF[:google_analytics_key].nil?
       %script{:type => 'text/javascript'}
         var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
         document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+
+      %script{:type => 'text/javascript'}
         == var pageTracker = _gat._getTracker("#{CONF[:google_analytics_key]}");
         pageTracker._initData();
         pageTracker._trackPageview();
+      - end

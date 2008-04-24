@@ -5,6 +5,7 @@
     %title= CONF[:app_title] + ' - ' + _('Administration')
     = stylesheet_link_tag('application')
     = javascript_include_tag('swfobject')
+
   %body
     #container
       #header_main
@@ -27,8 +28,3 @@
       %div{:style => 'clear:both'}
 
       #footer= CONF[:copyright]
-
-      = javascript_include_tag('http://www.google-analytics.com/urchin.js')
-      %script{:type => 'text/javascript'}
-        == _uacct='#{CONF[:google_analytics_code]}';
-        urchinTracker();
