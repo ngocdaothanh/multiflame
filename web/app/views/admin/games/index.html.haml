@@ -11,7 +11,8 @@
 %p= link_to(_('Upload new game'), new_admin_game_path)
 
 - unless @games.blank?
-- @games.each do |g|
-%p= link_to(h(g.name), edit_admin_game_path(g))
-- end
+%ol
+  - @games.each do |g|
+  %li= link_to(h(g.name), edit_admin_game_path(g))
+  - end
 - end

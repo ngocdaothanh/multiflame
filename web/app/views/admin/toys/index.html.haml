@@ -6,12 +6,13 @@
 
 %p= link_to(_('Update container'), edit_admin_toy_container_path)
 
-%h2= _('Games')
+%h2= _('Toys')
 
 %p= link_to(_('Upload new toy'), new_admin_toy_path)
 
 - unless @toys.blank?
--   @toys.each do |t|
-%p= link_to(t.name, edit_admin_toy_path(t))
--   end
+%ol
+  - @toys.each do |t|
+  %li= link_to(t.name, edit_admin_toy_path(t))
+  -   end
 - end
