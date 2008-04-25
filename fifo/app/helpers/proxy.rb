@@ -25,7 +25,11 @@ class Proxy
       CMD_FM_CHANNEL_CREATE => method(:on_result_fm_channel_create)
     }
 
-    on_close
+    begin
+      connect(CONF[:manager_host], CONF[:manager_port])
+    rescue
+      reconnect
+    end
   end
 
   def on_connect

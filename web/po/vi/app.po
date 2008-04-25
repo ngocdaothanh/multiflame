@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: latest\n"
-"POT-Creation-Date: 2008-04-23 15:51+0900\n"
-"PO-Revision-Date: 2008-04-23 15:53+0900\n"
+"POT-Creation-Date: 2008-04-25 23:23+0900\n"
+"PO-Revision-Date: 2008-04-25 23:24+0900\n"
 "Last-Translator: Ngoc Dao <ngocdaothanh@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -81,54 +81,60 @@ msgstr "Snapshot"
 msgid "Stat|Created at"
 msgstr "Tạo lúc"
 
-#: app/controllers/admin/game_container_controller.rb:13
-#: app/controllers/admin/toy_container_controller.rb:12
+#: app/controllers/admin/game_container_controller.rb:10
+#: app/controllers/admin/toy_container_controller.rb:9
 msgid "Container was updated"
 msgstr "Container đã được cập nhật"
 
-#: app/controllers/admin/games_controller.rb:17
-#: app/controllers/admin/toys_controller.rb:15
+#: app/controllers/admin/games_controller.rb:14
 msgid "%s was uploaded"
 msgstr "%s đã được upload"
 
-#: app/controllers/admin/games_controller.rb:32
-#: app/controllers/admin/toys_controller.rb:29
+#: app/controllers/admin/games_controller.rb:29
 msgid "%s was updated"
 msgstr "%s đã được cập nhật"
 
-#: app/controllers/admin/stats_controller.rb:9
+#: app/controllers/admin/toys_controller.rb:13
+msgid "%s has been uploaded"
+msgstr "%s đã được upload"
+
+#: app/controllers/admin/toys_controller.rb:27
+msgid "%s has been updated"
+msgstr "%s đã được cập nhật"
+
+#: app/controllers/admin/stats_controller.rb:6
 msgid "No data yet"
 msgstr "Chưa có dữ liệu"
 
-#: app/controllers/admin/stats_controller.rb:21
+#: app/controllers/admin/stats_controller.rb:18
 msgid "No fifo for now"
 msgstr "Hiện chưa có fifo nào"
 
-#: app/controllers/admin/stats_controller.rb:26
+#: app/controllers/admin/stats_controller.rb:23
 msgid "Error creating new snapshot"
 msgstr "Lỗi khi tạo snapshot"
 
-#: app/controllers/admin/stats_controller.rb:70
+#: app/controllers/admin/stats_controller.rb:67
 msgid "All specified games have become invalid"
 msgstr "Tất cả game đã trở thành bất hợp lệ"
 
-#: app/views/layouts/application.html.haml:16
-#: app/views/layouts/admin.html.haml:17
+#: app/views/layouts/application.html.haml:17
+#: app/views/layouts/admin.html.haml:18
 #: app/views/admin/games/index.html.haml:11
-#: app/views/admin/toys/index.rhtml:6
 msgid "Games"
 msgstr "Game"
 
-#: app/views/layouts/application.html.haml:18
-#: app/views/layouts/admin.html.haml:19
+#: app/views/layouts/application.html.haml:19
+#: app/views/layouts/admin.html.haml:20
+#: app/views/admin/toys/index.html.haml:11
 msgid "Toys"
 msgstr "Đồ chơi"
 
-#: app/views/layouts/application.html.haml:31
+#: app/views/layouts/application.html.haml:33
 msgid "Terms of service"
 msgstr "Điều khoản dịch vụ"
 
-#: app/views/layouts/application.html.haml:33
+#: app/views/layouts/application.html.haml:34
 msgid "Privacy policy"
 msgstr "Chính sách bảo vệ thông tin cá nhân"
 
@@ -136,7 +142,7 @@ msgstr "Chính sách bảo vệ thông tin cá nhân"
 msgid "Administration"
 msgstr "Quản lí"
 
-#: app/views/layouts/admin.html.haml:16
+#: app/views/layouts/admin.html.haml:17
 msgid "Statistics"
 msgstr "Thống kê"
 
@@ -173,7 +179,7 @@ msgid "Game container"
 msgstr "Game container"
 
 #: app/views/admin/games/index.html.haml:9
-#: app/views/admin/toys/index.rhtml:4
+#: app/views/admin/toys/index.html.haml:9
 msgid "Update container"
 msgstr "Cập nhật container"
 
@@ -183,23 +189,23 @@ msgid "Upload new game"
 msgstr "Upload game mới"
 
 #: app/views/admin/games/new.html.haml:18
-#: app/views/admin/toys/new.rhtml:20
+#: app/views/admin/toys/new.html.haml:18
 msgid "Upload"
 msgstr "Upload"
 
-#: app/views/admin/toys/index.rhtml:3
-msgid "Toy container"
-msgstr "Toy container"
+#: app/views/admin/toys/edit.html.haml:14
+#: app/views/admin/toys/new.html.haml:11
+msgid "Toy name"
+msgstr "Tên đồ chơi"
 
-#: app/views/admin/toys/index.rhtml:7
-#: app/views/admin/toys/new.rhtml:2
+#: app/views/admin/toys/new.html.haml:4
+#: app/views/admin/toys/index.html.haml:13
 msgid "Upload new toy"
 msgstr "Upload đồ chơi mới"
 
-#: app/views/admin/toys/new.rhtml:10
-#: app/views/admin/toys/edit.html.haml:14
-msgid "Toy name"
-msgstr "Tên đồ chơi"
+#: app/views/admin/toys/index.html.haml:7
+msgid "Toy container"
+msgstr "Toy container"
 
 #: app/views/admin/stats/index.html.haml:7
 #: app/views/admin/stats/show.html.haml:5
@@ -278,20 +284,12 @@ msgid "Newbie"
 msgstr "Mới bắt đầu"
 
 #: app/views/games/show.html.haml:11
-msgid "Easy"
-msgstr "Dễ"
-
-#: app/views/games/show.html.haml:11
 msgid "Normal"
 msgstr "Vừa phải"
 
 #: app/views/games/show.html.haml:11
 msgid "Hard"
 msgstr "Khó"
-
-#: app/views/games/show.html.haml:11
-msgid "World class"
-msgstr "Rất khó"
 
 #: app/views/toys/index.html.haml:3
 msgid "Let's make your web site more interesting by embedding toys!"
@@ -316,5 +314,5 @@ msgstr "Trang nhất"
 
 #: app/views/errors/500.html.haml:3
 msgid "There is error."
-msgstr "Có lỗi"
+msgstr "Có lỗi."
 

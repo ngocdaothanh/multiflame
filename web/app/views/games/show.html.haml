@@ -7,7 +7,7 @@
 .right
   %h2= _('Public channels')
   %ul
-    - [_('Newbie'), _('Easy'), _('Normal'), _('Hard'), _('World class')].each do |level|
+    - [_('Newbie'), _('Normal'), _('Hard')].each do |level|
     %li= link_to(level, play_path(:id => @game.id, :channel => level))
     - end
 

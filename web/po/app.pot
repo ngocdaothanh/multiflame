@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: latest\n"
-"POT-Creation-Date: 2008-04-23 15:51+0900\n"
+"POT-Creation-Date: 2008-04-25 23:23+0900\n"
 "PO-Revision-Date: 2007-12-29 03:04+0900\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -76,53 +76,60 @@ msgstr ""
 msgid "Stat|Created at"
 msgstr ""
 
-#: app/controllers/admin/game_container_controller.rb:13
-#: app/controllers/admin/toy_container_controller.rb:12
+#: app/controllers/admin/game_container_controller.rb:10
+#: app/controllers/admin/toy_container_controller.rb:9
 msgid "Container was updated"
 msgstr ""
 
-#: app/controllers/admin/games_controller.rb:17
-#: app/controllers/admin/toys_controller.rb:15
+#: app/controllers/admin/games_controller.rb:14
 msgid "%s was uploaded"
 msgstr ""
 
-#: app/controllers/admin/games_controller.rb:32
-#: app/controllers/admin/toys_controller.rb:29
+#: app/controllers/admin/games_controller.rb:29
 msgid "%s was updated"
 msgstr ""
 
-#: app/controllers/admin/stats_controller.rb:9
+#: app/controllers/admin/toys_controller.rb:13
+msgid "%s has been uploaded"
+msgstr ""
+
+#: app/controllers/admin/toys_controller.rb:27
+msgid "%s has been updated"
+msgstr ""
+
+#: app/controllers/admin/stats_controller.rb:6
 msgid "No data yet"
 msgstr ""
 
-#: app/controllers/admin/stats_controller.rb:21
+#: app/controllers/admin/stats_controller.rb:18
 msgid "No fifo for now"
 msgstr ""
 
-#: app/controllers/admin/stats_controller.rb:26
+#: app/controllers/admin/stats_controller.rb:23
 msgid "Error creating new snapshot"
 msgstr ""
 
-#: app/controllers/admin/stats_controller.rb:70
+#: app/controllers/admin/stats_controller.rb:67
 msgid "All specified games have become invalid"
 msgstr ""
 
-#: app/views/layouts/application.html.haml:16
-#: app/views/layouts/admin.html.haml:17
-#: app/views/admin/games/index.html.haml:11 app/views/admin/toys/index.rhtml:6
+#: app/views/layouts/application.html.haml:17
+#: app/views/layouts/admin.html.haml:18
+#: app/views/admin/games/index.html.haml:11
 msgid "Games"
 msgstr ""
 
-#: app/views/layouts/application.html.haml:18
-#: app/views/layouts/admin.html.haml:19
+#: app/views/layouts/application.html.haml:19
+#: app/views/layouts/admin.html.haml:20
+#: app/views/admin/toys/index.html.haml:11
 msgid "Toys"
 msgstr ""
 
-#: app/views/layouts/application.html.haml:31
+#: app/views/layouts/application.html.haml:33
 msgid "Terms of service"
 msgstr ""
 
-#: app/views/layouts/application.html.haml:33
+#: app/views/layouts/application.html.haml:34
 msgid "Privacy policy"
 msgstr ""
 
@@ -130,7 +137,7 @@ msgstr ""
 msgid "Administration"
 msgstr ""
 
-#: app/views/layouts/admin.html.haml:16
+#: app/views/layouts/admin.html.haml:17
 msgid "Statistics"
 msgstr ""
 
@@ -166,7 +173,8 @@ msgstr ""
 msgid "Game container"
 msgstr ""
 
-#: app/views/admin/games/index.html.haml:9 app/views/admin/toys/index.rhtml:4
+#: app/views/admin/games/index.html.haml:9
+#: app/views/admin/toys/index.html.haml:9
 msgid "Update container"
 msgstr ""
 
@@ -175,20 +183,23 @@ msgstr ""
 msgid "Upload new game"
 msgstr ""
 
-#: app/views/admin/games/new.html.haml:18 app/views/admin/toys/new.rhtml:20
+#: app/views/admin/games/new.html.haml:18
+#: app/views/admin/toys/new.html.haml:18
 msgid "Upload"
 msgstr ""
 
-#: app/views/admin/toys/index.rhtml:3
-msgid "Toy container"
+#: app/views/admin/toys/edit.html.haml:14
+#: app/views/admin/toys/new.html.haml:11
+msgid "Toy name"
 msgstr ""
 
-#: app/views/admin/toys/index.rhtml:7 app/views/admin/toys/new.rhtml:2
+#: app/views/admin/toys/new.html.haml:4
+#: app/views/admin/toys/index.html.haml:13
 msgid "Upload new toy"
 msgstr ""
 
-#: app/views/admin/toys/new.rhtml:10 app/views/admin/toys/edit.html.haml:14
-msgid "Toy name"
+#: app/views/admin/toys/index.html.haml:7
+msgid "Toy container"
 msgstr ""
 
 #: app/views/admin/stats/index.html.haml:7
@@ -269,19 +280,11 @@ msgid "Newbie"
 msgstr ""
 
 #: app/views/games/show.html.haml:11
-msgid "Easy"
-msgstr ""
-
-#: app/views/games/show.html.haml:11
 msgid "Normal"
 msgstr ""
 
 #: app/views/games/show.html.haml:11
 msgid "Hard"
-msgstr ""
-
-#: app/views/games/show.html.haml:11
-msgid "World class"
 msgstr ""
 
 #: app/views/toys/index.html.haml:3

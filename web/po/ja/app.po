@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: latest\n"
-"POT-Creation-Date: 2008-04-23 15:51+0900\n"
-"PO-Revision-Date: 2008-02-08 08:31+0900\n"
+"POT-Creation-Date: 2008-04-25 23:23+0900\n"
+"PO-Revision-Date: 2008-04-25 23:36+0900\n"
 "Last-Translator: Ngoc Dao <ngocdaothanh@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -15,14 +15,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: app/helpers/application_helper.rb:14 app/helpers/application_helper.rb:29
-#: app/views/games/show.html.haml:5 app/views/games/play.html.haml:6
+#: app/helpers/application_helper.rb:14
+#: app/helpers/application_helper.rb:29
+#: app/views/games/show.html.haml:5
+#: app/views/games/play.html.haml:6
 #: app/views/toys/show.html.haml:6
 msgid "Please install %{getflashplayer}"
 msgstr "%{getflashplayer} をインストールしてください"
 
-#: app/helpers/application_helper.rb:14 app/helpers/application_helper.rb:29
-#: app/views/games/show.html.haml:5 app/views/games/play.html.haml:6
+#: app/helpers/application_helper.rb:14
+#: app/helpers/application_helper.rb:29
+#: app/views/games/show.html.haml:5
+#: app/views/games/play.html.haml:6
 #: app/views/toys/show.html.haml:6
 msgid "Flash player 9 or above"
 msgstr "フラッシュプレイヤー9以上"
@@ -43,7 +47,8 @@ msgstr "ゲーム名"
 msgid "Please provide game.swf"
 msgstr "game.swf を入力してください。"
 
-#: app/models/game.rb:29 app/models/game.rb:64
+#: app/models/game.rb:29
+#: app/models/game.rb:64
 msgid "Please provide game name in English"
 msgstr "英語名を入力してください。"
 
@@ -59,77 +64,85 @@ msgstr "おもちゃ名"
 msgid "Please provide toy.swf"
 msgstr "toy.swf を入力してください。"
 
-#: app/models/toy.rb:29 app/models/toy.rb:64
+#: app/models/toy.rb:29
+#: app/models/toy.rb:64
 msgid "Please provide toy name in English"
 msgstr "英語名を入力してください。"
 
 #: app/models/stat.rb:-
 msgid "stat"
-msgstr ""
+msgstr "統計"
 
 #: app/models/stat.rb:-
 msgid "Stat|Snapshot"
-msgstr ""
+msgstr "スナップショット"
 
 #: app/models/stat.rb:-
 msgid "Stat|Created at"
-msgstr ""
+msgstr "作成時刻"
 
-#: app/controllers/admin/game_container_controller.rb:13
-#: app/controllers/admin/toy_container_controller.rb:12
+#: app/controllers/admin/game_container_controller.rb:10
+#: app/controllers/admin/toy_container_controller.rb:9
 msgid "Container was updated"
 msgstr "Container が更新されました"
 
-#: app/controllers/admin/games_controller.rb:17
-#: app/controllers/admin/toys_controller.rb:15
+#: app/controllers/admin/games_controller.rb:14
 msgid "%s was uploaded"
 msgstr "%s がアップロードされました"
 
-#: app/controllers/admin/games_controller.rb:32
-#: app/controllers/admin/toys_controller.rb:29
+#: app/controllers/admin/games_controller.rb:29
 msgid "%s was updated"
 msgstr "%s が更新されました"
 
-#: app/controllers/admin/stats_controller.rb:9
+#: app/controllers/admin/toys_controller.rb:13
+msgid "%s has been uploaded"
+msgstr "%s がアップロードされました"
+
+#: app/controllers/admin/toys_controller.rb:27
+msgid "%s has been updated"
+msgstr "%s が更新されました"
+
+#: app/controllers/admin/stats_controller.rb:6
 msgid "No data yet"
-msgstr ""
+msgstr "データなし"
 
-#: app/controllers/admin/stats_controller.rb:21
+#: app/controllers/admin/stats_controller.rb:18
 msgid "No fifo for now"
-msgstr ""
+msgstr "現在 fifo はありません"
 
-#: app/controllers/admin/stats_controller.rb:26
+#: app/controllers/admin/stats_controller.rb:23
 msgid "Error creating new snapshot"
-msgstr ""
+msgstr "スナップショットを作成できませんでした"
 
-#: app/controllers/admin/stats_controller.rb:70
+#: app/controllers/admin/stats_controller.rb:67
 msgid "All specified games have become invalid"
-msgstr ""
+msgstr "すべてのゲームが無効になった"
 
-#: app/views/layouts/application.html.haml:16
-#: app/views/layouts/admin.html.haml:17
-#: app/views/admin/games/index.html.haml:11 app/views/admin/toys/index.rhtml:6
+#: app/views/layouts/application.html.haml:17
+#: app/views/layouts/admin.html.haml:18
+#: app/views/admin/games/index.html.haml:11
 msgid "Games"
 msgstr "ゲーム"
 
-#: app/views/layouts/application.html.haml:18
-#: app/views/layouts/admin.html.haml:19
+#: app/views/layouts/application.html.haml:19
+#: app/views/layouts/admin.html.haml:20
+#: app/views/admin/toys/index.html.haml:11
 msgid "Toys"
 msgstr "おもちゃ"
 
-#: app/views/layouts/application.html.haml:31
-msgid "Terms of service"
-msgstr ""
-
 #: app/views/layouts/application.html.haml:33
+msgid "Terms of service"
+msgstr "利用規約"
+
+#: app/views/layouts/application.html.haml:34
 msgid "Privacy policy"
-msgstr ""
+msgstr "プライバシーの考え方"
 
 #: app/views/layouts/admin.html.haml:6
 msgid "Administration"
 msgstr "管理"
 
-#: app/views/layouts/admin.html.haml:16
+#: app/views/layouts/admin.html.haml:17
 msgid "Statistics"
 msgstr "統計"
 
@@ -165,7 +178,8 @@ msgstr "ゲーム名"
 msgid "Game container"
 msgstr "ゲーム container"
 
-#: app/views/admin/games/index.html.haml:9 app/views/admin/toys/index.rhtml:4
+#: app/views/admin/games/index.html.haml:9
+#: app/views/admin/toys/index.html.haml:9
 msgid "Update container"
 msgstr "Containerの更新"
 
@@ -174,92 +188,86 @@ msgstr "Containerの更新"
 msgid "Upload new game"
 msgstr "新しいゲームのアップロード"
 
-#: app/views/admin/games/new.html.haml:18 app/views/admin/toys/new.rhtml:20
+#: app/views/admin/games/new.html.haml:18
+#: app/views/admin/toys/new.html.haml:18
 msgid "Upload"
 msgstr "アップロード"
 
-#: app/views/admin/toys/index.rhtml:3
-#, fuzzy
-msgid "Toy container"
-msgstr "ゲーム container"
+#: app/views/admin/toys/edit.html.haml:14
+#: app/views/admin/toys/new.html.haml:11
+msgid "Toy name"
+msgstr "おもちゃ名"
 
-#: app/views/admin/toys/index.rhtml:7 app/views/admin/toys/new.rhtml:2
+#: app/views/admin/toys/new.html.haml:4
+#: app/views/admin/toys/index.html.haml:13
 msgid "Upload new toy"
 msgstr "新しいおもちゃのアップロード"
 
-#: app/views/admin/toys/new.rhtml:10 app/views/admin/toys/edit.html.haml:14
-msgid "Toy name"
-msgstr "おもちゃ名"
+#: app/views/admin/toys/index.html.haml:7
+msgid "Toy container"
+msgstr "おもちゃ container"
 
 #: app/views/admin/stats/index.html.haml:7
 #: app/views/admin/stats/show.html.haml:5
 msgid "Latest data (updated every %d minutes)"
-msgstr ""
+msgstr "最新データ (%d 分毎に更新される)"
 
 #: app/views/admin/stats/index.html.haml:9
 #: app/views/admin/stats/show.html.haml:7
 msgid "%s ago"
-msgstr ""
+msgstr "%s 前"
 
 #: app/views/admin/stats/index.html.haml:13
-#, fuzzy
 msgid "Update now"
-msgstr "Containerの更新"
+msgstr "すぐ更新"
 
 #: app/views/admin/stats/index.html.haml:20
 msgid "Host"
-msgstr ""
+msgstr "ホスト"
 
 #: app/views/admin/stats/index.html.haml:21
 msgid "Port"
-msgstr ""
+msgstr "ポート"
 
 #: app/views/admin/stats/index.html.haml:22
 msgid "Players limit"
-msgstr ""
+msgstr "プレーヤーの制限"
 
 #: app/views/admin/stats/index.html.haml:23
-#, fuzzy
 msgid "Number of channels"
-msgstr "みんなのチャンネル"
+msgstr "チャンネルの数"
 
 #: app/views/admin/stats/index.html.haml:24
 #: app/views/admin/stats/show.html.haml:15
 msgid "Number of players"
-msgstr ""
+msgstr "プレーヤーの人数"
 
 #: app/views/admin/stats/show.html.haml:12
-#, fuzzy
 msgid "Game"
 msgstr "ゲーム"
 
 #: app/views/admin/stats/show.html.haml:13
 msgid "Channel"
-msgstr ""
+msgstr "チャンネル"
 
 #: app/views/admin/stats/show.html.haml:18
-#, fuzzy
 msgid "%s channels"
-msgstr "みんなのチャンネル"
+msgstr "%s チャンネル"
 
 #: app/views/admin/toy_container/edit.html.haml:4
-#, fuzzy
 msgid "Edit toy container"
-msgstr "ゲーム container の編集"
+msgstr "おもちゃ container の編集"
 
 #: app/views/games/index.html.haml:3
-msgid ""
-"Let's make your web site more interesting by embedding <b><u>multiplayer</"
-"u></b> games and play with your friends right at your web site!"
-msgstr ""
-"<b><u>マルチプレイヤー</u></b>ゲームを埋め込んで面白いウェブサイトを作ってと"
-"もだちと楽しもう！"
+msgid "Let's make your web site more interesting by embedding <b><u>multiplayer</u></b> games and play with your friends right at your web site!"
+msgstr "<b><u>マルチプレイヤー</u></b>ゲームを埋め込んで面白いウェブサイトを作ってともだちと楽しもう！"
 
 #: app/views/games/index.html.haml:5
 msgid "Select game"
 msgstr "ゲームを選択する"
 
-#: app/views/games/index.html.haml:6 app/views/toys/index.html.haml:8
+#: app/views/games/index.html.haml:6
+#: app/views/toys/index.html.haml:8
 msgid "Embed into your web site"
 msgstr "自分のウェブサイトに埋め込む"
 
@@ -276,20 +284,12 @@ msgid "Newbie"
 msgstr "初心者"
 
 #: app/views/games/show.html.haml:11
-msgid "Easy"
-msgstr "やしゃしい"
-
-#: app/views/games/show.html.haml:11
 msgid "Normal"
-msgstr "ノーマル"
+msgstr "普通"
 
 #: app/views/games/show.html.haml:11
 msgid "Hard"
 msgstr "ハード"
-
-#: app/views/games/show.html.haml:11
-msgid "World class"
-msgstr "ワールドクラス"
 
 #: app/views/toys/index.html.haml:3
 msgid "Let's make your web site more interesting by embedding toys!"
@@ -305,12 +305,14 @@ msgstr "設定"
 
 #: app/views/errors/404.html.haml:3
 msgid "This page does not exist."
-msgstr ""
+msgstr "ページが存在しません。"
 
-#: app/views/errors/404.html.haml:4 app/views/errors/500.html.haml:4
+#: app/views/errors/404.html.haml:4
+#: app/views/errors/500.html.haml:4
 msgid "Home"
-msgstr ""
+msgstr "ホーム"
 
 #: app/views/errors/500.html.haml:3
 msgid "There is error."
-msgstr ""
+msgstr "エラーがあります。"
+

@@ -6,8 +6,8 @@
 %table
   %tr
     %th toy.swf
-      %td= file_field_tag('toy', :id => nil)
-      %th= _('Toy name')
+    %td= file_field_tag('toy', :id => nil)
+    %th= _('Toy name')
   - CONF[:locales].each do |l|
   %tr
     %th== #{l}.mo
