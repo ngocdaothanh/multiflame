@@ -37,7 +37,7 @@
 
 		public function get definition():Object {
 			return {
-				klass: Constants.REALTIME,
+				type: Constants.REALTIME,
 				nPlayersMin: 2,
 				nPlayersMax: 4,
 				moveSecMin: 0,

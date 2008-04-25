@@ -33,7 +33,7 @@
 
 		public function get definition():Object {
 			return {
-				klass: Constants.BATCH,
+				type: Constants.WEGO,
 				nPlayersMin: 2,
 				nPlayersMax: 4,
 				moveSecMin: 10,

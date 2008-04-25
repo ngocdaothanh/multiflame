@@ -1,11 +1,11 @@
 ﻿package multiflame.game {
 	public class Constants {
 		/**
-		 * Game classes.
+		 * Game types: http://en.wikipedia.org/wiki/Turn-based_game
 		 */
-		public static const TURN_BASED:int = 0;
-		public static const BATCH:int      = 1;
-		public static const REALTIME:int   = 2;
+		public static const IGOUGO:int   = 0;
+		public static const WEGO:int     = 1;
+		public static const REALTIME:int = 2;
 
 		/**
 		 * Results for each player.

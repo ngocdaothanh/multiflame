@@ -19,7 +19,7 @@
 		private var _channel:Channel;
 
 		private var _game:IGame;
-		private var _klass:int;
+		private var _type:int;
 		private var _configDlg:IConfigDlg;
 		private var _introSprite:Sprite;	
 
@@ -126,7 +126,7 @@
 
 			if (_firstAction) {
 				_firstAction = false;
-				_timeoutCalculator = new TimeoutCalculator(_klass, _channel.baseConfig, result);
+				_timeoutCalculator = new TimeoutCalculator(_type, _channel.baseConfig, result);
 			}
 
 			_game.enabled = indexMe >= 0 &&
@@ -178,7 +178,7 @@
 			_game.enabled = false;
 
 			var o:Object = _game.setContainer(this);
-			_klass = o.klass;
+			_type = o.type;
 			_configDlg = o.configDlg;
 			if (_configDlg == null) {
 				_configDlg = new ConfigDlg();
@@ -191,8 +191,8 @@
 			return _game as Sprite;
 		}
 
-		public function get klass():int {
-			return _klass;
+		public function get type():int {
+			return _type;
 		}
 
 		public function get introSprite():Sprite {

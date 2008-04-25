@@ -24,7 +24,7 @@
 		 *
 		 * @return
 		 * {
-		 * 	klass,         Game class, see Constants.as
+		 * 	type,          Game type, see Constants.as
 		 * 	configDlg,     An instance of IConfigDlg, null to use the default
 		 * 	introSprite    A sprite displaying game introduction (rule, trivia...), null for none
 		 * }

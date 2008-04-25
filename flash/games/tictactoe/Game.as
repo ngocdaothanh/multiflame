@@ -37,7 +37,7 @@
 		public function setContainer(container:IContainer):Object {
 			_container = container;
 			return {
-				klass: Constants.TURN_BASED,
+				type: Constants.IGOUGO,
 				introSprite: new IntroSprite(this)
 			};
 		}

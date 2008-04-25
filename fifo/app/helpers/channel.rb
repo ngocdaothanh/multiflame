@@ -1,7 +1,7 @@
 class Channel
-  CLASS_TURN_BASED = 0
-  CLASS_BATCH      = 1
-  CLASS_REALTIME   = 2
+  TYPE_IGOUGO  = 0
+  TYPE_WEGO    = 1
+  TYP_REALTIME = 2
 
   # Login result codes
   LOGIN_OK                          = 0
@@ -38,7 +38,7 @@ class Channel
     captcha_code      = value[4].to_s
     encrypted_code    = value[5].to_s
     nick              = value[6].to_s.strip
-    batch_game        = (value[7] == CLASS_BATCH)? true : false
+    batch_game        = (value[7] == TYPE_WEGO)? true : false
 
     return unless validate(player, container_version, game_id, game_version,
       captcha_code, encrypted_code, nick)

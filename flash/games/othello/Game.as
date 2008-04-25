@@ -74,7 +74,7 @@
 
 		public function get definition():Object {
 			return {
-				klass: Constants.TURN_BASED,
+				type: Constants.IGOUGO,
 				nPlayersMin: 2,
 				nPlayersMax: 2,
 				moveSecMin: 10,

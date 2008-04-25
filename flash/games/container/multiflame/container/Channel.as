@@ -193,7 +193,7 @@
 				code,
 				encryptedCode,
 				nick,
-				RoomTab.instance.klass
+				RoomTab.instance.type
 			]);
 			this.nick = nick;
 		}

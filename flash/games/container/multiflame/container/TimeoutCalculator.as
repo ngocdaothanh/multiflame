@@ -2,7 +2,7 @@
 	import multiflame.game.Constants;
 
 	public class TimeoutCalculator {
-		private var _klass:int;
+		private var _type:int;
 		private var _baseConfig:Object;
 		private var _totalSecLefts:Array;
 
@@ -12,8 +12,8 @@
 		private var _moveSecLeft:Number;
 		private var _totalSecLeft:Number;
 
-		public function TimeoutCalculator(klass:int, baseConfig:Object, firstIndex:int):void {
-			_klass = klass;
+		public function TimeoutCalculator(type:int, baseConfig:Object, firstIndex:int):void {
+			_type = type;
 			_baseConfig = baseConfig;
 
 			// Initialize _totalSecLefts to baseConfig.totalMin*60
@@ -34,7 +34,7 @@
 		// ---------------------------------------------------------------------------
 		
 		public function get moveSecLeft():int {
-			if (_klass == Constants.REALTIME || _baseConfig.moveSec == 0) {
+			if (_type == Constants.REALTIME || _baseConfig.moveSec == 0) {
 				return 0;
 			}
 			return _moveSecLeft;
@@ -59,8 +59,8 @@
 				return;
 			}
 
-			switch (_klass) {
-			case Constants.TURN_BASED:
+			switch (_type) {
+			case Constants.IGOUGO:
 				_moveSecLeft = _baseConfig.moveSec - processingSec;				
 
 				if (_totalSecLefts != null) {
@@ -75,7 +75,7 @@
 					_totalSecLeft = _baseConfig.totalMin*60 - timestamp - processingSec;
 				}
 				break;
-			case Constants.BATCH:
+			case Constants.WEGO:
 				_moveSecLeft = _baseConfig.moveSec;
 				if (_totalSecLefts != null) {
 					_totalSecLeft = _baseConfig.totalMin*60 - timestamp - processingSec;
@@ -96,8 +96,8 @@
 			var index:int = reporterIndex;
 			var dt:Number;
 
-			switch (_klass) {
-			case Constants.TURN_BASED:
+			switch (_type) {
+			case Constants.IGOUGO:
 				dt = timestamp - _lastTimestamp;
 				if (dt >= _moveSecLeft ||
 						(_totalSecLefts != null && dt >= _totalSecLefts[_lastIndex])) {
