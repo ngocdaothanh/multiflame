@@ -29,7 +29,7 @@ class Proxy
   end
 
   def on_connect
-    LOGGER.info("Connected to the manager at #{CONFIG[:manager_host]}:#{CONFIG[:manager_port]}")
+    LOGGER.info("Connected to the manager at #{CONF[:manager_host]}:#{CONF[:manager_port]}")
     fm_channel_keys_set
   end
 
@@ -77,10 +77,10 @@ class Proxy
   # Fifo -> manager ------------------------------------------------------------
 
   def reconnect
-    LOGGER.info("Reconnect to the manager at #{CONFIG[:manager_host]}:#{CONFIG[:manager_port]} in #{CONFIG[:manager_reconnect_interval]} seconds")
-    EventMachine::add_timer(CONFIG[:manager_reconnect_interval]) do
+    LOGGER.info("Reconnect to the manager at #{CONF[:manager_host]}:#{CONF[:manager_port]} in #{CONF[:manager_reconnect_interval]} seconds")
+    EventMachine::add_timer(CONF[:manager_reconnect_interval]) do
       begin
-        connect(CONFIG[:manager_host], CONFIG[:manager_port])
+        connect(CONF[:manager_host], CONF[:manager_port])
       rescue
         reconnect
       end
@@ -88,7 +88,7 @@ class Proxy
   end
 
   def fm_channel_keys_set
-    property = {:swf_host => CONFIG[:swf_host], :swf_port => CONFIG[:swf_port], :players_limit => Stats.instance.players_limit}
+    property = {:swf_host => CONF[:swf_host], :swf_port => CONF[:swf_port], :players_limit => Stats.instance.players_limit}
     call(CMD_FM_CHANNEL_KEYS_SET, {:property => property, :channel_keys => Channel.keys})
   end
 

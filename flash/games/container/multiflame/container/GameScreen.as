@@ -50,7 +50,7 @@
 			_channel.addEventListener(RoomEnterLeaveEvent.ENTER_ME, onRoomEnterMe);
 			_channel.addEventListener(RoomEnterLeaveEvent.LEAVE_ME, onRoomLeaveMe);
 			_channel.addEventListener(ChatEvent.CHAT, onChat);
-			_channel.addEventListener(NewEvent.CONFIG, onNewConfig);
+			_channel.addEventListener(NewEvent.CONF, onNewConfig);
 			_channel.addEventListener(NewEvent.JOIN, onNewJoin);
 			_channel.addEventListener(NewEvent.UNJOIN, onNewUnjoin);
 			_channel.addEventListener(NewEvent.TIMEOUT, onNewTimeout);

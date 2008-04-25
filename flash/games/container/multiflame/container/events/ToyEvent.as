@@ -3,10 +3,10 @@
 	import flash.events.Event;
 
 	public class ToyEvent extends Event {
-		public static const CONFIG:String = "TOY_EVENT_CONFIG";
+		public static const CONF:String = "TOY_EVENT_CONF";
 		public static const SWF:String = "TOY_EVENT_SWF";
 
-		// CONFIG
+		// CONF
 		public var toyId:int;
 		public var config:XML;
 

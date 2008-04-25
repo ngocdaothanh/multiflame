@@ -25,7 +25,7 @@
 		public static const CMD_ROOM_ENTER:int   = 5;
 		public static const CMD_ROOM_LEAVE:int   = 6;
 		public static const CMD_CHAT:int         = 7;
-		public static const CMD_NEW_CONFIG:int   = 8;
+		public static const CMD_NEW_CONF:int     = 8;
 		public static const CMD_NEW_JOIN:int     = 9;
 		public static const CMD_NEW_UNJOIN:int   = 10;
 		public static const CMD_NEW_TIMEOUT:int  = 11;
@@ -116,7 +116,7 @@
 			_transporter.addEventListener("" + CMD_ROOM_ENTER, onRoomEnter);
 			_transporter.addEventListener("" + CMD_ROOM_LEAVE, onRoomLeave);
 			_transporter.addEventListener("" + CMD_CHAT, onChat);
-			_transporter.addEventListener("" + CMD_NEW_CONFIG, onNewConfig);
+			_transporter.addEventListener("" + CMD_NEW_CONF, onNewConfig);
 			_transporter.addEventListener("" + CMD_NEW_JOIN, onNewJoin);
 			_transporter.addEventListener("" + CMD_NEW_UNJOIN, onNewUnjoin);
 			_transporter.addEventListener("" + CMD_NEW_TIMEOUT, onNewTimeout);
@@ -376,7 +376,7 @@
 
 		public function newConfig(baseConfig:Object, extendedConfig:Object):void {
 			var aBaseConfig:Array = [baseConfig.nPlayers, baseConfig.moveSec, baseConfig.totalMin];
-			_transporter.call(CMD_NEW_CONFIG, [aBaseConfig, extendedConfig]);
+			_transporter.call(CMD_NEW_CONF, [aBaseConfig, extendedConfig]);
 		}
 
 		private function onNewConfig(event:TransporterEvent):void {
@@ -394,7 +394,7 @@
 			this.extendedConfig = extendedConfig;
 			playNicks0 = new Array(nick);
 			
-			var e:NewEvent = new NewEvent(NewEvent.CONFIG);
+			var e:NewEvent = new NewEvent(NewEvent.CONF);
 			e.nick           = nick;
 			e.baseConfig     = baseConfig;
 			e.extendedConfig = extendedConfig;

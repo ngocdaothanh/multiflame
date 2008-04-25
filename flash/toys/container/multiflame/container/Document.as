@@ -84,7 +84,7 @@
 				if (flashVars["mode"] == "demo") {
 					_mode = Constants.MODE_DEMO;
 				} else if (flashVars["mode"] == "edit") {
-					_mode = Constants.MODE_CONFIG;
+					_mode = Constants.MODE_CONF;
 				} else {
 					_mode = Constants.MODE_REAL;
 				}
@@ -117,7 +117,7 @@
 			addChild(sprite);
 			_dimensions = toy.setContainer(this, _mode, _config);
 
-			if (_mode == Constants.MODE_CONFIG) {
+			if (_mode == Constants.MODE_CONF) {
 				stage.scaleMode = StageScaleMode.NO_SCALE;
 				sprite.x = (500 - _dimensions[0])/2;
 				sprite.y = (500 - _dimensions[1])/2;

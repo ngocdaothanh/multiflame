@@ -28,10 +28,10 @@ else
   LOGGER = Logger.new(STDOUT)
 end
 
-CAPTCHA = Revent::Captcha.new(CONFIG[:captcha_key], CONFIG[:captcha_length], CONFIG[:captcha_valid_period])
+CAPTCHA = Revent::Captcha.new(CONF[:captcha_key], CONF[:captcha_length], CONF[:captcha_valid_period])
 
 EventMachine::run do
   Proxy.instance
-  Server.new(CONFIG[:host], CONFIG[:port])
-  LOGGER.info("Fifo started on #{CONFIG[:host]}:#{CONFIG[:port]}")
+  Server.new(CONF[:host], CONF[:port])
+  LOGGER.info("Fifo started on #{CONF[:host]}:#{CONF[:port]}")
 end

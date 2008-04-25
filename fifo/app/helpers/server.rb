@@ -24,7 +24,7 @@ class Server
   #CMD_ROOM_ENTER
   #CMD_ROOM_LEAVE
   #CMD_CHAT
-  CMD_NEW_CONFIG   = 8
+  CMD_NEW_CONF     = 8
   CMD_NEW_JOIN     = 9
   CMD_NEW_UNJOIN   = 10
   CMD_NEW_TIMEOUT  = 11

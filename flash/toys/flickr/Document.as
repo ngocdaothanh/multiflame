@@ -32,7 +32,7 @@
 				config = demoConfig();
 				doStart(config);
 				break;
-			case Constants.MODE_CONFIG:
+			case Constants.MODE_CONF:
 				_waiting.x = 250;
 				_waiting.y = 265;
 				addEventListener(Event.ADDED, onAdded);
@@ -72,7 +72,7 @@
 				removeChild(_gallery);
 			}
 
-			if (_mode == Constants.MODE_CONFIG) {
+			if (_mode == Constants.MODE_CONF) {
 				if (!contains(_waiting)) {
 					addChild(_waiting);
 				}

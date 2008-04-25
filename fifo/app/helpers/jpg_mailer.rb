@@ -1,6 +1,6 @@
 class JPGMailer < ActionMailer::Base
   def msg(recipient, subject, body, jpg)
-    self.from       CONFIG[:admin_email]
+    self.from       CONF[:admin_email]
     self.recipients recipient
     self.subject    subject
     self.body       body

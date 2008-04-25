@@ -46,7 +46,7 @@
 
 			_channel.addEventListener(CloseEvent.CLOSED, onClosed);
 			_channel.addEventListener(RoomEnterLeaveEvent.ENTER_ME, onRoomEnterMe);
-			_channel.addEventListener(NewEvent.CONFIG, onNewConfig);
+			_channel.addEventListener(NewEvent.CONF, onNewConfig);
 			_channel.addEventListener(NewEvent.JOIN, onNewJoin);
 			_channel.addEventListener(NewEvent.UNJOIN, onNewUnjoin);
 			_channel.addEventListener(NewEvent.TIMEOUT, onNewTimeout);

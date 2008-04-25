@@ -34,7 +34,7 @@ class Room
       Server::CMD_ROOM_ENTER   => method('enter'),
       Server::CMD_ROOM_LEAVE   => method('leave'),
       Server::CMD_CHAT         => method('chat'),
-      Server::CMD_NEW_CONFIG   => method('new_config'),
+      Server::CMD_NEW_CONF   => method('new_config'),
       Server::CMD_NEW_JOIN     => method('new_join'),
       Server::CMD_NEW_UNJOIN   => method('new_unjoin'),
       Server::CMD_NEW_TIMEOUT  => method('new_timeout'),
@@ -139,7 +139,7 @@ private
     @playing_players0 = [player]
 
     @players.each do |p|
-      p.call(Server::CMD_NEW_CONFIG, [player.session[:nick], a_base_config, @extended_config])
+      p.call(Server::CMD_NEW_CONF, [player.session[:nick], a_base_config, @extended_config])
     end
   end
 
@@ -277,7 +277,7 @@ private
     @state = GAME_OVER
     # TODO: phase2: collect results and judge later
     #collect_results(player, value)
-    EventMachine::add_timer(CONFIG[:game_over_delay]) do
+    EventMachine::add_timer(CONF[:game_over_delay]) do
       # TODO: phase2: collect results and judge later
       #judge_results
       @state = NEWABLE
@@ -358,7 +358,7 @@ private
     # Check if it is not move timeout
     dt = now - @last_batch_move_sent
     if dt < @base_config[:move_sec]
-      player.close_connection if CONFIG[:max_lag] < dt
+      player.close_connection if CONF[:max_lag] < dt
       return
     end
 

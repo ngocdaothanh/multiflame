@@ -1,4 +1,4 @@
-CONFIG = {
+CONF = {
   :captcha_key          => 'captcha_key',
   :captcha_length       => 3,
   #:captcha_valid_period => 15,  # [sec]
