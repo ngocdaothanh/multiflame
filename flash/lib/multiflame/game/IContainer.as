@@ -20,11 +20,12 @@
 		// ---------------------------------------------------------------------------
 
 		/**
-		 * Only called by the game.
+		 * Only called by games.
 		 */
 
 		/**
 		 * @return
+		 * The config of the current game.
 		 * {
 		 * 	nPlayers,
 		 * 	moveSec,
@@ -34,13 +35,16 @@
 		function get baseConfig():Object;
 
 		/**
-		 * If you want to use extended config, please define a custom config dialog.
+                 * @return
+		 * The extended config of the current game. If you want
+		 * to use extended config, please define a custom config dialog.
 		 */
 		function get extendedConfig():Object;
 
 		/**
 		 * @return
-		 * Nicks of players who initially joined the game. Players can resign during the game.
+		 * Nicks of players who initially joined the game. Note that players can
+		 * resign during the game.
 		 */
 		function get nicks0():Array;
 
@@ -98,9 +102,25 @@
 		 * Only called by the config dialog.
 		 */
 
+		/**
+		 * The config dialog calls to get the config ranges.
+		 */
 		function get baseConfigRange():Object;
+
+		/**
+		 * The config dialog calls to notify that the player has finished configurating
+		 * a new game and is ready for other players to join.
+		 */
 		function config(baseConfig:Object, extendedConfig:Object):void;
+
+		/**
+		 * The config dialog calls to notify that the player has decided to join.
+		 */
 		function join():void;
+
+		/**
+		 * The config dialog calls to notify that the player has decided to unjoin.
+		 */
 		function unjoin():void;
 	}
 }

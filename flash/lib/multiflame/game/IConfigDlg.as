@@ -8,7 +8,7 @@
 		/**
 		 * If the player logs in at the the middle of NEW state, onInit and
 		 * a series of onJoin will be called by the game container.
-		 * 
+		 *
 		 * @param nick
 		 * Nick of the player who is inviting.
 		 *
