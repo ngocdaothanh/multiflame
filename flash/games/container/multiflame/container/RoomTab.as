@@ -156,7 +156,7 @@
 		// --------------------------------------------------------------------------
 
 		public function get baseConfigRange():Object {
-			return _game.baseConfigRange;
+			return _baseConfigRange;
 		}
 
 		public function config(baseConfig:Object, extendedConfig:Object):void {
@@ -177,13 +177,13 @@
 			_game = value as IGame;
 			_game.enabled = false;
 
-			var o:Object = _game.setContainer(this);
+			var o:Object = _game.onLoaded(this);
 			_type = o.type;
 			_configDlg = o.configDlg;
 			if (_configDlg == null) {
 				_configDlg = new ConfigDlg();
 			}
-			_configDlg.setContainer(this);
+			_configDlg.onLoaded(this);
 			_introSprite = o.introSprite;
 		}
 

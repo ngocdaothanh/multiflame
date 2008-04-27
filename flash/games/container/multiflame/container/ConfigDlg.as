@@ -46,28 +46,27 @@
 		
 		// --------------------------------------------------------------------------
 		
-		public function setContainer(value:IContainer):void {
+		public function onLoaded(value:IContainer, gameInfo:Object):void {
 			_container = value;
-			var range:Object = _container.baseConfigRange;
 
-			_nPlayersStepper.minimum = range.nPlayersMin;
-			_nPlayersStepper.maximum = range.nPlayersMax;
+			_nPlayersStepper.minimum = gameInfo.nPlayersMin;
+			_nPlayersStepper.maximum = gameInfo.nPlayersMax;
 			_nPlayersStepper.value = _nPlayersStepper.minimum;
 			_nPlayersAlwaysDisabled = _nPlayersStepper.minimum == _nPlayersStepper.maximum;
 			if (_nPlayersAlwaysDisabled) {
 				_nPlayersStepper.enabled = false;
 			}
 			
-			_moveSecStepper.minimum = range.moveSecMin;
-			_moveSecStepper.maximum = range.moveSecMax;
+			_moveSecStepper.minimum = gameInfo.moveSecMin;
+			_moveSecStepper.maximum = gameInfo.moveSecMax;
 			_moveSecStepper.value = _moveSecStepper.minimum;
 			_moveSecAlwaysDisabled = _moveSecStepper.minimum == _moveSecStepper.maximum;
 			if (_moveSecAlwaysDisabled) {
 				_moveSecStepper.enabled = false;
 			}
 			
-			_totalMinStepper.minimum = range.totalMinMin;
-			_totalMinStepper.maximum = range.totalMinMax;
+			_totalMinStepper.minimum = gameInfo.totalMinMin;
+			_totalMinStepper.maximum = gameInfo.totalMinMax;
 			_totalMinStepper.value = _totalMinStepper.minimum;
 			_totalMinAlwaysDisabled = _totalMinStepper.minimum == _totalMinStepper.maximum
 			if (_totalMinAlwaysDisabled) {

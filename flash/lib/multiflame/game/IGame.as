@@ -4,7 +4,8 @@
 	 */
 	public interface IGame {
 		/**
-                 * The container calls after it has finished loading this game.
+                 * The container calls to get information about this game after
+		 * it has finished loading.
                  *
 		 * Utilities like translation, TweenLite and TweenFilterLite are not available
 		 * until the game container has been set. Because this movie clip can be used
@@ -14,24 +15,15 @@
 		 *
 		 * @return
 		 * {
-		 * 	type,          Game type, see Constants.as
-		 * 	configDlg,     An instance of IConfigDlg, null to use the default
-		 * 	introSprite    A sprite displaying game introduction (rule, trivia...), null for none
-		 * }
-		 */
-		function setContainer(container:IContainer):Object;
-
-		/**
-                 * The container calls to get information about this game.
-                 *
-		 * @return
-		 * {
+		 * 	type,                        Game type, see Constants.as
 		 * 	nPlayersMin, nPlayersMax,    Number of players, should be >= 2
 		 * 	moveSecMin, moveSecMax,      [sec], = 0 for unlimited, not used for realtime game
 		 * 	totalMinMin, totalMinMax     [min], = 0 for unlimited
+		 * 	configDlg,                   An instance of IConfigDlg, null to use the default
+		 * 	introSprite                  A sprite displaying game introduction (rule, trivia...), null for none
 		 * }
 		 */
-		function get baseConfigRange():Object;
+		function onLoaded(container:IContainer):Object;
 
 		/**
 		 * The container calls to ask the game to enable/disable user inputs.

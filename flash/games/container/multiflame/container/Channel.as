@@ -291,11 +291,11 @@
 					totalMin: snapshot[2][2]
 				};
 			} else {
-				var range = RoomTab.instance.baseConfigRange;
+				var gameInfo = RoomTab.instance.gameInfo;
 				snapshot[2] = {
-					nPlayers: range.nPlayersMin,
-					moveSec:  range.moveSecMin,
-					totalMin: range.totalMinMin
+					nPlayers: gameInfo.nPlayersMin,
+					moveSec:  gameInfo.moveSecMin,
+					totalMin: gameInfo.totalMinMin
 				};
 			}
 			baseConfig     = snapshot[2];

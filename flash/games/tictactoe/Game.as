@@ -26,18 +26,13 @@
 
 		// ---------------------------------------------------------------------------
 
-		public function get baseConfigRange():Object {
-			return {
-				nPlayersMin: 2, nPlayersMax: 2,
-				moveSecMin: 10, moveSecMax: 60,
-				totalMinMin: 0,	totalMinMax: 0
-			};
-		}
-
-		public function setContainer(container:IContainer):Object {
+		public function onLoaded(container:IContainer):Object {
 			_container = container;
 			return {
 				type: Constants.IGOUGO,
+				nPlayersMin: 2, nPlayersMax: 2,
+				moveSecMin: 10, moveSecMax: 60,
+				totalMinMin: 0,	totalMinMax: 0
 				introSprite: new IntroSprite(this)
 			};
 		}

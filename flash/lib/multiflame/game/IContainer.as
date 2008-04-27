@@ -103,11 +103,6 @@
 		 */
 
 		/**
-		 * The config dialog calls to get the config ranges.
-		 */
-		function get baseConfigRange():Object;
-
-		/**
 		 * The config dialog calls to notify that the player has finished configurating
 		 * a new game and is ready for other players to join.
 		 */
