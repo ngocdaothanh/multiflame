@@ -8,6 +8,10 @@
 * Set ouput directory to fifo/WEB-INF/classes
 * Add red5.jar, commons-logging-x.jar, spring-core-x.jar to the build path
 
+== Running
+
+* Put logback-classic-x.jar, logback-core-x.jar, slf4j-api-x.jar to WEB-INF/lib.
+
 == Debuging with Eclipse on Windows
 
 * Add the following lines to <Red5>/conf/wrapper.conf
