@@ -5,17 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import org.red5.server.api.IConnection;
 
-public class Login {
-	protected final Logger logger = LoggerFactory.getLogger(Login.class);
-
-	private static final Login instance = new Login();
-
-	private Login() {
-	}
-
-	public static Login getInstance() {
-		return instance;
-	}
+public class Auth {
+	protected final Logger logger = LoggerFactory.getLogger(Auth.class);
 
 	public boolean appConnect(IConnection conn, Object[] params) {
 		logger.debug("6666");

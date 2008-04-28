@@ -5,8 +5,7 @@
 	    <property name="location" value="/WEB-INF/red5-web.properties" />
 	</bean>
 
-	<bean id="web.context" class="org.red5.server.Context"
-		autowire="byType" />
+	<bean id="web.context" class="org.red5.server.Context" autowire="byType" />
 
 	<bean id="web.scope" class="org.red5.server.WebScope"
 		 init-method="register">
@@ -18,5 +17,9 @@
 		<property name="virtualHosts" value="${webapp.virtualHosts}" />
 	</bean>
 
-	<bean id="web.handler" class="fifo.Application" singleton="true" />
+	<bean id="web.handler" class="fifo.Application" singleton="true">
+		<property name="auth" ref="fifo.auth" />
+	</bean>
+
+	<bean id="fifo.auth" class="fifo.Auth" />
 </beans>
