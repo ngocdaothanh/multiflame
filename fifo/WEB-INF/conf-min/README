@@ -1,0 +1,3 @@
+These are minimum configuration files for Red5. To decrease startup time:
+* Only leave red5-default.xml and fifo in webapps, remove everything else.
+* Backup the original configuration files then replace them with these ones. 

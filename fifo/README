@@ -1,13 +1,21 @@
-== Requirements
+== Creating Eclipse project
 
-* RMagick: for creating CAPTCHA images
-http://rubyforge.org/projects/rmagick/
+* Install Red5 as standalone server, not as WAR
+* Create <Red5>/webapps/fifo directory
+* Check out /trunk/fifo into this <Red5>/webapps/fifo
+* From Eclipse create a new Java project named fifo, choose
+  "Create project from existing source" and point to <Red5>/webapps/fifo
+* Set ouput directory to fifo/WEB-INF/classes
+* Add red5.jar, commons-logging-x.jar, spring-core-x.jar to the build path
 
-* EventMachine: for creating server
-gem install eventmachine
+== Debuging with Eclipse on Windows
 
-* Revent:
-gem install revent
-
-* JSON: for serializing and deserializing text data between games and the server
-gem install json
+* Add the following lines to <Red5>/conf/wrapper.conf
+wrapper.java.additional.1=-Djava.security.manager
+wrapper.java.additional.2=-Djava.security.policy=<Red5>/conf/red5.policy
+wrapper.java.additional.3=-Xdebug
+wrapper.java.additional.4=-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y
+* Run <Red5>/wrapper/Red5.bat
+* In Eclipse, open debug dialog, right click Remote Java Application, choose NEW
+* Create a new debug profile named fifo for fifo project, set the port to 8787
+* Debug As... -> fifo
