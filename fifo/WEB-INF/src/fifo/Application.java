@@ -21,7 +21,7 @@ import org.red5.server.api.so.ISharedObject;
  * Room:  /<app>/<game>/<channel>/<player>
  */
 public class Application extends ApplicationAdapter {
-	protected final Logger logger = LoggerFactory.getLogger(Application.class);
+	private final Logger logger = LoggerFactory.getLogger(Application.class);
 
 	/* -----------------------------------------------------------------------*/
 
@@ -45,24 +45,14 @@ public class Application extends ApplicationAdapter {
 	/* -----------------------------------------------------------------------*/
 
 	public boolean appConnect(IConnection conn, Object[] params) {
-		return auth.appConnect(conn, params);
-	}
+		if (!auth.appConnect(conn, params)) {
+			return false;
+		} 
 
-	public void appDisconnect(IConnection conn) {
-	}
+		// Not put in roomStart() because it is always run before appConnect(). 
+		IScope lobbyScope = conn.getScope();
+		Lobby.attach(this, lobbyScope);
 
-	/* -----------------------------------------------------------------------*/
-
-	public boolean roomStart(IScope room) {
-		System.out.println("hehhehehehehheheheheehehhehehhehehe");
-		Object handler = new Service();
-		room.registerServiceHandler("sample", handler);
-		
-
-		createSharedObject(room, "players", false);
-		ISharedObject so = getSharedObject(room, "players");
-		so.setAttribute("names", "hahahaha");
-		System.out.println(so);
-		return true;
+		return true; 
 	}
 }
