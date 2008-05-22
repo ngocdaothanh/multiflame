@@ -6,7 +6,9 @@
   "Create project from existing source" and point to <Red5>/webapps/gserver
 * Set ouput directory to gserver/WEB-INF/classes
 * Right-click WEB-INF/src, select Build Path -> Use as Source Folder
-* Add red5.jar, commons-logging-x.jar, spring-core-x.jar to the build path
+* Right-click the project, select Build Path -> Confiugure Build Path...
+  and add red5.jar, logback-classic-x.jar, logback-core-x.jar, slf4j-api-x.jar,
+  spring-core-x.jar as external JARs to the library list
 
 == Running
 
