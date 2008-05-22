@@ -4,9 +4,9 @@
 	 */
 	public interface IGame {
 		/**
-                 * The container calls to get information about this game after
+		 * The container calls to get information about this game after
 		 * it has finished loading.
-                 *
+		 *
 		 * Utilities like translation, TweenLite and TweenFilterLite are not available
 		 * until the game container has been set. Because this movie clip can be used
 		 * at places other than the game container, if you need to ensure that
