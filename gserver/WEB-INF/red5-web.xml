@@ -17,9 +17,9 @@
 		<property name="virtualHosts" value="${webapp.virtualHosts}" />
 	</bean>
 
-	<bean id="web.handler" class="fifo.Application" singleton="true">
-		<property name="auth" ref="fifo.auth" />
+	<bean id="web.handler" class="gserver.Application" singleton="true">
+		<property name="auth" ref="gserver.auth" />
 	</bean>
 
-	<bean id="fifo.auth" class="fifo.Auth" />
+	<bean id="gserver.auth" class="gserver.Auth" />
 </beans>

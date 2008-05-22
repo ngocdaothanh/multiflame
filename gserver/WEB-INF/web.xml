@@ -29,7 +29,7 @@
 
 	<context-param>
 		<param-name>webAppRootKey</param-name>
-		<param-value>/fifo</param-value>
+		<param-value>/gserver</param-value>
 	</context-param>
 
 	<listener>

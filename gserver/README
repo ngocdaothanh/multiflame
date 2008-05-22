@@ -1,11 +1,11 @@
 == Creating Eclipse project
 
 * Install Red5 as standalone server, not as WAR
-* Create <Red5>/webapps/fifo directory
-* Check out /trunk/fifo into this <Red5>/webapps/fifo
-* From Eclipse create a new Java project named fifo, choose
-  "Create project from existing source" and point to <Red5>/webapps/fifo
-* Set ouput directory to fifo/WEB-INF/classes
+* Create <Red5>/webapps/gserver directory
+* Check out /trunk/gserver into this <Red5>/webapps/gserver
+* From Eclipse create a new Java project named gserver, choose
+  "Create project from existing source" and point to <Red5>/webapps/gserver
+* Set ouput directory to gserver/WEB-INF/classes
 * Add red5.jar, commons-logging-x.jar, spring-core-x.jar to the build path
 
 == Running
@@ -21,5 +21,5 @@ wrapper.java.additional.3=-Xdebug
 wrapper.java.additional.4=-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y
 * Run <Red5>/wrapper/Red5.bat
 * In Eclipse, open debug dialog, right click Remote Java Application, choose NEW
-* Create a new debug profile named fifo for fifo project, set the port to 8787
-* Debug As... -> fifo
+* Create a new debug profile named gserver for gserver project, set the port to 8787
+* Debug As... -> gserver
