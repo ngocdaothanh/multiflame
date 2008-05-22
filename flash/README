@@ -1,4 +1,4 @@
-Compile with Adode Flash:
+Compile from Adode Flash:
 * Go to Files/Edit -> Preferences -> ActionScript -> ActionScript 3.0 Settings
 * Add ../../lib to class path
 
@@ -7,13 +7,13 @@ Publish (compile) from CLI:
 * Run publish.rb <path to a .fla> to compile one file, or
       publish.rb without arguments to compile all .fla files
 
+i18n:
+* Install Ruby and RubyGetText: gem install gettext
+* Install poedit and add its bin directory to system path
+* In the game or toy directory, run ruby <path to gettext.rb> <updatepo|makemo>
+
 Run without wserver:
 * Go to http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html
 * Add the folder of your game to trusted location list
 * Copy client.swf to your game folder, rename it to <locale>.swf
 * Run client.swf, it will load game.swf in <locale> language
-
-i18n:
-* Install Ruby and RubyGetText: gem install gettext
-* Install poedit and add its bin directory to system path
-* In the game or toy directory, run ruby <path to gettext.rb> <updatepo|makemo>
