@@ -1,5 +1,7 @@
 module Admin
   class AdminController < ApplicationController
+    session :on
+
     layout 'admin'
     before_filter :check_login_admin
 

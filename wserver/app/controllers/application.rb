@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  session :off
+
   before_init_gettext :set_lang
   init_gettext 'app'
 

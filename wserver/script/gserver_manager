@@ -11,7 +11,7 @@ require 'zlib'
 RAILS_ROOT = "#{File.dirname(__FILE__)}/.."
 
 if ARGV[0] == 'production'
-  LOGGER = Logger.new("#{RAILS_ROOT}/log/fifo_manager.log", 'daily')
+  LOGGER = Logger.new("#{RAILS_ROOT}/log/gserver_manager.log", 'daily')
   LOGGER.level = Logger::INFO
 else
   LOGGER = Logger.new(STDOUT)
@@ -30,15 +30,15 @@ require "#{RAILS_ROOT}/app/models/stat"
 # ------------------------------------------------------------------------------
 
 # Game information is rarely changed. On startup, the manager will load
-# information about all games into memory. When a fifo connects, it will be passed
+# information about all games into memory. When a gserver connects, it will be passed
 # this information. When there is a change, the web server will notify the manager,
-# and the manager in turn will push this change to all the fifos.
+# and the manager in turn will push this change to all the gservers.
 #
-# Moreover, the manager may be down while the fifos are still alive. In this case,
-# the fifos will try to connect to the manager every ~15sec. On startup, the
-# manager will wait ~1min for all the fifos to connect and report their status
+# Moreover, the manager may be down while the gservers are still alive. In this case,
+# the gservers will try to connect to the manager every ~15sec. On startup, the
+# manager will wait ~1min for all the gservers to connect and report their status
 # (list of channels they are serving...).
-class FifoManager
+class GserverManager
   include Revent::RRServer
 
   # Web -> manager
@@ -46,12 +46,12 @@ class FifoManager
   CMD_WM_CG_RELOAD        = 1
   CMD_WM_SNAPSHOT_CREATE  = 2
 
-  # Manager -> fifo
+  # Manager -> gserver
   CMD_MF_READY_SET        = 0
   CMD_MF_CG_SET           = 1
   CMD_MF_REMOTE_IPS_GET   = 2
 
-  # Fifo -> manager
+  # Gserver -> manager
   CMD_FM_CHANNEL_KEYS_SET = 10
   CMD_FM_CHANNEL_CREATE   = 11
   CMD_FM_CHANNEL_DELETE   = 12
@@ -63,7 +63,7 @@ class FifoManager
     @ready = false
 
     @on_calls = {
-      CMD_WM_WHICH_FIFO       => method(:on_call_wm_which_fifo),
+      CMD_WM_WHICH_FIFO       => method(:on_call_wm_which_gserver),
       CMD_WM_CG_RELOAD        => method(:on_call_wm_cg_reload),
       CMD_WM_SNAPSHOT_CREATE  => method(:on_call_wm_snapshot_create),
       CMD_FM_CHANNEL_KEYS_SET => method(:on_call_fm_channel_keys_set),
@@ -72,12 +72,12 @@ class FifoManager
     }
 
     cg_reload
-    EventMachine::add_timer(CONF[:fifo_manager_startup_delay]) do
+    EventMachine::add_timer(CONF[:gserver_manager_startup_delay]) do
       @ready = true
-      clients.each { |fifo| mf_ready_set(fifo) }
+      clients.each { |gserver| mf_ready_set(gserver) }
     end
 
-    EventMachine::add_periodic_timer(CONF[:fifo_manager_snapshot_interval]*60) do
+    EventMachine::add_periodic_timer(CONF[:gserver_manager_snapshot_interval]*60) do
       on_call_wm_snapshot_create(nil, nil)
     end
 
@@ -117,32 +117,32 @@ private
 
   # Web server -> manager ------------------------------------------------------
 
-  # Which fifo should handle a certain channel?
+  # Which gserver should handle a certain channel?
   # Input: {:game_id, :channel_name}
   # Output: {:game_id, :channel_name, :host, :port}
-  def on_call_wm_which_fifo(fifo, value)
+  def on_call_wm_which_gserver(gserver, value)
     @mutex_channel_keys.synchronize do
       return nil if @channel_keys.empty?
 
-      # Take out the fifo the is handling this channel
+      # Take out the gserver the is handling this channel
       key = value
-      fifos = @channel_keys.each do |f, keys|
+      gservers = @channel_keys.each do |f, keys|
         return [key, f.session[:swf_host], f.session[:swf_port]] if keys.include?(key)
       end
 
-      # Take out the the emptiest fifo
-      fifos = @channel_keys.keys
-      max_fifo = fifos[0]
-      max = fifos[0].session[:players_avalable]
-      (1...fifos.size).each do |i|
-        f = fifos[i]
+      # Take out the the emptiest gserver
+      gservers = @channel_keys.keys
+      max_gserver = gservers[0]
+      max = gservers[0].session[:players_avalable]
+      (1...gservers.size).each do |i|
+        f = gservers[i]
         a = f.session[:players_avalable]
         if max < a
-          max_fifo = f
+          max_gserver = f
           max = a
         end
       end
-      return [key, max_fifo.session[:swf_host], max_fifo.session[:swf_port]]
+      return [key, max_gserver.session[:swf_host], max_gserver.session[:swf_port]]
     end
   end
 
@@ -166,22 +166,22 @@ private
     end
   end
 
-  # Fifos -> manager -----------------------------------------------------------
+  # Gservers -> manager -----------------------------------------------------------
 
-  # The fifos call this right after connecting to the manager.
-  def on_call_fm_channel_keys_set(fifo, value)
+  # The gservers call this right after connecting to the manager.
+  def on_call_fm_channel_keys_set(gserver, value)
     @mutex_channel_keys.synchronize do
-      fifo.session = value[:property]
-      fifo.session[:players_available] = fifo.session[:players_limit]
-      @channel_keys[fifo] = value[:channel_keys]
+      gserver.session = value[:property]
+      gserver.session[:players_available] = gserver.session[:players_limit]
+      @channel_keys[gserver] = value[:channel_keys]
     end
     nil
   end
 
   # Ask the manager to create a channel. If the channel has already existed, let
-  # the fifo know where to redirect the container to.
-  # Returns nil if the calling fifo should handle the channel.
-  def on_call_fm_channel_create(fifo, value)
+  # the gserver know where to redirect the container to.
+  # Returns nil if the calling gserver should handle the channel.
+  def on_call_fm_channel_create(gserver, value)
     @mutex_channel_keys.synchronize do
       key = value
       host = port = nil
@@ -194,9 +194,9 @@ private
       end
 
       if host.nil?
-        fifo.session[:players_available] -= 1
-        @channel_keys[fifo] << key
-      elsif fifo.session[:swf_host] == host and fifo.session[:swf_port] == port
+        gserver.session[:players_available] -= 1
+        @channel_keys[gserver] << key
+      elsif gserver.session[:swf_host] == host and gserver.session[:swf_port] == port
         host = nil
         port = nil
       end
@@ -204,23 +204,23 @@ private
     end
   end
 
-  # The channel has been deleted on the fifo.
-  def on_call_fm_channel_delete(fifo, value)
+  # The channel has been deleted on the gserver.
+  def on_call_fm_channel_delete(gserver, value)
     @mutex_channel_keys.synchronize do
       key = value
-      @channel_keys[fifo].delete(key)
+      @channel_keys[gserver].delete(key)
     end
     nil
   end
 
-  # Manager -> fifos -----------------------------------------------------------
+  # Manager -> gservers -----------------------------------------------------------
 
-  def mf_ready_set(fifo)
-    fifo.call(CMD_MF_READY_SET, nil)
+  def mf_ready_set(gserver)
+    gserver.call(CMD_MF_READY_SET, nil)
   end
 
-  def mf_cg_set(fifo)
-    fifo.call(CMD_MF_CG_SET, @cg)
+  def mf_cg_set(gserver)
+    gserver.call(CMD_MF_CG_SET, @cg)
   end
 
   def channel_key(game_id, channel_name)
@@ -230,28 +230,28 @@ private
   # ----------------------------------------------------------------------------
 
   # client is not nil if this method is strigged by the web.
-  # Returns 0 if there's no fifo, nil if the snapshot will be written to DB.
+  # Returns 0 if there's no gserver, nil if the snapshot will be written to DB.
   def on_call_wm_snapshot_create(client, value)
     if !client.nil?
-      @num_fifos = clients.size - 1
+      @num_gservers = clients.size - 1
     else
-      @num_fifos = clients.size 
+      @num_gservers = clients.size
     end
-    return 0 if @num_fifos == 0
+    return 0 if @num_gservers == 0
 
     @remote_ips_got = {}
-    clients.each do |fifo|
-      fifo.call(CMD_MF_REMOTE_IPS_GET, nil) if fifo != client
+    clients.each do |gserver|
+      gserver.call(CMD_MF_REMOTE_IPS_GET, nil) if gserver != client
     end
     nil
   end
 
-  def on_result_mf_remote_ips_get(fifo, value)
+  def on_result_mf_remote_ips_get(gserver, value)
     value = Zlib::Inflate.inflate(value)
     value = Marshal.load(value)
-    k = {:host => fifo.session[:swf_host], :port => fifo.session[:swf_port], :players_limit => fifo.session[:players_limit]}
+    k = {:host => gserver.session[:swf_host], :port => gserver.session[:swf_port], :players_limit => gserver.session[:players_limit]}
     @remote_ips_got[k] = value
-    return if @remote_ips_got.size < @num_fifos
+    return if @remote_ips_got.size < @num_gservers
 
     s = Stat.new
     s.snapshot = Zlib::Deflate.deflate(Marshal.dump(@remote_ips_got))
@@ -262,6 +262,6 @@ end
 # ------------------------------------------------------------------------------
 
 EventMachine::run do
-  FifoManager.new(CONF[:fifo_manager_host], CONF[:fifo_manager_port])
-  LOGGER.info("Fifo manager started on #{CONF[:fifo_manager_host]}:#{CONF[:fifo_manager_port]}")
+  GserverManager.new(CONF[:gserver_manager_host], CONF[:gserver_manager_port])
+  LOGGER.info("Gserver manager started on #{CONF[:gserver_manager_host]}:#{CONF[:gserver_manager_port]}")
 end

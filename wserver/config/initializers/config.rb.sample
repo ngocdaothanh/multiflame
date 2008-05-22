@@ -1,4 +1,4 @@
-# Used by both the web and script/fifo_manager, things only used by the web
+# Used by both the web and script/gserver_manager, things only used by the web
 # should be put in environment.rb.
 
 CONF = {
@@ -15,10 +15,10 @@ CONF = {
   :swf_height           => 560,
 
   # For security, only connections from localhost is allowed
-  :fifo_manager_host              => 'localhost',
-  :fifo_manager_port              => 1943,
-  :fifo_manager_startup_delay     => 5,   # [sec], wait for the fifos to reconnect
-  :fifo_manager_snapshot_interval => 10,  # [min], snapshots of the whole system, for statistics
+  :gserver_manager_host              => 'localhost',
+  :gserver_manager_port              => 1943,
+  :gserver_manager_startup_delay     => 5,   # [sec], wait for the gservers to reconnect
+  :gserver_manager_snapshot_interval => 10,  # [min], snapshots of the whole system, for statistics
   :captcha_salt_renew_interval    => 1    # [min]
 }.freeze
 
