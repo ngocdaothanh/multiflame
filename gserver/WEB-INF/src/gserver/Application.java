@@ -1,4 +1,4 @@
-package fifo;
+package gserver;
 
 import java.util.Map;
 import java.util.List;
@@ -14,7 +14,7 @@ import org.red5.server.api.service.IServiceCapableConnection;
 import org.red5.server.adapter.ApplicationAdapter;
 import org.red5.server.exception.ClientRejectedException;
 import org.red5.io.amf3.ByteArray;
-import org.red5.server.api.so.ISharedObject; 
+import org.red5.server.api.so.ISharedObject;
 
 /**
  * Lobby: /<app>/<game>/<channel>
@@ -47,12 +47,12 @@ public class Application extends ApplicationAdapter {
 	public boolean appConnect(IConnection conn, Object[] params) {
 		if (!auth.appConnect(conn, params)) {
 			return false;
-		} 
+		}
 
-		// Not put in roomStart() because it is always run before appConnect(). 
+		// Not put in roomStart() because it is always run before appConnect().
 		IScope lobbyScope = conn.getScope();
 		Lobby.attach(this, lobbyScope);
 
-		return true; 
+		return true;
 	}
 }

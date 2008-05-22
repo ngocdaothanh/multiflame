@@ -5,6 +5,7 @@
 * From Eclipse create a new Java project named gserver, choose
   "Create project from existing source" and point to <Red5>/webapps/gserver
 * Set ouput directory to gserver/WEB-INF/classes
+* Right-click WEB-INF/src, select Build Path -> Use as Source Folder
 * Add red5.jar, commons-logging-x.jar, spring-core-x.jar to the build path
 
 == Running

@@ -1,4 +1,4 @@
-package fifo;
+package gserver;
 
 import org.red5.server.adapter.ApplicationAdapter;
 import org.red5.io.amf3.ByteArray;
@@ -15,7 +15,7 @@ public class Lobby {
 		if (application == null) {
 			application = app;
 		}
- 
+
 		synchronized(scope) {
 			Object lobbyHandler = scope.getServiceHandler("lobby");
 			if (lobbyHandler == null) {

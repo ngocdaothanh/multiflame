@@ -1,4 +1,4 @@
-package fifo;
+package gserver;
 
 import org.red5.server.adapter.ApplicationAdapter;
 import org.red5.server.api.IScope;
