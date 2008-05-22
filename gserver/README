@@ -1,8 +1,7 @@
 == Creating Eclipse project
 
 * Install Red5 as standalone server, not as WAR
-* Create <Red5>/webapps/gserver directory
-* Check out /trunk/gserver into this <Red5>/webapps/gserver
+* Create <Red5>/webapps/gserver directory and check out /trunk/gserver into it
 * From Eclipse create a new Java project named gserver, choose
   "Create project from existing source" and point to <Red5>/webapps/gserver
 * Set ouput directory to gserver/WEB-INF/classes
@@ -10,7 +9,8 @@
 
 == Running
 
-* Put logback-classic-x.jar, logback-core-x.jar, slf4j-api-x.jar to WEB-INF/lib.
+* Copy logback-classic-x.jar, logback-core-x.jar, slf4j-api-x.jar to WEB-INF/lib
+* Start Red5
 
 == Debuging with Eclipse on Windows
 
