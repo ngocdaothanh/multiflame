@@ -58,7 +58,7 @@ Rails::Initializer.run do |config|
   #config.active_record.default_timezone = :utc
 end
 
-# Custom config not used by script/fifo_manager is put here. -------------------
+# Custom config not used by script/gserver_manager is put here -----------------
 
 $KCODE = 'u'
 require 'jcode'

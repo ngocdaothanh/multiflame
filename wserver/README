@@ -8,15 +8,15 @@
 
 * Modify config/initializers/config.rb, config/database.yml
 * Prepare DB
-rake db:migrate
-rake db:init
+jruby -S rake db:migrate
+jruby -S rake db:init
 * Translate pofiles to mofiles
-rake gettext:makemo
+jruby -S rake gettext:makemo
 
 == Running
 
 * Start the fifo manager first
-ruby script/fifo_manager
+jruby script/gserver_manager
 
 * Then start the web server(s)
-ruby script/server
+jruby script/server
