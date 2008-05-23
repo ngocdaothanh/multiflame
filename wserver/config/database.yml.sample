@@ -1,6 +1,6 @@
 # encoding: "unicode" for PostgreSQL or "utf8" for MySQL.
 common: &common
-  adapter: postgresql
+  adapter: jdbcpostgresql
   host: localhost
   port: 5432
   username: postgres

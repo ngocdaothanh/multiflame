@@ -1,8 +1,8 @@
 == Requirements
 
-* Rails 2+
+* JRuby 1.1.1+
+* Rails 2.0.2 (newer version may not work!)
 * RubyGettext (for Windows: install poedit and add its bin directory to system path)
-* Revent
 
 == Installation
 
