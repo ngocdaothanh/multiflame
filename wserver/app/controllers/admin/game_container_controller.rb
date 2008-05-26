@@ -6,11 +6,11 @@ module Admin
     def update
       container = GameContainer.instance
       if container.upload_and_update(params)
-        FifoManager.new(FifoManager::CMD_WM_CG_RELOAD, nil)
+        GserverManager.new(GserverManager::CMD_WM_CG_RELOAD, nil)
         flash[:notice] = _('Container was updated')
-        redirect_to admin_games_path
+        redirect_to(admin_games_path)
       else
-        render :action => 'edit'
+        render(:action => 'edit')
       end
     end
   end

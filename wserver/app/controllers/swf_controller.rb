@@ -7,18 +7,18 @@ class SwfController < ApplicationController
     game_container = GameContainer.instance
     game = Game.find(params[:id])
 
-    fm = FifoManager.new(FifoManager::CMD_WM_WHICH_FIFO,
-      FifoManager.channel_key(game.id, params[:channel]))
-    if !fm.nil? and fm.result_or_error == :result and !fm.result.nil?
-      host = fm.result[1]
-      port = fm.result[2]
+    gm = GserverManager.new(GserverManager::CMD_WM_WHICH_FIFO,
+      GserverManager.channel_key(game.id, params[:channel]))
+    if !gm.nil? and gm.result_or_error == :result and !gm.result.nil?
+      host = gm.result[1]
+      port = gm.result[2]
     else
       # The game container will fail to connect and display message that the server is down
-      host = "0"
+      host = '0'
       port = 0
     end
 
-    redirect_to game_container_with_versions_path(
+    redirect_to(game_container_with_versions_path(
       :id                => game.id,
       :channel           => Base64.encode64(CGI.escape(params[:channel])).strip,
       :locale            => params[:locale],
@@ -28,7 +28,7 @@ class SwfController < ApplicationController
       # Not "host" and "port" to avoid conflict with Rails
       :h                 => Base64.encode64(CGI.escape(host)).strip,
       :p                 => Base64.encode64(port.to_s).strip
-    )
+    ))
   end
 
   def game_container_with_versions

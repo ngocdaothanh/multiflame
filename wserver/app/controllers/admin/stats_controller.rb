@@ -12,9 +12,9 @@ module Admin
     end
 
     def create
-      fm = FifoManager.new(FifoManager::CMD_WM_SNAPSHOT_CREATE, nil)
-      if fm.result_or_error == :result
-        if fm.result == 0
+      gm = GserverManager.new(GserverManager::CMD_WM_SNAPSHOT_CREATE, nil)
+      if gm.result_or_error == :result
+        if gm.result == 0
           flash[:notice] = _('No gserver for now')
         else
           sleep(3)
