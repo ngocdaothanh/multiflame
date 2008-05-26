@@ -19,7 +19,7 @@ Dir.glob("#{FIFO_ROOT}/config/initializers/**/*.rb").each do |f|
 end
 
 if ENV['ASONR'] == 'production'
-  LOGGER = Logger.new("#{FIFO_ROOT}/log/fifo.log", 'daily')
+  LOGGER = Logger.new("#{FIFO_ROOT}/log/production.log", 'daily')
   LOGGER.level = Logger::INFO
 else
   LOGGER = Logger.new(STDOUT)

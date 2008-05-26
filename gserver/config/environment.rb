@@ -1,10 +1,9 @@
 CONF = {
   :captcha_key          => 'captcha_key',
   :captcha_length       => 3,
-  #:captcha_valid_period => 15,  # [sec]
   :captcha_valid_period => 24*60*60,  # [sec]
 
-  # Address on the machine that this fifo runs
+  # Address on the machine that this gserver runs
   :host => '0.0.0.0',
   :port => 443,
 

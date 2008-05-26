@@ -10,7 +10,7 @@ class Proxy
   CMD_FM_CHANNEL_CREATE   = 11
   CMD_FM_CHANNEL_DELETE   = 12
 
-  # Manager -> fifo
+  # Manager -> gserver
   CMD_MF_READY_SET        = 0
   CMD_MF_CG_SET           = 1
   CMD_MF_REMOTE_IPS_GET   = 2
@@ -108,7 +108,7 @@ class Proxy
     call(CMD_FM_CHANNEL_DELETE, key) if self.connected?
   end
 
-  # Manager -> fifo ------------------------------------------------------------
+  # Manager -> gserver ------------------------------------------------------------
 
   def on_call_mf_ready_set(value)
     @manager_ready = true
