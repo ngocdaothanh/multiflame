@@ -1,7 +1,7 @@
-- @navigator = "#{@fifo[:host]}:#{@fifo[:port]}"
+- @navigator = "#{@gserver[:host]}:#{@gserver[:port]}"
 
 %p
-  - s = _('Latest data (updated every %d minutes)') % CONF[:fifo_manager_snapshot_interval]
+  - s = _('Latest data (updated every %d minutes)') % CONF[:gserver_manager_snapshot_interval]
   = #{s}:
   - s = _('%s ago') % distance_of_time_in_words(@created_at.to_i, Time.now.to_i)
   = s

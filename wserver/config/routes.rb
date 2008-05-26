@@ -30,7 +30,7 @@ ActionController::Routing::Routes.draw do |map|
 
   #-----------------------------------------------------------------------------
 
-  map.connect 'admin', :controller => 'admin/stats'
+  map.admin 'admin', :controller => 'admin/stats', :action => 'index'
   map.namespace :admin do |admin|
     admin.resources :stats
     admin.resource  :game_container, :controller => 'game_container'

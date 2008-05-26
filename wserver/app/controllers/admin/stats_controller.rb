@@ -15,7 +15,7 @@ module Admin
       fm = FifoManager.new(FifoManager::CMD_WM_SNAPSHOT_CREATE, nil)
       if fm.result_or_error == :result
         if fm.result == 0
-          flash[:notice] = _('No fifo for now')
+          flash[:notice] = _('No gserver for now')
         else
           sleep(3)
         end
@@ -26,7 +26,7 @@ module Admin
     end
 
     def show
-      # Search back the selected fifo
+      # Search back the selected gserver
       hostport = params[:id]
       stat = Stat.find(:first, :order => 'created_at DESC')
       if stat.nil?
@@ -34,14 +34,14 @@ module Admin
         return
       end
       snapshot = stat.unzipped_snapshot
-      @fifo = nil
+      @gserver = nil
       snapshot.each_key do |k|
         if "#{k[:host].delete('.')}#{k[:port]}" == hostport
-          @fifo = k
+          @gserver = k
           break
         end
       end
-      if @fifo.nil? or @fifo.keys.empty?
+      if @gserver.nil? or @gserver.keys.empty?
         redirect_to(:action => 'index')
         return
       end
@@ -51,7 +51,7 @@ module Admin
       # Take out game -> channel names
 
       # Sort by game id (because the keys are in the format "game_id/channel_name")
-      key_ips = snapshot[@fifo]
+      key_ips = snapshot[@gserver]
       keys = key_ips.keys.sort
 
       # Find the first game with valid id (because game id maybe become invalid when
