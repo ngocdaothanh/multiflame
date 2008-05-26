@@ -1,0 +1,13 @@
+== Requirements
+
+* RMagick (for creating CAPTCHA images)
+http://rubyforge.org/projects/rmagick/
+
+* crypt (for encrypt/decrypt CAPTCHA keys)
+ruby -S gem install crypt --no-rdoc --no-ri
+
+* EventMachine (for creating server)
+ruby -S gem install eventmachine --no-rdoc --no-ri
+
+* Revent (for RPC)
+ruby -S gem install revent --no-rdoc --no-ri

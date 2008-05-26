@@ -14,9 +14,6 @@ Dir.glob("#{FIFO_ROOT}/app/helpers/**/*.rb").each do |f|
   require f
 end
 
-$: << "#{FIFO_ROOT}/vendor/plugins/action_mailer_tls/lib"
-require "#{FIFO_ROOT}/vendor/plugins/action_mailer_tls/init"
-
 Dir.glob("#{FIFO_ROOT}/config/initializers/**/*.rb").each do |f|
   require f
 end
