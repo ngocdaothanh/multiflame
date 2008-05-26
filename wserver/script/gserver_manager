@@ -22,7 +22,7 @@ abort "Environment '#{ARGV[0]}' not found" unless database_config = database_yam
 ActiveRecord::Base.establish_connection(database_config)
 ActiveRecord::Base.logger = LOGGER
 
-require "#{RAILS_ROOT}/config/initializers/config"
+require "#{RAILS_ROOT}/config/config"
 require "#{RAILS_ROOT}/app/models/game"
 require "#{RAILS_ROOT}/app/models/game_container"
 require "#{RAILS_ROOT}/app/models/stat"

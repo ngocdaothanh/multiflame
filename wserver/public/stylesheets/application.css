@@ -7,7 +7,7 @@ html, body {
 
 body {
   color: #444444;
-  font-family: Arial,sans-serif;
+  font-family: Arial, sans-serif;
   font-size: 12px;
   padding: 5px;
 }
@@ -93,9 +93,13 @@ table.data td {
 }
 
 #banner {
-  /*margin: auto;
-  text-align: center;*/
+  margin: auto;
+  text-align: center;
   padding-bottom: 10px;
+}
+
+#banner a:link, #banner a:visited {
+  color: white;
 }
 
 #player_menu {
@@ -216,14 +220,14 @@ pre {
   white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
 }
 
-.page_navi {
+.pagination {
   color: #8d8d8d;
   font-size: 1.6em;
   letter-spacing: -0.05em;
   margin: 0.2em 0 0.5em 0;
 }
 
-.page_navi a {
+.pagination a {
   font-size: 0.5em;
   border: 1px solid #595959;
   padding: 3px 6px;

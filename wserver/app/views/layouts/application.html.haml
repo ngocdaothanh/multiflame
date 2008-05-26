@@ -10,11 +10,13 @@
     #container
       #header_main
         #header
-          #banner= image_tag('logo.png')
+          #banner= link_to(image_tag('logo.png'), root_path)
 
+        - if CONF[:toy]
         %ul{:id => 'menu'}
           %li= link_to(_('Games'), root_path, :class => ('games' == params[:controller])? 'selected' : '')
           %li= link_to(_('Toys'),  toys_path, :class => ('toys'  == params[:controller])? 'selected' : '')
+        - end
 
         #main
           - unless @navigator.nil?
@@ -28,9 +30,9 @@
 
       #footer
         = CONF[:copyright]
-        - if CONF[:legal]
-        = link_to(_('Terms of service'), :controller => 'games', :action => 'terms')
-        = link_to(_('Privacy policy'),   :controller => 'games', :action => 'privacy')
+        - if CONF[:pr]
+        =   link_to(_('Terms of service'), terms_path)
+        =   link_to(_('Privacy policy'),   privacy_path)
         - end
 
       - unless CONF[:google_analytics_key].nil?

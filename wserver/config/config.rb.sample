@@ -1,0 +1,27 @@
+# This file is ssed by both the wserver and script/gserver_manager. Things only
+# used by the web should be put in environment.rb.
+
+CONF = {
+  :locales       => ['en', 'ja', 'vi'],
+  :app_title     => 'web20games.net',
+  :copyright     => '&copy; 2008 web20games.net',
+  :new_threshold => 3,  # [day], to determine if something is "NEW"
+
+  :swf_width  => 500,
+  :swf_height => 560,
+
+  :toy => false,  # Enable toy?
+  :pr  => false,  # Display Terms of Service and Privacy Policy?
+
+  :admin_email => 'admin@web20games.net',
+
+  :google_analytics_key => nil,  # nil for none
+
+  :gserver_manager_host              => 'localhost',  # "localhost" to accept only local connections
+  :gserver_manager_port              => 1943,
+  :gserver_manager_startup_delay     => 5,   # [sec], wait for gservers to reconnect
+  :gserver_manager_snapshot_interval => 10,  # [min], snapshot the whole system, for statistics
+}.freeze
+
+# Use UTC instead of local time
+ActiveRecord::Base.default_timezone = :utc
