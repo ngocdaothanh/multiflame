@@ -7,7 +7,6 @@ require 'revent/r_r'
 require 'revent/captcha'
 require 'singleton'
 require 'logger'
-require 'actionmailer'
 
 require "#{FIFO_ROOT}/config/environment"
 Dir.glob("#{FIFO_ROOT}/app/helpers/**/*.rb").each do |f|
@@ -30,5 +29,5 @@ CAPTCHA = Revent::Captcha.new(CONF[:captcha_key], CONF[:captcha_length], CONF[:c
 EventMachine::run do
   Proxy.instance
   Server.new(CONF[:host], CONF[:port])
-  LOGGER.info("Fifo started on #{CONF[:host]}:#{CONF[:port]}")
+  LOGGER.info("gserver started on #{CONF[:host]}:#{CONF[:port]}")
 end

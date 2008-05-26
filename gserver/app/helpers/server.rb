@@ -14,7 +14,7 @@ class Server
   # While being out in the lobby
   #CMD_LOGIN
   CMD_WILL_CLOSE   = 3
-  CMD_LOGOUT       = 4  # Fifo -> container
+  CMD_LOGOUT       = 4  # gserver -> container
   CMD_ROOM_ENTER   = 5
   CMD_ROOM_LEAVE   = 6
   CMD_CHAT         = 7

@@ -15,7 +15,7 @@ CONF = {
   :manager_port => 1943,
   :manager_reconnect_interval => 60,  # [sec]
 
-  :players_limit  => 5000,  # Initial value, can be changed by the Fifo manager
+  :players_limit  => 5000,  # Initial value, can be changed by the gserver manager
 
   :max_lag         => 2,  # [sec]
   :game_over_delay => 2   # [sec]

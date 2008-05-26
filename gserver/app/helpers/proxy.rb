@@ -5,24 +5,24 @@ class Proxy
   include Singleton
   include Revent::RRClient
 
-  # Fifo -> manager
-  CMD_FM_CHANNEL_KEYS_SET = 10
-  CMD_FM_CHANNEL_CREATE   = 11
-  CMD_FM_CHANNEL_DELETE   = 12
+  # gserver -> manager
+  CMD_GM_CHANNEL_KEYS_SET = 10
+  CMD_GM_CHANNEL_CREATE   = 11
+  CMD_GM_CHANNEL_DELETE   = 12
 
   # Manager -> gserver
-  CMD_MF_READY_SET        = 0
-  CMD_MF_CG_SET           = 1
-  CMD_MF_REMOTE_IPS_GET   = 2
+  CMD_MG_READY_SET        = 0
+  CMD_MG_CG_SET           = 1
+  CMD_MG_REMOTE_IPS_GET   = 2
 
   def initialize
     @on_calls = {
-      CMD_MF_READY_SET        => method(:on_call_mf_ready_set),
-      CMD_MF_CG_SET           => method(:on_call_mf_cg_set),
-      CMD_MF_REMOTE_IPS_GET   => method(:on_call_mf_remote_ips_get)
+      CMD_MG_READY_SET        => method(:on_call_mf_ready_set),
+      CMD_MG_CG_SET           => method(:on_call_mf_cg_set),
+      CMD_MG_REMOTE_IPS_GET   => method(:on_call_mf_remote_ips_get)
     }
     @on_results = {
-      CMD_FM_CHANNEL_CREATE => method(:on_result_fm_channel_create)
+      CMD_GM_CHANNEL_CREATE => method(:on_result_fm_channel_create)
     }
 
     begin
@@ -78,7 +78,7 @@ class Proxy
     Channel::LOGIN_OK
   end
 
-  # Fifo -> manager ------------------------------------------------------------
+  # gserver -> manager ------------------------------------------------------------
 
   def reconnect
     LOGGER.info("Reconnect to the manager at #{CONF[:manager_host]}:#{CONF[:manager_port]} in #{CONF[:manager_reconnect_interval]} seconds")
@@ -93,11 +93,11 @@ class Proxy
 
   def fm_channel_keys_set
     property = {:swf_host => CONF[:swf_host], :swf_port => CONF[:swf_port], :players_limit => Stats.instance.players_limit}
-    call(CMD_FM_CHANNEL_KEYS_SET, {:property => property, :channel_keys => Channel.keys})
+    call(CMD_GM_CHANNEL_KEYS_SET, {:property => property, :channel_keys => Channel.keys})
   end
 
   def fm_channel_create(key)
-    call(CMD_FM_CHANNEL_CREATE, key)
+    call(CMD_GM_CHANNEL_CREATE, key)
   end
 
   def on_result_fm_channel_create(result)
@@ -105,7 +105,7 @@ class Proxy
   end
 
   def fm_channel_delete(key)
-    call(CMD_FM_CHANNEL_DELETE, key) if self.connected?
+    call(CMD_GM_CHANNEL_DELETE, key) if self.connected?
   end
 
   # Manager -> gserver ------------------------------------------------------------
