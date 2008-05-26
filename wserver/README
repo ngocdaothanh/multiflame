@@ -1,22 +1,21 @@
 == Requirements
 
-* JRuby 1.1.1+
-* Rails 2.0.2 (newer version may not work!)
-* RubyGettext (for Windows: install poedit and add its bin directory to system path)
+* Rails 2.0.2
+* RubyGettext (Windows: install poedit and add its bin directory to system path)
 
 == Installation
 
 * Modify config/initializers/config.rb, config/database.yml
 * Prepare DB
-jruby -S rake db:migrate
-jruby -S rake db:init
+ruby -S rake db:migrate
+ruby -S rake db:init
 * Translate pofiles to mofiles
-jruby -S rake gettext:makemo
+ruby -S rake gettext:makemo
 
 == Running
 
-* Start the fifo manager first
-jruby script/gserver_manager
+* Start gserver manager first
+ruby script/gserver_manager
 
-* Then start the web server(s)
-jruby script/server
+* Then wserver
+ruby script/server
