@@ -20,7 +20,7 @@ class GserverManager
     @arg = arg
     t = Thread.new do
       EventMachine::run do
-        connect(CONF[:fifo_manager_host], CONF[:fifo_manager_port])
+        connect(CONF[:gserver_manager_host], CONF[:gserver_manager_port])
       end
     end
     t.join
