@@ -263,5 +263,5 @@ end
 
 EventMachine::run do
   GserverManager.new(CONF[:gserver_manager_host], CONF[:gserver_manager_port])
-  LOGGER.info("Gserver manager started on #{CONF[:gserver_manager_host]}:#{CONF[:gserver_manager_port]}")
+  LOGGER.info("gserver manager started on #{CONF[:gserver_manager_host]}:#{CONF[:gserver_manager_port]}")
 end
