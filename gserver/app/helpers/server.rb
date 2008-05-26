@@ -33,9 +33,6 @@ class Server
   CMD_PLAY_TIMEOUT = 14
   CMD_GAME_OVER    = 15
 
-  # The client wants to send a mail
-  CMD_MAIL = 100
-
   GAME_INFO_OK               = 0
   GAME_INFO_CONNECTION_ERROR = 1
   GAME_INFO_NO_GAME          = 2
@@ -67,11 +64,6 @@ class Server
         LOGGER.debug('@player: CMD_CAPTCHA but already logged in')
         client.close_connection
       end
-      return
-    end
-
-    if cmd == CMD_MAIL
-      mail(client, value)
       return
     end
 
@@ -141,21 +133,5 @@ class Server
     end
 
     client.result(CMD_GAME_INFO, [code, info], true)
-  end
-
-  #-----------------------------------------------------------------------------
-
-  def mail(client, value)
-    encrypted_code_with_timestamp = value[:encryptedCode]
-    code                          = value[:code]
-    recipient                     = value[:recipient]
-    subject                       = value[:subject]
-    body                          = value[:body]
-    jpg                           = value[:jpg]
-
-    if CAPTCHA.correct?(code, encrypted_code_with_timestamp)
-      JPGMailer.deliver_msg(recipient, subject, body, jpg)
-    end
-    client.close_connection
   end
 end
