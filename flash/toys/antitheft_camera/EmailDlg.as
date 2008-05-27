@@ -21,7 +21,7 @@
 		private var _encryptedCode:ByteArray;
 
 		private var _jpgMail:JpgMail;
-		
+
 		public function EmailDlg(container:IContainer):void {
 			_container = container;
 			_codeLbl.text   = _("Code");
@@ -34,11 +34,11 @@
 			_ok.selectable = false;
 			_ok.addEventListener(MouseEvent.CLICK, onOKClick);
 
-			_captcha = new Captcha(Config.DEFAULT_FIFO_HOST, Config.DEFAULT_FIFO_PORT);
+			_captcha = new Captcha(Config.DEFAULT_GSERVER_HOST, Config.DEFAULT_GSERVER_PORT);
 			_captcha.addEventListener(Event.COMPLETE, onCaptchaLoaded);
 			_captcha.receive();
 
-			_jpgMail = new JpgMail(Config.DEFAULT_FIFO_HOST, Config.DEFAULT_FIFO_PORT);
+			_jpgMail = new JpgMail(Config.DEFAULT_GSERVER_HOST, Config.DEFAULT_GSERVER_PORT);
 		}
 
 		public function mail(subject:String, body:String, img:BitmapData):void {

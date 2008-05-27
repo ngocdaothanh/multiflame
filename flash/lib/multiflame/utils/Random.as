@@ -1,0 +1,1 @@
+﻿﻿package multiflame.game {	public class Random {		/**		 * @return		 * Array of shuffled integer elements in the range [0..size - 1]		 */		public static function shuffle(size:int):Array {			var ret:Array = new Array(size);			for (var i:int = 0; i < size; i++) {				ret[i] = i;			}			return ret;		}	}}

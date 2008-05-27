@@ -5,9 +5,9 @@
 	public interface IConfigDlg {
 		/**
 		 * @param gameInfo
-		 * Game information returned by IGame#onLoaded.
+		 * Game information returned by IGame#onLoad.
 		 */
-		function onLoaded(container:IContainer, gameInfo:Object):void;
+		function onLoad(container:IContainer, gameInfo:Object):void;
 
 		/**
 		 * If the player logs in at the the middle of NEW state, onInit and
@@ -27,7 +27,7 @@
 
 		/**
 		 * When a game is over, the config dialog is redisplayed. The dialog should
-		 * display reresult of the last game.
+		 * display result of the last game.
 		 */
 		function onGameResult(nicks0:Array, result:Array, extra:String):void;
 	}

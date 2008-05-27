@@ -35,7 +35,7 @@
 		function get baseConfig():Object;
 
 		/**
-                 * @return
+		 * @return
 		 * The extended config of the current game. If you want
 		 * to use extended config, please define a custom config dialog.
 		 */
@@ -43,8 +43,8 @@
 
 		/**
 		 * @return
-		 * Nicks of players who initially joined the game. Note that players can
-		 * resign during the game.
+		 * Nicks of players who initially joined the game (players can resign
+		 * during the game).
 		 */
 		function get nicks0():Array;
 
@@ -57,7 +57,8 @@
 		/**
 		 * If move time is nearly over and enqueueMove() has not been called, the game
 		 * container will automatically call enqueueMove(defaultMove) if defaultMove
-		 * is not null.
+		 * is not null. This is useful for WEGO games: players can change his decision
+		 * if his opponent has not moved and timeout has not occured.
 		 */
 		function set defaultMove(value:Object):void;
 
@@ -77,9 +78,9 @@
 		/**
 		 * "Action" means onMove()/onResign()/onTimeout(). The game calls this method
 		 * to notify that game action processing has finished. The processing may take
-		 * a lot of time (up to some seconds) when the game uses physics engine.
+		 * a lot of time, typically when the game uses physics engine.
 		 *
-		 * @param value
+		 * @param result
 		 * OVER                The game is over.
 		 * ANY                 Any player can make the next move.
 		 * Non-negative number Index of the player who should make the next move.
