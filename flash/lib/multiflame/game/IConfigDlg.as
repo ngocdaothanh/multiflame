@@ -10,7 +10,7 @@
 		function onLoad(container:IContainer, gameInfo:Object):void;
 
 		/**
-		 * If the player logs in at the the middle of NEW state, onInit and
+		 * If the player logs in at the the middle of NEW state, this method and
 		 * a series of onJoin will be called by the game container.
 		 *
 		 * @param nick

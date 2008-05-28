@@ -23,7 +23,7 @@
 		public static const TIMEOUT:int = 2;
 
 		/**
-		 * Results for each action (onMove/onResign/onTimeout).
+		 * Negative results for each action (onMove/onResign/onTimeout).
 		 */
 		public static const OVER:int = -1;
 		public static const ANY:int  = -2;

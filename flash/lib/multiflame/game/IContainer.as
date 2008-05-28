@@ -76,7 +76,7 @@
 		function set extraGameResult(value:String):void;
 
 		/**
-		 * "Action" means onMove()/onResign()/onTimeout(). The game calls this method
+		 * "Action" means onNew/onMove()/onResign()/onTimeout(). The game calls this method
 		 * to notify that game action processing has finished. The processing may take
 		 * a lot of time, typically when the game uses physics engine.
 		 *
@@ -88,7 +88,7 @@
 		function onActionDone(result:int):void;
 
 		/**
-		 * For immediate game, it is the index of the player who should make the next move.
+		 * For IGOUGO games, it is the index of the player who should make the next move.
 		 */
 		function get lastActionResult():int;
 
