@@ -3,11 +3,7 @@
 	 * Config dialog must be a Sprite or its subclass.
 	 */
 	public interface IConfigDlg {
-		/**
-		 * @param gameInfo
-		 * Game information returned by IGame#onLoad.
-		 */
-		function onLoad(container:IContainer, gameInfo:Object):void;
+		function onLoad(container:IContainer, game:IGame):void;
 
 		/**
 		 * If the player logs in at the the middle of NEW state, this method and

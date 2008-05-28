@@ -1,27 +1,19 @@
 ﻿package multiflame.game {
-	public interface IContainer {
-		/**
-		 * Translates the given text into the current language on the container.
-		 */
-		function _(id:String):String;
+	public interface IRoom {
+		// ---------------------------------------------------------------------
+		// Called by the communicator.
 
-		/**
-		 * @return
-		 * TweenLite class. See http://www.TweenLite.com.
-		 */
-		function get TweenLite():*;
+		function onNewConfig():void;
+		function onNewJoin():void;
+		function onNewUnjoin():void;
+		function onNewTimeout():void;
+		function onPlayMove():void;
+		function onPlayResign():void;
+		function onPlayTimeout():void;
+		function onGameOver():void;
 
-		/**
-		 * @return
-		 * TweenFilerLite class. See http://www.TweenLite.com.
-		 */
-		function get TweenFilterLite():*;
-
-		// ---------------------------------------------------------------------------
-
-		/**
-		 * Only called by games.
-		 */
+		// ---------------------------------------------------------------------
+		// Called by the game.
 
 		/**
 		 * @return
@@ -98,10 +90,7 @@
 		function enqueueMove(data:Object):void;
 
 		// ---------------------------------------------------------------------------
-
-		/**
-		 * Only called by the config dialog.
-		 */
+		// Called by the config dialog.
 
 		/**
 		 * The config dialog calls to notify that the player has finished configurating
@@ -118,5 +107,25 @@
 		 * The config dialog calls to notify that the player has decided to unjoin.
 		 */
 		function unjoin():void;
+
+		// ---------------------------------------------------------------------------
+		// Utilities.
+
+		/**
+		 * Translates the given text into the current language on the container.
+		 */
+		function _(id:String):String;
+
+		/**
+		 * @return
+		 * TweenLite class. See http://www.TweenLite.com.
+		 */
+		function get TweenLite():*;
+
+		/**
+		 * @return
+		 * TweenFilerLite class. See http://www.TweenLite.com.
+		 */
+		function get TweenFilterLite():*;
 	}
 }
