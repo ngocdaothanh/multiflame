@@ -35,7 +35,7 @@
 		// ---------------------------------------------------------------------------
 
 		private function onAdded(event:Event):void {
-			_userNameLbl.text = _("User name");
+			_usernameLbl.text = _("Username");
 			_tagsRadio.label  = _("Tags");
 			_setRadio.label   = _("Set");
 			_embedLbl.text    = _("Embed");
