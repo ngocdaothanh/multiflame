@@ -6,14 +6,11 @@
   %li= _('Embed into your web site')
 
 - if @toys.size == 1
-.left= render_toys(@game, @toys)
-- end
-
-- if @toys.size > 1
-.left= render_toys(@game, @toys[0...@toys.size/2])
+  .left= render_toys(@game, @toys)
+- else
+  .left= render_toys(@game, @toys[0...@toys.size/2])
 
 .right= render_toys(@game, @toys[@toys.size/2...@toys.size])
-- end
 
 %div{:style => 'clear:both'}
 

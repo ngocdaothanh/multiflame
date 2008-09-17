@@ -2,21 +2,19 @@
 - @navigator = _('Edit game container')
 
 - unless flash[:notice].nil?
-.notice= flash[:notice]
-- end
+  .notice= flash[:notice]
 
-= form_tag(admin_game_container_path, :multipart => true, :method => :put)
-%table
-  %tr
-    %th &nbsp;
-    %td= _('(blank = no change)')
-  %tr
-    %th container.swf
-    %td= file_field_tag('container', :id => nil)
-  - locales = CONF[:locales].dup; locales.delete('en')
-  - locales.each do |l|
-  %tr
-    %th== #{l}.mo
-    %td= file_field_tag(l, :id => nil)
-  - end
-= submit_tag(_('Save'))
+- form_tag(admin_game_container_path, :multipart => true, :method => :put) do
+  %table
+    %tr
+      %th &nbsp;
+      %td= _('(blank = no change)')
+    %tr
+      %th container.swf
+      %td= file_field_tag('container', :id => nil)
+    - locales = CONF[:locales].dup; locales.delete('en')
+    - locales.each do |l|
+      %tr
+        %th== #{l}.mo
+        %td= file_field_tag(l, :id => nil)
+  = submit_tag(_('Save'))

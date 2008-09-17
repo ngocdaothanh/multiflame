@@ -2,17 +2,15 @@
 - @navigator = _('Upload new toy')
 
 = error_messages_for(@toy, [])
-= form_tag(admin_toys_path, :multipart => true)
-%table
-  %tr
-    %th toy.swf
-    %td= file_field_tag('toy', :id => nil)
-    %th= _('Toy name')
-  - CONF[:locales].each do |l|
-  %tr
-    %th== #{l}.mo
-    %td= (l == 'en')? '&nbsp;' : file_field_tag("mo_#{l}", :id => nil)
-    %td= text_field_tag("name_#{l}", (@toy.nil?)? '' : @toy.name(l), :id => nil)
-  - end
-= submit_tag(_('Upload'))
-</form>
+- form_tag(admin_toys_path, :multipart => true) do
+  %table
+    %tr
+      %th toy.swf
+      %td= file_field_tag('toy', :id => nil)
+      %th= _('Toy name')
+    - CONF[:locales].each do |l|
+      %tr
+        %th== #{l}.mo
+        %td= (l == 'en')? '&nbsp;' : file_field_tag("mo_#{l}", :id => nil)
+        %td= text_field_tag("name_#{l}", (@toy.nil?)? '' : @toy.name(l), :id => nil)
+  = submit_tag(_('Upload'))

@@ -1,6 +1,5 @@
 - unless flash[:notice].nil?
-%p.notice= flash[:notice]
-- end
+  %p.notice= flash[:notice]
 
 %h2= _('Toy container')
 
@@ -11,8 +10,6 @@
 %p= link_to(_('Upload new toy'), new_admin_toy_path)
 
 - unless @toys.blank?
-%ol
-  - @toys.each do |t|
-  %li= link_to(t.name, edit_admin_toy_path(t))
-  -   end
-- end
+  %ol
+    - @toys.each do |t|
+      %li= link_to(t.name, edit_admin_toy_path(t))

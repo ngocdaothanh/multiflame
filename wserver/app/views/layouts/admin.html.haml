@@ -16,13 +16,11 @@
           %li= link_to(_('Statistics'), admin_stats_path, :class => ('admin/stats' == params[:controller])                                ? 'selected' : '')
           %li= link_to(_('Games'),      admin_games_path, :class => ['admin/games', 'admin/game_container'].include?(params[:controller]) ? 'selected' : '')
           - if CONF[:toy]
-          %li= link_to(_('Toys'),       admin_toys_path,  :class => ['admin/toys', 'admin/toy_container'].include?(params[:controller])   ? 'selected' : '')
-          - end
+            %li= link_to(_('Toys'),       admin_toys_path,  :class => ['admin/toys', 'admin/toy_container'].include?(params[:controller])   ? 'selected' : '')
 
         #main
           - unless @navigator.nil?
-          #navigator= @navigator
-          - end
+            #navigator= @navigator
           %div= yield
 
       #flags= flags_to_locales

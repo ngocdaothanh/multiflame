@@ -1,0 +1,7 @@
+# Set the absolute path to Adobe Flash program.
+
+# Sample for Windows
+FLASH_PATH = '/C:/Program Files/Adobe/Adobe Flash CS3/Flash.exe'
+
+# Sample for Mac
+FLASH_PATH = "/Applications/Adobe\ Flash\ CS3/Adobe\ Flash\ CS3.app/Contents/MacOS/Adobe\ Flash\ CS3"

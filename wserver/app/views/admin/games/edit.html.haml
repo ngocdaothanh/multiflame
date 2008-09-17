@@ -2,19 +2,18 @@
 - @navigator = _('Edit %s') % h(@game.name)
 
 = error_messages_for(@game, [])
-= form_tag(admin_game_path(@game), :multipart => true, :method => :put)
-%table
-  %tr
-    %th &nbsp;
-    %td= _('(blank = no change)')
-  %tr
-    %th game.swf
-    %td= file_field_tag('game', :id => nil)
-    %th= _('Game name')
-  - CONF[:locales].each do |l|
-  %tr
-    %th== #{l}.mo
-    %td= (l == 'en')? '&nbsp;' : file_field_tag("mo_#{l}", :id => nil)
-    %td= text_field_tag("name_#{l}", @game.name(l))
-  - end
-= submit_tag _('Save')
+- form_tag(admin_game_path(@game), :multipart => true, :method => :put) do
+  %table
+    %tr
+      %th &nbsp;
+      %td= _('(blank = no change)')
+    %tr
+      %th game.swf
+      %td= file_field_tag('game', :id => nil)
+      %th= _('Game name')
+    - CONF[:locales].each do |l|
+      %tr
+        %th== #{l}.mo
+        %td= (l == 'en')? '&nbsp;' : file_field_tag("mo_#{l}", :id => nil)
+        %td= text_field_tag("name_#{l}", @game.name(l))
+  = submit_tag _('Save')

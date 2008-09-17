@@ -1,4 +1,4 @@
-Interface IBlah *only* declares methods that are used by *other interfaces*, not
+Interface IFoo *only* declares methods that are used by *other interfaces*, not
 by itself or the system.
 
 The system will create and wire objects of these interfaces together.

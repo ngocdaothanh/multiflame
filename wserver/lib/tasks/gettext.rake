@@ -9,7 +9,12 @@ module GetText
   end
 end
 
-require "#{RAILS_ROOT}/vendor/plugins/haml/lib/haml"
+begin
+  require "#{RAILS_ROOT}/vendor/plugins/haml/lib/haml"
+rescue LoadError
+  require 'haml' # From gem
+end
+
 module HamlParser
   module_function
 

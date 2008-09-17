@@ -2,16 +2,14 @@
 - @navigator = _('Edit toy container')
 
 - unless flash[:notice].nil?
-.notice= flash[:notice]
-- end
+  .notice= flash[:notice]
 
-= form_tag(admin_toy_container_path, :multipart => true, :method => :put)
-%table
-  %tr
-    %th &nbsp;
-    %td= _('(blank = no change)')
-  %tr
-    %th container.swf
-    %td= file_field_tag('container', :id => nil)
-= submit_tag(_('Save'))
-
+- form_tag(admin_toy_container_path, :multipart => true, :method => :put) do
+  %table
+    %tr
+      %th &nbsp;
+      %td= _('(blank = no change)')
+    %tr
+      %th container.swf
+      %td= file_field_tag('container', :id => nil)
+  = submit_tag(_('Save'))

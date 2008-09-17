@@ -6,14 +6,11 @@
   %li= _('Play with your friends')
 
 - if @games.size == 1
-.left= render_games(@games)
-- end
-
-- if @games.size > 1
-.left= render_games(@games[0...@games.size/2])
+  .left= render_games(@games)
+- else
+  .left= render_games(@games[0...@games.size/2])
 
 .right= render_games(@games[@games.size/2...@games.size])
-- end
 
 %div{:style => 'clear:both'}
 

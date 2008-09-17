@@ -1,4 +1,4 @@
-class CreateSchema < ActiveRecord::Migration
+class Schema < ActiveRecord::Migration
   def self.up
     create_table :games do |t|
       t.text :names, :null => false  # Hash of {locale => name}, serialized using YML
