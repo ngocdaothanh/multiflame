@@ -18,10 +18,10 @@ Dir.glob("#{FIFO_ROOT}/config/initializers/**/*.rb").each do |f|
 end
 
 if ENV['ASONR'] == 'production'
-  LOGGER = Logger.new("#{FIFO_ROOT}/log/production.log", 'daily')
-  LOGGER.level = Logger::INFO
+  $logger = Logger.new("#{FIFO_ROOT}/log/production.log", 'daily')
+  $logger.level = Logger::INFO
 else
-  LOGGER = Logger.new(STDOUT)
+  $logger = Logger.new(STDOUT)
 end
 
 CAPTCHA = Revent::Captcha.new(CONF[:captcha_key], CONF[:captcha_length], CONF[:captcha_valid_period])
@@ -29,5 +29,5 @@ CAPTCHA = Revent::Captcha.new(CONF[:captcha_key], CONF[:captcha_length], CONF[:c
 EventMachine::run do
   Proxy.instance
   Server.new(CONF[:host], CONF[:port])
-  LOGGER.info("gserver started on #{CONF[:host]}:#{CONF[:port]}")
+  $logger.info("gserver started on #{CONF[:host]}:#{CONF[:port]}")
 end

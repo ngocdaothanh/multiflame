@@ -29,29 +29,32 @@ require "#{RAILS_ROOT}/app/models/stat"
 
 # ------------------------------------------------------------------------------
 
-# Game information is rarely changed. On startup, the manager will load
-# information about all games into memory. When a gserver connects, it will be passed
-# this information. When there is a change, the web server will notify the manager,
-# and the manager in turn will push this change to all the gservers.
+# wservers <--> gserver_manager <--> wservers
 #
-# Moreover, the manager may be down while the gservers are still alive. In this case,
-# the gservers will try to connect to the manager every ~15sec. On startup, the
-# manager will wait ~1min for all the gservers to connect and report their status
+# On startup, gserver_manager will load information about all games into memory.
+# When a gserver connects, it will be passed this information.
+#
+# Game information is rarely changed. When there is a change, a wserver will
+# notify gserver_manager, and it will broadcast this change to all gservers.
+#
+# gserver_manager may be down while the gservers are still alive. In this case,
+# gservers will try to connect to the manager every ~15sec. On startup, the
+# manager will wait ~1min for all gservers to connect and report their status
 # (list of channels they are serving...).
 class GserverManager
   include Revent::RRServer
 
-  # Web -> manager
+  # wserver -> gserver_manager
   CMD_WM_WHICH_FIFO       = 0
   CMD_WM_CG_RELOAD        = 1
   CMD_WM_SNAPSHOT_CREATE  = 2
 
-  # Manager -> gserver
+  # gserver_manager -> gserver
   CMD_MG_READY_SET        = 0
   CMD_MG_CG_SET           = 1
   CMD_MG_REMOTE_IPS_GET   = 2
 
-  # Gserver -> manager
+  # gserver -> gserver_manager
   CMD_GM_CHANNEL_KEYS_SET = 10
   CMD_GM_CHANNEL_CREATE   = 11
   CMD_GM_CHANNEL_DELETE   = 12
@@ -113,9 +116,9 @@ class GserverManager
     LOGGER.error("cmd = #{cmd}, error = #{backtrace}")
   end
 
-private
+  private
 
-  # Web server -> manager ------------------------------------------------------
+  # wservers -> gserver_manager ------------------------------------------------
 
   # Which gserver should handle a certain channel?
   # Input: {:game_id, :channel_name}
@@ -124,13 +127,13 @@ private
     @mutex_channel_keys.synchronize do
       return nil if @channel_keys.empty?
 
-      # Take out the gserver the is handling this channel
+      # Take out the gserver which is handling this channel
       key = value
       gservers = @channel_keys.each do |f, keys|
         return [key, f.session[:swf_host], f.session[:swf_port]] if keys.include?(key)
       end
 
-      # Take out the the emptiest gserver
+      # Take out the the least busy gserver
       gservers = @channel_keys.keys
       max_gserver = gservers[0]
       max = gservers[0].session[:players_avalable]
@@ -166,9 +169,9 @@ private
     end
   end
 
-  # Gservers -> manager -----------------------------------------------------------
+  # gservers -> gserver_manager ------------------------------------------------
 
-  # The gservers call this right after connecting to the manager.
+  # gservers call this right after connecting to gserver_manager.
   def on_call_fm_channel_keys_set(gserver, value)
     @mutex_channel_keys.synchronize do
       gserver.session = value[:property]
@@ -178,8 +181,8 @@ private
     nil
   end
 
-  # Ask the manager to create a channel. If the channel has already existed, let
-  # the gserver know where to redirect the container to.
+  # Ask gserver_manager to create a channel. If the channel exists, let
+  # gserver know where to redirect the game container to.
   # Returns nil if the calling gserver should handle the channel.
   def on_call_fm_channel_create(gserver, value)
     @mutex_channel_keys.synchronize do

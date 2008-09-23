@@ -33,7 +33,7 @@ class Proxy
   end
 
   def on_connect
-    LOGGER.info("Connected to the manager at #{CONF[:manager_host]}:#{CONF[:manager_port]}")
+    $logger.info("Connected to the manager at #{CONF[:manager_host]}:#{CONF[:manager_port]}")
     fm_channel_keys_set
   end
 
@@ -54,7 +54,7 @@ class Proxy
 
   def on_error(cmd, value)
     backtrace = value.backtrace.join("\n")
-    LOGGER.error("@proxy: cmd = #{cmd}, error = #{backtrace}")
+    $logger.error("@proxy: cmd = #{cmd}, error = #{backtrace}")
   end
 
   # ----------------------------------------------------------------------------
@@ -81,7 +81,7 @@ class Proxy
   # gserver -> manager ------------------------------------------------------------
 
   def reconnect
-    LOGGER.info("Reconnect to the manager at #{CONF[:manager_host]}:#{CONF[:manager_port]} in #{CONF[:manager_reconnect_interval]} seconds")
+    $logger.info("Reconnect to the manager at #{CONF[:manager_host]}:#{CONF[:manager_port]} in #{CONF[:manager_reconnect_interval]} seconds")
     EventMachine::add_timer(CONF[:manager_reconnect_interval]) do
       begin
         connect(CONF[:manager_host], CONF[:manager_port])

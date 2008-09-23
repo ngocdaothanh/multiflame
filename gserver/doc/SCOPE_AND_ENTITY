@@ -1,0 +1,11 @@
+== Scope
+
+There are many scopes in an application. The scopes are nested, for example:
+gate/lobby/room
+
+Right after connecting, the client is in the first scope.
+
+== Entity
+
+In a scope, there are many entities. Scope methods can be seen as class methods
+of an entity.
