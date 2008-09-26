@@ -1,4 +1,4 @@
-class LobbyScope < Scope
+class Lobby < Scope
   TYPE_IGOUGO  = 0
   TYPE_WEGO    = 1
   TYP_REALTIME = 2

@@ -1,4 +1,4 @@
-class RoomScope < Scope
+class Room < Scope
   # States
   NEWABLE   = 0
   NEW       = 1
@@ -9,6 +9,8 @@ class RoomScope < Scope
   NEW_TIMEOUT = 30  # [s]
 
   def initialize(player, batch_game)
+    super
+
     @players = [player]
     @batch_game = batch_game
 

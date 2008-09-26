@@ -1,15 +1,21 @@
-class GateController < Scope
+class Gate < Scope
   GAME_INFO_OK               = 0
   GAME_INFO_CONNECTION_ERROR = 1
   GAME_INFO_NO_GAME          = 2
 
+  def initialize
+    super
+    @captcha = Revent::Captcha.new(CONF[:captcha_key], CONF[:captcha_length], CONF[:captcha_valid_period])
+    @zones = {}
+  end
+
   def callables
-    ['captcha', 'game_info']
+    ['captcha', 'game_info', 'login']
   end
 
   # Returns: [encrypted code with timestamp, image]
   def captcha(client)
-    encrypted_code_with_timestamp, img = CAPTCHA.new
+    encrypted_code_with_timestamp, img = @captcha.new
     ba1 = RubyAMF::IO::ByteArray.new(encrypted_code_with_timestamp)
     ba2 = RubyAMF::IO::ByteArray.new(img)
 
@@ -32,5 +38,9 @@ class GateController < Scope
     end
 
     client.result(CMD_GAME_INFO, [code, info], true)
+  end
+
+  def login(client, zone, name, pass)
+
   end
 end

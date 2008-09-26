@@ -1,10 +1,7 @@
-class Channel
-  @@channels = {}
-
-  # ----------------------------------------------------------------------------
-
-
-  # ----------------------------------------------------------------------------
+class Zone
+  def initialize
+    @rooms = {}
+  end
 
   def initialize(key, players, container_version, game_version, batch_game)
     @@channels.synchronize do
@@ -89,8 +86,6 @@ class Channel
     end
   end
 
-private
-
   def logout(player)
     self.synchronize do
       if player.session[:room] != @lobby
@@ -160,6 +155,4 @@ private
       player.call(Server::CMD_ROOM_LEAVE, snapshot)
     end
   end
-
-
 end
