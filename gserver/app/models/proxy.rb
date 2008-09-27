@@ -42,7 +42,7 @@ class Proxy
     reconnect
   end
 
-  def on_call(cmd, value)
+  def on_invoke(cmd, value)
     m = @on_calls[cmd]
     m.call(value)
   end

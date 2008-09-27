@@ -382,4 +382,42 @@ private
     end
     @last_batch_move_sent = Time.now
   end
+
+
+    # Called when a player enters a room (from the lobby).
+  # in: iroom
+  # out: [iroom, nick]
+  def join(client)
+    @clients.synchronize do
+      @clients.each do |c|
+        c.invoke(Server::CMD_ROOM_ENTER, [iroom, player.session[:nick]])
+      end
+      @clients << client
+    end
+  end
+
+  # Called when a player leaves a room (to enter the lobby).
+  def room_leave(player, iroom)
+    @players.each do |p|
+      p.call(Server::CMD_ROOM_LEAVE, [iroom, player.session[:nick]])
+    end
+    @players << player
+  end
+
+  # out: [[nicks in lobby], [nicks in room0], [nicks in room1]...]
+  def snapshot
+    a = [@lobby.nicks]
+    a.concat(@rooms.map { |r| r.nicks })
+    a
+  end
+
+  def chat(client, message)
+    @clients.synchronize do
+      index = @clientss.index(client)
+      @clients.each do |c|
+        c.invoke('chat', [index, message])
+      end
+    end
+  end
+
 end

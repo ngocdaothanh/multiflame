@@ -45,7 +45,7 @@ class Server
     $logger.debug("on_invoke, cmd: #{cmd}, value: #{value.inspect}")
 
     scope = client.session[:scope]
-    if scope.callables.include?(cmd)
+    if scope.invokables.include?(cmd)
       scope.send(cmd, *value)
     else
       raise('Invalid command')

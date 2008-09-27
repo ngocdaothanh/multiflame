@@ -1,15 +1,8 @@
-class Zone
-  def initialize
-    @rooms = {}
-  end
-
-  def initialize(key, players, container_version, game_version, batch_game)
-    @@channels.synchronize do
-      @@channels[key] = self
-
-      @key = key  # Used to delete this channel
-
-      @lobby = Lobby.new(players)
+# A zone acts as a lobby.
+class Zone < Scope
+  def initialize(clients, container_version, game_version, batch_game)
+    self.synchronize do
+      @clients = clients
       @rooms = []
 
       @container_version = container_version
@@ -17,64 +10,89 @@ class Zone
       @batch_game        = batch_game
 
       s = snapshot
-      players.each do |p|
-        p.session[:channel] = self
-        p.session[:room] = @lobby
-        p.result(Server::CMD_LOGIN, [LOGIN_OK, s])
+      clients.each do |c|
+        c.session[:scope] = self
+        c.result('login', [Gate::LOGIN_OK, s])
       end
     end
   end
 
-  def login(player, container_version, game_version, batch_game)
+  def login(client, container_version, game_version, batch_game)
     self.synchronize do
-      code = LOGIN_OK
-      if @lobby.nicks.include?(player.session[:nick])
-        code = LOGIN_DUPLICATE_NICK
+      code = Gate::LOGIN_OK
+      if nicks.include?(client.session[:nick])
+        code = Gate::LOGIN_DUPLICATE_NICK
       else
         @rooms.each do |r|
           if r.nicks.include?(player.session[:nick])
-            code = LOGIN_DUPLICATE_NICK
+            code = Gate::LOGIN_DUPLICATE_NICK
             break
           end
         end
       end
-      if code == LOGIN_OK
+
+      if code == Gate::LOGIN_OK
         if container_version != @container_version
-          code = LOGIN_DIFFERENT_CONTAINER_VERSION
+          code = Gate::LOGIN_DIFFERENT_CONTAINER_VERSION
         elsif game_version != @game_version
-          code = LOGIN_DIFFERENT_GAME_VERSION
+          code = Gate::LOGIN_DIFFERENT_GAME_VERSION
         elsif batch_game != @batch_game
-          code = LOGIN_DIFFERENT_GAME_VERSION
+          code = Gate::LOGIN_DIFFERENT_GAME_VERSION
         end
       end
-
-      if code != LOGIN_OK
-        player.result(Server::CMD_LOGIN, [code, nil], true)
+      if code != Gate::LOGIN_OK
+        client.result('login', [code, nil], true)
         return
       end
 
-      player.session[:channel] = self
-      @lobby.process(player, Server::CMD_LOGIN, nil)
-      player.session[:room] = @lobby
-      player.result(Server::CMD_LOGIN, [LOGIN_OK, snapshot])
+      @clients.each do |c|
+        c.invoke('join', c.session[:nick])
+      end
+
+      @clients << client
+      client.session[:scope] = self
+      client.result('login', [Gate::LOGIN_OK, snapshot])
     end
+  end
+
+  def logout(client)
+  end
+
+  def room_create(client)
+
+  end
+
+  def room_join(client, iroom)
   end
 
   # ----------------------------------------------------------------------------
 
-  def process(player, cmd, value)
-    # Cross-room related commands are processed here, the others are processed
-    # in the room the player is currently in (lobby or game room)
-    if cmd == Server::CMD_LOGOUT
-      logout(player)
-    elsif cmd == Server::CMD_ROOM_ENTER
-      room_enter(player, value)
-    elsif cmd == Server::CMD_ROOM_LEAVE
-      room_leave(player, value)
-    else
-      player.session[:room].process(player, cmd, value)
+  # Called by a room after a client has left that room.
+  #
+  # out:
+  # * For the players who are in the lobby: [iroom, nick]
+  # * For the player who left:              room snapshot
+  def room_on_leave(client)
+    self.synchronize do
+      iroom = @rooms.index(client.session[:scope])
+
+      player.session[:room].process(player, Server::CMD_ROOM_LEAVE, nil)
+      if player.session[:room].nicks.empty?
+        @rooms.delete_at(iroom)
+      end
+
+      @lobby.process(player, Server::CMD_ROOM_LEAVE, iroom)
+
+      client.session[:scope] = self
+      client.call('room_leave', snapshot)
     end
   end
+
+
+  def nicks
+    @clients.map { |c| c.session[:nick] }
+  end
+
 
   def remote_ips
     self.synchronize do
@@ -130,29 +148,15 @@ class Zone
     end
   end
 
-  # out:
-  # * For the players who are in the room:  nick
-  # * For the players who are in the lobby: [iroom, nick]
-  # * For the player who left:              room snapshot
-  def room_leave(player, value)
-    self.synchronize do
-      if player.session[:room] == @lobby
-        $logger.debug('@channel: room_leave: No room to leave')
-        player.close_connection
-        return
+  # Returns {channel_key => remote_ips} of all channels.
+  def remote_ips
+    @@channels.synchronize do
+      ret = {}
+      @@channels.each do |k, c|
+        ret[k] = c.remote_ips
       end
-
-      iroom = @rooms.index(player.session[:room])
-
-      player.session[:room].process(player, Server::CMD_ROOM_LEAVE, nil)
-      if player.session[:room].nicks.empty?
-        @rooms.delete_at(iroom)
-      end
-
-      @lobby.process(player, Server::CMD_ROOM_LEAVE, iroom)
-
-      player.session[:room] = @lobby
-      player.call(Server::CMD_ROOM_LEAVE, snapshot)
+      return ret
     end
   end
+
 end

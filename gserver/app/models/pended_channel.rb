@@ -45,9 +45,9 @@ class PendedChannel
   def login(player, container_version, game_version, batch_game)
     code = Channel::LOGIN_OK
     if nicks.include?(player.session[:nick])
-      code = Channel::LOGIN_DUPLICATE_NICK 
+      code = Channel::LOGIN_DUPLICATE_NICK
     elsif container_version != @container_version
-      code = Channel::LOGIN_DIFFERENT_CONTAINER_VERSION 
+      code = Channel::LOGIN_DIFFERENT_CONTAINER_VERSION
     elsif game_version != @game_version or batch_game != @batch_game
       code = Channel::LOGIN_DIFFERENT_GAME_VERSION
     end
