@@ -1,6 +1,8 @@
 # A zone acts as a lobby.
 class Zone < Scope
   def initialize(clients, container_version, game_version, batch_game)
+    super
+
     self.synchronize do
       @clients = clients
       @rooms = []

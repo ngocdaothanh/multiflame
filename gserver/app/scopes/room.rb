@@ -8,10 +8,10 @@ class Room < Scope
 
   NEW_TIMEOUT = 30  # [s]
 
-  def initialize(player, batch_game)
+  def initialize(client, batch_game)
     super
 
-    @players = [player]
+    @clients = [client]
     @batch_game = batch_game
 
     @state = NEWABLE
@@ -20,11 +20,11 @@ class Room < Scope
     @new_created_at   = nil
     @base_config      = nil
     @extended_config  = nil
-    @playing_players0 = []
+    @playing_clients0 = []
 
     # PLAY
-    @playing_players = []  # Set to @playing_players0 when the game starts
-    @judgers = []          # Set to @players when the game starts
+    @playing_clients = []  # Set to @playing_clients0 when the game starts
+    @judgers = []          # Set to @clients when the game starts
     @play_created_at = nil
     if @batch_game
       @batch_move = BatchMove.new
@@ -46,169 +46,169 @@ class Room < Scope
       Server::CMD_GAME_OVER    => method('game_over')
     }
 
-    player.session[:room] = self
-    player.call(Server::CMD_ROOM_ENTER, snapshot)
+    client.session[:room] = self
+    client.call(Server::CMD_ROOM_ENTER, snapshot)
   end
 
-  def process(player, cmd, value)
+  def process(client, cmd, value)
     self.synchronize do
       m = @methods[cmd]
       if m.nil?
         $logger.debug("@lobby: Invalid command: #{cmd}")
-        player.close_connection
+        client.close_connection
       else
-        m.call(player, value)
+        m.call(client, value)
       end
     end
   end
 
   def nicks
-    return @players.map { |p| p.session[:nick] }
+    return @clients.map { |p| p.session[:nick] }
   end
 
   def remote_ips
     self.synchronize do
-      @players.map { |p| p.remote_ip }
+      @clients.map { |p| p.remote_ip }
     end
   end
 
 private
 
-  def will_close(player, value)
+  def will_close(client, value)
   end
 
   # in: iroom
   # out:
-  #   for the player who entered: snapshot
+  #   for the client who entered: snapshot
   #   for the others: nick
-  def enter(player, value)
-    @players.each do |p|
-      p.call(Server::CMD_ROOM_ENTER, player.session[:nick])
+  def enter(client, value)
+    @clients.each do |p|
+      p.call(Server::CMD_ROOM_ENTER, client.session[:nick])
     end
 
-    @players << player
+    @clients << client
 
-    player.session[:room] = self
-    player.call(Server::CMD_ROOM_ENTER, snapshot)
+    client.session[:room] = self
+    client.call(Server::CMD_ROOM_ENTER, snapshot)
   end
 
   # out: nick
-  def leave(player, value)
-    @players.delete(player)
-    @judgers.delete(player)
+  def leave(client, value)
+    @clients.delete(client)
+    @judgers.delete(client)
 
-    # Notify joining/playing players (CMD_NEW_UNJOIN or CMD_PLAY_RESIGN)
-    if @playing_players.include?(player)
+    # Notify joining/playing clients (CMD_NEW_UNJOIN or CMD_PLAY_RESIGN)
+    if @playing_clients.include?(client)
       if @state == NEW
-        new_unjoin(player, nil)
+        new_unjoin(client, nil)
       elsif @state == PLAY
-        play_resign(player, nil)
+        play_resign(client, nil)
       end
     end
 
-    # Notify all players
-    @players.each do |p|
-      p.call(Server::CMD_ROOM_LEAVE, player.session[:nick])
+    # Notify all clients
+    @clients.each do |p|
+      p.call(Server::CMD_ROOM_LEAVE, client.session[:nick])
     end
   end
 
-  def chat(player, value)
+  def chat(client, value)
     msg = value
-    index = @players.index(player)
-    @players.each do |p|
+    index = @clients.index(client)
+    @clients.each do |p|
       p.call(Server::CMD_CHAT, [index, msg])
     end
   end
 
-  def new_config(player, value)
+  def new_config(client, value)
     return if @state != NEWABLE
 
     a_base_config = value[0]
     @base_config = {
-      :n_players    => a_base_config[0].to_i,
+      :n_clients    => a_base_config[0].to_i,
       :move_sec => a_base_config[1].to_i,
       :total_min    => a_base_config[2].to_i
     }
     # Validate, just in case
-    if @base_config[:n_players] < 2 or @base_config[:move_sec] < 0 or @base_config[:total_min] < 0
-      logout(player)
+    if @base_config[:n_clients] < 2 or @base_config[:move_sec] < 0 or @base_config[:total_min] < 0
+      logout(client)
       return
     end
 
     @state = NEW
     @new_created_at = Time.now
     @extended_config = value[1]
-    @playing_players0 = [player]
+    @playing_clients0 = [client]
 
-    @players.each do |p|
-      p.call(Server::CMD_NEW_CONF, [player.session[:nick], a_base_config, @extended_config])
+    @clients.each do |p|
+      p.call(Server::CMD_NEW_CONF, [client.session[:nick], a_base_config, @extended_config])
     end
   end
 
-  def new_join(player, value)
+  def new_join(client, value)
     return if @state != NEW
-    if @playing_players0.include?(player)
-      player.close_connection
+    if @playing_clients0.include?(client)
+      client.close_connection
       return
     end
 
-    @playing_players0 << player
-    if @playing_players0.size == @base_config[:n_players]
+    @playing_clients0 << client
+    if @playing_clients0.size == @base_config[:n_clients]
       @state = PLAY
-      @playing_players = @playing_players0.dup
-      @judgers = @players.dup  # Judgers are the ones who watch the game from the start
+      @playing_clients = @playing_clients0.dup
+      @judgers = @clients.dup  # Judgers are the ones who watch the game from the start
       @play_created_at = Time.now
       @game_snapshot = nil
       if @batch_game
-        @batch_move.new_game(@playing_players0.size)
+        @batch_move.new_game(@playing_clients0.size)
         @last_batch_move_sent = Time.now
       end
     end
 
-    @players.each do |p|
-      p.call(Server::CMD_NEW_JOIN, player.session[:nick])
+    @clients.each do |p|
+      p.call(Server::CMD_NEW_JOIN, client.session[:nick])
     end
   end
 
-  def new_unjoin(player, value)
+  def new_unjoin(client, value)
     return if @state != NEW
-    unless @playing_players0.include?(player)
-      player.close_connection
+    unless @playing_clients0.include?(client)
+      client.close_connection
       return
     end
 
-    @playing_players0.delete(player)
-    @state = NEWABLE if @playing_players0.empty?
+    @playing_clients0.delete(client)
+    @state = NEWABLE if @playing_clients0.empty?
 
-    @players.each do |p|
-      p.call(Server::CMD_NEW_UNJOIN, player.session[:nick])
+    @clients.each do |p|
+      p.call(Server::CMD_NEW_UNJOIN, client.session[:nick])
     end
   end
 
-  def new_timeout(player, value)
+  def new_timeout(client, value)
     return if @state != NEW
     if Time.now - @new_created_at < NEW_TIMEOUT
-      player.close_connection
+      client.close_connection
       return
     end
 
     @state = NEWABLE
 
-    @players.each do |p|
+    @clients.each do |p|
       p.call(Server::CMD_NEW_TIMEOUT, nil)
     end
   end
 
-  def play_move(player, value)
+  def play_move(client, value)
     return if @state != PLAY
-    unless @playing_players.include?(player)
-      player.close_connection
+    unless @playing_clients.include?(client)
+      client.close_connection
       return
     end
 
     @game_snapshot = value[0]
 
-    index = @playing_players0.index(player)
+    index = @playing_clients0.index(client)
     if !play_move_util(index, value[1])
       @batch_game ?
       play_move_batch(index, value[1]) :
@@ -216,22 +216,22 @@ private
     end
   end
 
-  def play_resign(player, value)
+  def play_resign(client, value)
     return if @state != PLAY
-    unless @playing_players.include?(player)
-      player.close_connection
+    unless @playing_clients.include?(client)
+      client.close_connection
       return
     end
 
-    @playing_players.delete(player)
-    if @playing_players.empty?
+    @playing_clients.delete(client)
+    if @playing_clients.empty?
       @state = NEWABLE
       return
     end
 
-    index = @playing_players0.index(player)
+    index = @playing_clients0.index(client)
     a = [Time.now - @play_created_at, index]
-    @players.each do |p|
+    @clients.each do |p|
       p.call(Server::CMD_PLAY_RESIGN, a)
     end
 
@@ -241,14 +241,14 @@ private
     broadcast_batch if @batch_game and @batch_move.resign(index)
   end
 
-  def play_timeout(player, value)
+  def play_timeout(client, value)
     return if @state != PLAY
-    unless @playing_players.include?(player)
-      player.close_connection
+    unless @playing_clients.include?(client)
+      client.close_connection
       return
     end
 
-    index = @playing_players0.index(player)
+    index = @playing_clients0.index(client)
 
     @last_action = [Server::CMD_PLAY_TIMEOUT, index, nil]
 
@@ -259,31 +259,31 @@ private
     end
   end
 
-  def game_over(player, value)
+  def game_over(client, value)
     if @state == GAME_OVER
-      unless @judgers.include?(player)
-        player.close_connection
+      unless @judgers.include?(client)
+        client.close_connection
         return
       end
 
       # TODO: phase2: collect results and judge later
-      #collect_results(player, value)
+      #collect_results(client, value)
       return
     end
 
     if @state != PLAY
-      player.close_connection
+      client.close_connection
       return
     end
 
     @state = GAME_OVER
     # TODO: phase2: collect results and judge later
-    #collect_results(player, value)
+    #collect_results(client, value)
     EventMachine::add_timer(CONF[:game_over_delay]) do
       # TODO: phase2: collect results and judge later
       #judge_results
       @state = NEWABLE
-      @players.each do |p|
+      @clients.each do |p|
         p.call(Server::CMD_GAME_OVER, nil)
       end
     end
@@ -294,7 +294,7 @@ private
   # Returns [state, nicks, baseConfig, extendedConfig, playNicks0, gameSnapshot, actions]
   def snapshot
     a_base_config = [
-      @base_config[:n_players],
+      @base_config[:n_clients],
       @base_config[:move_sec],
       @base_config[:total_min]
     ] unless @base_config.nil?
@@ -303,7 +303,7 @@ private
       nicks,
       a_base_config,
       @extended_config,
-      @playing_players0.map { |p| p.session[:nick] },
+      @playing_clients0.map { |p| p.session[:nick] },
       nil,
       []
     ]
@@ -315,7 +315,7 @@ private
     return false if ret.nil?
 
     a = [Time.now - @play_created_at, index, ret]
-    @players.each do |p|
+    @clients.each do |p|
       p.call(Server::CMD_PLAY_MOVE, a)
     end
     true
@@ -323,50 +323,50 @@ private
 
   def play_move_immediate(index, value)
     a = [Time.now - @play_created_at, index, value]
-    @players.each do |p|
+    @clients.each do |p|
       p.call(Server::CMD_PLAY_MOVE, a)
     end
   end
 
   def play_move_batch(index, value)
     if @batch_move.include?(index)
-      @players[index].close_connection
+      @clients[index].close_connection
       return
     end
 
     broadcast_batch if @batch_move.move(index, value)
   end
 
-  # Only broadcast for playing players.
+  # Only broadcast for playing clients.
   def play_timeout_immediate(index)
     a = [Time.now - @play_created_at, index]
-    @playing_players.each do |p|
+    @playing_clients.each do |p|
       p.call(Server::CMD_PLAY_TIMEOUT, a)
     end
   end
 
-  # Fill in nils for player who did not move and broadcast the batch move.
+  # Fill in nils for client who did not move and broadcast the batch move.
   def play_timeout_batch(index)
-    player = @playing_players0[index]
+    client = @playing_clients0[index]
 
     # Check if it is game timeout
     now = Time.now
     if @base_config[:total_min] > 0 and
         now - @play_created_at >= @base_config[:total_min]*60
-      game_over(player, nil)
+      game_over(client, nil)
       return
     end
 
     # Check if it is not move timeout
     dt = now - @last_batch_move_sent
     if dt < @base_config[:move_sec]
-      player.close_connection if CONF[:max_lag] < dt
+      client.close_connection if CONF[:max_lag] < dt
       return
     end
 
     # Prevent too many successive default moves
     if @batch_move.timeout
-      @playing_players.each do |p|
+      @playing_clients.each do |p|
         p.close_connection
       end
     else
@@ -377,31 +377,31 @@ private
   def broadcast_batch
     a = [Time.now - @play_created_at].concat(@batch_move.to_a)
     @batch_move.clear
-    @players.each do |p|
+    @clients.each do |p|
       p.call(Server::CMD_PLAY_MOVE, a)
     end
     @last_batch_move_sent = Time.now
   end
 
 
-    # Called when a player enters a room (from the lobby).
+    # Called when a client enters a room (from the lobby).
   # in: iroom
   # out: [iroom, nick]
   def join(client)
     @clients.synchronize do
       @clients.each do |c|
-        c.invoke(Server::CMD_ROOM_ENTER, [iroom, player.session[:nick]])
+        c.invoke(Server::CMD_ROOM_ENTER, [iroom, client.session[:nick]])
       end
       @clients << client
     end
   end
 
-  # Called when a player leaves a room (to enter the lobby).
-  def room_leave(player, iroom)
-    @players.each do |p|
-      p.call(Server::CMD_ROOM_LEAVE, [iroom, player.session[:nick]])
+  # Called when a client leaves a room (to enter the lobby).
+  def room_leave(client, iroom)
+    @clients.each do |p|
+      p.call(Server::CMD_ROOM_LEAVE, [iroom, client.session[:nick]])
     end
-    @players << player
+    @clients << client
   end
 
   # out: [[nicks in lobby], [nicks in room0], [nicks in room1]...]
