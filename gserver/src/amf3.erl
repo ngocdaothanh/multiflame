@@ -10,52 +10,69 @@
 % * Reverse Engineered spec: http://osflash.org/documentation/amf3
 
 -module(amf3).
--export([decode/1, encode/1]).
+-export([decode_all/1, encode/1]).
 
 %-------------------------------------------------------------------------------
--define(UNDEFINED, 0).
--define(NULL,      1).
--define(FALSE,     2).
--define(TRUE,      3).
--define(INTEGER,   4).
--define(NUMBER,    5).
--define(STRING,    6).
--define(ARRAY,     9).
+-define(UNDEFINED,   0).
+-define(NULL,        1).
+-define(FALSE,       2).
+-define(TRUE,        3).
+-define(INTEGER,     4).
+-define(NUMBER,      5).
+-define(STRING,      6).
+-define(ARRAY,       9).
+-define(BYTE_ARRAY, 12).
 
 %-------------------------------------------------------------------------------
-decode(<<>>) ->
-    [];
+decode_all(Data) ->
+    decode_all(Data, []).
+
+decode_all(<<>>, Acc) ->
+    lists:reverse(Acc);
+decode_all(Data, Acc) ->
+    {Result, Rest} = decode(Data),
+    decode_all(Rest, [Result | Acc]).
+
+%-------------------------------------------------------------------------------
 decode(<<?UNDEFINED, Rest/binary>>) ->
-    [undefined | decode(Rest)];
+    {undefined, Rest};
+
 decode(<<?NULL, Rest/binary>>) ->
-    [null | decode(Rest)];
+    {null, Rest};
+
 decode(<<?FALSE, Rest/binary>>) ->
-    [false | decode(Rest)];
+    {false, Rest};
+
 decode(<<?TRUE, Rest/binary>>) ->
-    [true | decode(Rest)];
+    {true, Rest};
+
 decode(<<?INTEGER, Rest/binary>>) ->
-    {Result, Rest2} = from_amf3_integer(Rest),
-    [Result | decode(Rest2)];
+    decode_integer(Rest);
+
 decode(<<?NUMBER, Rest/binary>>) ->
     <<Float:64/float, Rest2/binary>> = Rest,
-    [Float | decode(Rest2)];
-decode(<<?STRING, Len:16/unsigned, Rest/binary>>) ->
-    <<String:Len/binary, Rest2/binary>> = Rest,
-    [binary_to_list(String), decode(Rest2)].
-%decode(<<?ARRAY
+    {Float, Rest2};
+
+decode(<<?STRING, Rest/binary>>) ->
+    {Type, Rest2} = decode_integer(Rest),
+    Length = Type bsr 1,
+    <<String:Length/binary, Rest3/binary>> = Rest2,
+    {binary_to_list(String), Rest3};
+
+decode(<<?ARRAY, Rest/binary>>) ->
+    {Type, Rest2} = decode_integer(Rest),
+    Length = Type bsr 1,
+    decode_array(Length, Rest2).
 
 %-------------------------------------------------------------------------------
-from_amf3_integer(Data) ->
-    from_amf3_integer(Data, 0, 0).
+decode_integer(Data) ->
+    decode_integer(Data, 0, 0).
 
-from_amf3_integer(<<1:1, Num:7, Rest/binary>>, Result, N) when N < 3 ->
-    from_amf3_integer(Rest, (Result bsl 7) bor Num, N + 1);
-from_amf3_integer(<<0:1, Num:7, Rest/binary>>, Result, N) when N < 3 ->
+decode_integer(<<1:1, Num:7, Rest/binary>>, Result, N) when N < 3 ->
+    decode_integer(Rest, (Result bsl 7) bor Num, N + 1);
+decode_integer(<<0:1, Num:7, Rest/binary>>, Result, N) when N < 3 ->
     {(Result bsl 7) bor Num, Rest};
-%TODO:
-%1100 0001 1111 1111 1111 1111 1111 1111 = -268435456
-%1100 0000 1000 0001 1000 0001 1000 0000 = 268435455
-from_amf3_integer(<<Byte, Rest/binary>>, Result, _N) ->
+decode_integer(<<Byte, Rest/binary>>, Result, _N) ->
     Result1 = (Result bsl 8) bor Byte,
     Result3 = case Result1 band 16#10000000 of
       16#10000000 ->
@@ -66,6 +83,16 @@ from_amf3_integer(<<Byte, Rest/binary>>, Result, _N) ->
           Result1
     end,
     {Result3, Rest}.
+
+%-------------------------------------------------------------------------------
+decode_array(Length, <<1, Data/binary>>) ->
+    decode_array(Length, Data, []).
+
+decode_array(0, Data, Acc) ->
+    {lists:reverse(Acc), Data};
+decode_array(Length, Data, Acc) ->
+    {Item, Rest} = decode(Data),
+    decode_array(Length - 1, Rest, [Item | Acc]).
 
 %-------------------------------------------------------------------------------
 encode(Variable) ->
