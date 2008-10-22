@@ -1,4 +1,4 @@
-MODULES   = foo bar baz
+MODULES   = amf3
 
 BEAMS     = $(MODULES:%=%.beam)
 
@@ -15,6 +15,3 @@ all: $(BEAMS)
 
 %.beam : %.erl %.hrl
   $(ERLC) -b beam $(ERLCFLAGS) -I $(INCDIR) -o $(BINDIR) $< .PHONY: clean
-
-clean:
-  rm -rf $(BINDIR)/*.beam $(INCDIR)/*~ $(SRCDIR)/*~ *~
