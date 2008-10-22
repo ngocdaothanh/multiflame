@@ -5,6 +5,8 @@
 % * string
 % * dense array, byte array
 %
+% Hash, reference, and other types are not supported.
+%
 % More information:
 % * Official AMF3 spec: http://download.macromedia.com/pub/labs/amf/amf3_spec_121207.pdf
 % * Reverse Engineered spec: http://osflash.org/documentation/amf3
