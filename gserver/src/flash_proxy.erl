@@ -1,9 +1,9 @@
--module(flash).
--export([start_listener/1]).
+-module(flash_proxy).
+-export([start/1]).
 
 -define(TCP_OPTIONS, [binary, {packet, 0}, {active, false}, {reuseaddr, true}]).
 
-start_listener(Port) ->
+start(Port) ->
     {ok, LSocket} = gen_tcp:listen(Port, ?TCP_OPTIONS),
     accept(LSocket).
 
