@@ -13,7 +13,7 @@
 %% API
 %%====================================================================
 %%--------------------------------------------------------------------
-%% Function: start_link() -> {ok,Pid} | ignore | {error,Error}
+%% Function: start_link() -> {ok,Pid} | ignore | {error, Error}
 %% Description: Starts the server
 %%--------------------------------------------------------------------
 start_link() ->
@@ -43,21 +43,17 @@ init([]) ->
 %%                                      {stop, Reason, State}
 %% Description: Handling call messages
 %%--------------------------------------------------------------------
-handle_call({Socket, captcha}, _From, State) ->
-    Reply = 1,
+handle_call({enter_root}, Client, Clients) ->
+    io:format("er~p~n", [[Client | Clients]]),
+    Reply = {enter_root_ok, ["Tictactoe"], [2]},
+    {reply, Reply, [Client | Clients]};
+
+handle_call({enter_game, GameIndex}, _Client, State) ->
+    Reply = {enter_game_ok, ["Beginner"], [2]},
     {reply, Reply, State};
 
-handle_call({Socket, game_info, {Id, Locale}}, _From, State) ->
-    Reply = 2,
-    {reply, Reply, State};
-
-handle_call({Socket, login, {ContainerVersion, GameId, GameVersion, GameType, Zone, Nick, CaptchaCode, EncryptedCode}}, _From, State) ->
-    Reply = 3,
-    {reply, Reply, State};
-
-%%--------------------------------------------------------------------
-handle_call({Socket, chat, Message}, _From, State) ->
-    Reply = 4,
+handle_call({enter_room_ok, RoomIndex}, _Client, State) ->
+    Reply = {enter_game_ok, [], nothing},
     {reply, Reply, State};
 
 %%--------------------------------------------------------------------

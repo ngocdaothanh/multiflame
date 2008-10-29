@@ -3,7 +3,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0]).
+-export([start_link/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -16,8 +16,10 @@
 %% Function: start_link() -> {ok,Pid} | ignore | {error,Error}
 %% Description: Starts the server
 %%--------------------------------------------------------------------
-start_link() ->
-    gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+start_link(GameName, RoomName) ->
+    Name = GameName ++ RoomName,
+    Atom = list_to_atom(Name),
+    gen_server:start_link({local, Atom}, ?MODULE, [], []).
 
 %%====================================================================
 %% gen_server callbacks
@@ -43,20 +45,9 @@ init([]) ->
 %%                                      {stop, Reason, State}
 %% Description: Handling call messages
 %%--------------------------------------------------------------------
-handle_call({Socket, captcha}, _From, State) ->
-    Reply = 1,
-    {reply, Reply, State};
-
-handle_call({Socket, game_info, {Id, Locale}}, _From, State) ->
-    Reply = 2,
-    {reply, Reply, State};
-
-handle_call({Socket, login, {ContainerVersion, GameId, GameVersion, GameType, Zone, Nick, CaptchaCode, EncryptedCode}}, _From, State) ->
-    Reply = 3,
-    {reply, Reply, State};
 
 %%--------------------------------------------------------------------
-handle_call({Socket, chat, Message}, _From, State) ->
+handle_call({Socket, chat, Message}, Client, State) ->
     Reply = 4,
     {reply, Reply, State};
 
