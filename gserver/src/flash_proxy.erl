@@ -13,6 +13,15 @@ accept(LSocket) ->
     accept(LSocket).
 
 proxy(Socket) ->
+    spawn_link(fun() -> recv(Socket) end),
+    receive
+        {chat, UserName, Message} ->
+            io:format("~p: ~p~n", [UserName, Message]);
+        _Any ->
+            proxy(Socket)
+    end.
+
+recv(Socket) ->
     case gen_tcp:recv(Socket, 0) of
         {ok, Data} ->
             %gen_tcp:send(Socket, Data),
