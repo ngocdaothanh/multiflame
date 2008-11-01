@@ -3,6 +3,9 @@
 -behaviour(gen_fsm).
 
 %% API
+-export([list_games/0, list_rooms/1]).
+-export([enter/3, leave/3, chat/3]).
+-export([config/3, join/2, unjoin/2, play/3]).
 -export([start_link/1]).
 
 %% gen_fsm callbacks
@@ -17,6 +20,45 @@
 %%====================================================================
 %% API
 %%====================================================================
+list_games() ->
+    Atoms = registered(),
+    Names = [to_game_name(A) || A <- Atoms],
+    NonBlankNames = [N || N <- Names, N =/= ""],
+    lists:usort(NonBlankNames).
+
+list_rooms(GameName) ->
+    Atoms = registered(),
+    Names = [to_room_name(A, GameName) || A <- Atoms],
+    [N || N <- Names, N =/= ""].
+
+enter(GameName, RoomName, UserName) ->
+    Atom = to_room_atom(GameName, RoomName),
+    gen_fsm:sync_send_all_state_event(Atom, {enter, UserName}).
+
+leave(GameName, RoomName, UserName) ->
+    Atom = to_room_atom(GameName, RoomName),
+    gen_fsm:sync_send_all_state_event(Atom, {leave, UserName}).
+
+chat(GameName, RoomName, Message) ->
+    Atom = to_room_atom(GameName, RoomName),
+    gen_fsm:sync_send_all_state_event(Atom, {chat, Message}).
+
+config(GameName, RoomName, Config) ->
+    Atom = to_room_atom(GameName, RoomName),
+    gen_fsm:sync_send_event(Atom, {config, Config}).
+
+join(GameName, RoomName) ->
+    Atom = to_room_atom(GameName, RoomName),
+    gen_fsm:sync_send_event(Atom, join).
+
+unjoin(GameName, RoomName) ->
+    Atom = to_room_atom(GameName, RoomName),
+    gen_fsm:sync_send_event(Atom, unjoin).
+
+play(GameName, RoomName, Data) ->
+    Atom = to_room_atom(GameName, RoomName),
+    gen_fsm:sync_send_event(Atom, {play, Data}).
+
 %%--------------------------------------------------------------------
 %% Function:
 %% start_link() ->
@@ -27,7 +69,8 @@
 %% does not return until Module:init/1 has returned.
 %%--------------------------------------------------------------------
 start_link(RoomName) ->
-    Atom = room_name_to_atom(RoomName),
+    GameName = atom_to_list(?MODULE),
+    Atom = to_room_atom(GameName, RoomName),
     gen_fsm:start_link({local, Atom}, ?MODULE, [], []).
 
 %%====================================================================
@@ -46,7 +89,9 @@ start_link(RoomName) ->
 %% initialize.
 %%--------------------------------------------------------------------
 init([]) ->
-    {ok, new, [-1, -1, -1, -1, -1, -1, -1, -1, -1]}.
+    UserAtoms = [],
+    Board = [-1, -1, -1, -1, -1, -1, -1, -1, -1],
+    {ok, new, {UserAtoms, Board}}.
 
 %%--------------------------------------------------------------------
 %% Function:
@@ -103,6 +148,25 @@ handle_event(_Event, StateName, State) ->
 %% gen_fsm:sync_send_all_state_event/2,3, this function is called to handle
 %% the event.
 %%--------------------------------------------------------------------
+handle_sync_event({enter, UserName}, _From, StateName, {UserAtoms, Board}) ->
+    UserAtom = to_user_atom(UserName),
+    AlreadyEntered = lists:any(fun(X) -> X == UserAtom end, UserAtoms),
+    if
+        AlreadyEntered ->
+            Reply = {error, {already_entered}},
+            {reply, Reply, StateName, {UserAtoms, Board}};
+        true ->
+            UserAtoms2 = [UserAtom | UserAtoms],
+            UserNames = [to_user_name(A) || A <- UserAtoms],
+            Reply = {UserNames, Board},
+            {reply, Reply, StateName, {UserAtoms2, Board}}
+    end;
+
+handle_sync_event({leave, UserName}, _From, StateName, {UserAtoms, Board}) ->
+    UserAtoms2 = lists:delete(to_user_atom(UserName), UserAtoms),
+    Reply = ok,
+    {reply, Reply, StateName, {UserAtoms2, Board}};
+
 handle_sync_event(_Event, _From, StateName, State) ->
     Reply = ok,
     {reply, Reply, StateName, State}.
@@ -147,7 +211,49 @@ code_change(_OldVsn, StateName, State, _Extra) ->
 %%--------------------------------------------------------------------
 %% Internal functions
 %%--------------------------------------------------------------------
-room_name_to_atom(RoomName) ->
-    GameName = atom_to_list(?MODULE),
+to_game_name(Registered) ->
+    String = atom_to_list(Registered),
+    {ok, L} = regexp:split(String, "/"),
+    if
+        length(L) == 3 ->
+            [Games, GameName, _] = L,
+            if
+                Games == "games" -> GameName;
+                true -> ""
+            end;
+        true -> ""
+    end.
+
+to_room_name(Registered, GameName) ->
+    String = atom_to_list(Registered),
+    {ok, L} = regexp:split(String, "/"),
+    if
+        length(L) == 3 ->
+            [Games, GameName2, RoomName] = L,
+            if
+                (Games == "games") and (GameName2 == GameName) -> RoomName;
+                true -> ""
+            end;
+        true -> ""
+    end.
+
+to_room_atom(GameName, RoomName) ->
     Path = "games/" ++ GameName ++ "/" ++ RoomName,
+    list_to_atom(Path).
+
+to_user_name(UserAtom) ->
+    String = atom_to_list(UserAtom),
+    {ok, L} = regexp:split(String, "/"),
+    if
+        length(L) == 2 ->
+            [Users, UserName] = L,
+            if
+                Users == "users" -> UserName;
+                true -> ""
+            end;
+        true -> ""
+    end.
+
+to_user_atom(UserName) ->
+    Path = "users/" ++ UserName,
     list_to_atom(Path).
