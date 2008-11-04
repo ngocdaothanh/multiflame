@@ -1,20 +1,23 @@
-% This module supports decoding from and encoding to AMF3. Types supported:
-% * undefined, null
-% * false, true
-% * integer, number
-% * string
-% * dense array, byte array
-%
-% Hash, reference, and other types are not supported.
-%
-% More information:
-% * Official AMF3 spec: http://download.macromedia.com/pub/labs/amf/amf3_spec_121207.pdf
-% * Reverse Engineered spec: http://osflash.org/documentation/amf3
+%% This module supports decoding from and encoding to AMF3. Types supported:
+%% * undefined, null
+%% * false, true
+%% * integer, number
+%% * string
+%% * dense array, byte array
+%%
+%% Hash, reference, and other types are not supported.
+%%
+%% More information:
+%% * Official AMF3 spec: http://download.macromedia.com/pub/labs/amf/amf3_spec_121207.pdf
+%% * Reverse Engineered spec: http://osflash.org/documentation/amf3
+%% * http://code.google.com/p/eswf/
+%% * http://code.google.com/p/erlyvideo/
 
 -module(amf3).
 -export([decode_all/1, encode/1]).
 
 %-------------------------------------------------------------------------------
+
 -define(UNDEFINED,   0).
 -define(NULL,        1).
 -define(FALSE,       2).
@@ -29,6 +32,7 @@
 -define(INTEGER_MAX,  268435455).
 
 %-------------------------------------------------------------------------------
+
 decode_all(Data) ->
     decode_all(Data, []).
 
@@ -39,6 +43,7 @@ decode_all(Data, Acc) ->
     decode_all(Rest, [Result | Acc]).
 
 %-------------------------------------------------------------------------------
+
 decode(<<?UNDEFINED, Rest/binary>>) ->
     {undefined, Rest};
 
@@ -76,6 +81,7 @@ decode(<<?BYTE_ARRAY, Rest/binary>>) ->
     {Binary, Rest3}.
 
 %-------------------------------------------------------------------------------
+
 decode_integer(Data) ->
     decode_integer(Data, 0, 0).
 
@@ -96,6 +102,7 @@ decode_integer(<<Byte, Rest/binary>>, Result, _N) ->
     {Result3, Rest}.
 
 %-------------------------------------------------------------------------------
+
 decode_array(Length, <<1, Data/binary>>) ->
     decode_array(Length, Data, []).
 
@@ -106,6 +113,7 @@ decode_array(Length, Data, Acc) ->
     decode_array(Length - 1, Rest, [Item | Acc]).
 
 %-------------------------------------------------------------------------------
+
 encode(undefined) ->
     <<?UNDEFINED>>;
 
@@ -135,6 +143,7 @@ encode(Binary) when is_binary(Binary) ->
      <<?BYTE_ARRAY, (encode_integer(Length bsl 1 bor 1))/binary, Binary/binary>>.
 
 %-------------------------------------------------------------------------------
+
 encode_integer(Integer) ->
     Int = Integer band 16#1fffffff,
     if
