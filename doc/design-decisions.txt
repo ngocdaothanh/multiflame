@@ -1,0 +1,26 @@
+Be simple, pragmatic, and opinionated. It takes time to please everyone, and
+if you want to please everyone eventually no one is happy.
+
+== No registration and no login
+
+Users do not have to register, do not have to login. Why bother register and
+login to play a casual game? Just Connect And Play (TM).
+
+For this reason, the user list appears as:
+You
+Guest1
+Guest2
+...
+GuestN
+
+== No game configuration
+
+The game configuration has been decided by the developers for "normal" users.
+The games are multiplayer and the users come to play immediately, why waste
+time to configure? If a user is able to configure, it cannot be sure that
+the others are also happy. Also, the configuration table can be hard to
+understand for newcomers.
+
+== No total timeout
+
+There is one-move timeout, but no total timeout.
